@@ -1,0 +1,80 @@
+@import "tailwindcss";
+
+@theme {
+  --color-brand: #7c3aed; /* Violet 600 */
+  --color-brand-light: #a78bfa; /* Violet 400 */
+  --color-brand-dark: #5b21b6; /* Violet 800 */
+  --color-bg-dark: #0b0e14;
+  --color-bg-card: #161b22;
+}
+
+@layer base {
+  body {
+    @apply bg-[var(--color-bg-dark)] text-slate-400 font-sans antialiased;
+  }
+}
+
+@layer utilities {
+  .bg-neural-grid {
+    background-image: 
+      linear-gradient(rgba(124, 58, 237, 0.1) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(124, 58, 237, 0.1) 1px, transparent 1px);
+    background-size: 50px 50px;
+  }
+
+  .bg-data-stream {
+    background: linear-gradient(to bottom, 
+      transparent, 
+      rgba(124, 58, 237, 0.05) 50%, 
+      transparent
+    );
+    background-size: 100% 200px;
+  }
+
+  .bg-circuit {
+    background-image: 
+      radial-gradient(circle at 2px 2px, rgba(124, 58, 237, 0.15) 1px, transparent 0),
+      linear-gradient(rgba(124, 58, 237, 0.05) 1px, transparent 1px);
+    background-size: 30px 30px, 100px 100px;
+  }
+
+  .bg-cyber-dots {
+    background-image: radial-gradient(rgba(124, 58, 237, 0.2) 1px, transparent 0);
+    background-size: 20px 20px;
+  }
+
+  .bg-tech-lines {
+    background: repeating-linear-gradient(
+      45deg,
+      transparent,
+      transparent 10px,
+      rgba(124, 58, 237, 0.02) 10px,
+      rgba(124, 58, 237, 0.02) 11px
+    );
+  }
+  
+  @keyframes data-flow {
+    0% { transform: translateY(-100%); }
+    100% { transform: translateY(100%); }
+  }
+  .animate-data-flow {
+    animation: data-flow 20s linear infinite;
+  }
+
+  @keyframes pulse-slow {
+    0%, 100% { opacity: 0.3; }
+    50% { opacity: 0.6; }
+  }
+  .animate-pulse-slow {
+    animation: pulse-slow 4s ease-in-out infinite;
+  }
+
+  @keyframes cyber-flicker {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.8; }
+    80% { opacity: 0.9; }
+  }
+  .animate-cyber-flicker {
+    animation: cyber-flicker 2s linear infinite;
+  }
+}
