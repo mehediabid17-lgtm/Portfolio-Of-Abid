@@ -120,6 +120,13 @@ const EXPERIENCE: ExperienceItem[] = [
     certificate: "https://lh3.googleusercontent.com/d/1aVX7YTYxAmYf46bH3Zj8qYg21AD7wbhC"
   },
   {
+    role: "Sawtul ilm Co-Ordinator",
+    company: "Grantha Shala",
+    duration: "2026",
+    description: "Serving as the Sawtul ilm Co-Ordinator at Grantha Shala, managing educational programs and coordinating knowledge-sharing initiatives.",
+    certificate: "https://lh3.googleusercontent.com/d/13T9VQfIHiQrZkNBoPeaqVod7UzRFqIHK"
+  },
+  {
     role: "Chief Executive",
     company: "Taan Raat Institute of Bangladesh",
     duration: "2023 - Present",
@@ -254,6 +261,27 @@ const CO_CURRICULAR: CoCurricularItem[] = [
     year: "2026",
     description: "Comprehensive study of computer architecture, instruction sets, and hardware-software interface.",
     certificate: "https://lh3.googleusercontent.com/d/17iWjF6l0brFj07XcZgBqTJcZGaGJptHz"
+  },
+  {
+    title: "Block Out Algorithm",
+    organization: "Algorithm Competition",
+    year: "2024",
+    description: "Participated in the Block Out Algorithm competition, demonstrating problem-solving skills and algorithmic thinking.",
+    certificate: "https://lh3.googleusercontent.com/d/1wIiZBOK__3Up2AD9EW89CKuHDGdV21dU"
+  },
+  {
+    title: "Code Trap",
+    organization: "Coding Challenge",
+    year: "2024",
+    description: "Successfully completed the Code Trap challenge, showcasing proficiency in programming and debugging.",
+    certificate: "https://lh3.googleusercontent.com/d/1KTJR5XVsTQpkpDX7OHyVQpTytwzXSYvm"
+  },
+  {
+    title: "Sawtul ilm",
+    organization: "Educational Platform",
+    year: "2022 - Present",
+    description: "Involved in educational initiatives and knowledge-sharing programs through the Sawtul ilm platform.",
+    certificate: "https://lh3.googleusercontent.com/d/1EEIhE9SeHbOR9wC6QyA9aOasUT1MZ9CV"
   }
 ];
 
