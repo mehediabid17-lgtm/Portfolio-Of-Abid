@@ -1,6 +1,7 @@
 import React from 'react';
 import { motion } from 'motion/react';
 import { SKILL_CATEGORIES } from '../constants';
+import ExploreJourney from './ExploreJourney';
 
 const PageWrapper = ({ children }: { children: React.ReactNode }) => {
   return (
@@ -68,6 +69,7 @@ const Skills = () => {
           </div>
         </div>
       </section>
+      <ExploreJourney />
     </PageWrapper>
   );
 };

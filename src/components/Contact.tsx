@@ -10,6 +10,7 @@ import {
   MessageCircle,
   Send
 } from 'lucide-react';
+import ExploreJourney from './ExploreJourney';
 
 const PageWrapper = ({ children }: { children: React.ReactNode }) => {
   return (
@@ -163,6 +164,7 @@ const Contact = () => {
           </div>
         </div>
       </section>
+      <ExploreJourney />
     </PageWrapper>
   );
 };

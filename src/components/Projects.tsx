@@ -2,6 +2,7 @@ import React from 'react';
 import { motion } from 'motion/react';
 import { ExternalLink, Github } from 'lucide-react';
 import { PROJECTS } from '../constants';
+import ExploreJourney from './ExploreJourney';
 
 const PageWrapper = ({ children }: { children: React.ReactNode }) => {
   return (
@@ -75,6 +76,7 @@ const Projects = () => {
           </div>
         </div>
       </section>
+      <ExploreJourney />
     </PageWrapper>
   );
 };

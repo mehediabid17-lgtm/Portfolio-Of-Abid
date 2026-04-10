@@ -3,6 +3,7 @@ import { motion } from 'motion/react';
 import { ExternalLink } from 'lucide-react';
 import { CO_CURRICULAR } from '../constants';
 import CertificateModal from './CertificateModal';
+import ExploreJourney from './ExploreJourney';
 
 const PageWrapper = ({ children }: { children: React.ReactNode }) => {
   return (
@@ -78,6 +79,7 @@ const CoCurriculum = () => {
         imageUrl={selectedCert?.url || ''} 
         title={selectedCert?.title || ''} 
       />
+      <ExploreJourney />
     </PageWrapper>
   );
 };

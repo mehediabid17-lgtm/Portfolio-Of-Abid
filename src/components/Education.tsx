@@ -1,6 +1,7 @@
 import React from 'react';
 import { motion } from 'motion/react';
 import { EDUCATION } from '../constants';
+import ExploreJourney from './ExploreJourney';
 
 const PageWrapper = ({ children }: { children: React.ReactNode }) => {
   return (
@@ -49,6 +50,7 @@ const Education = () => {
           </div>
         </div>
       </section>
+      <ExploreJourney />
     </PageWrapper>
   );
 };
