@@ -186,7 +186,7 @@ const Home = () => {
             >
               <div className="aspect-square max-w-[400px] mx-auto rounded-3xl overflow-hidden border border-white/10 shadow-2xl shadow-violet-500/10">
                 <img 
-                  src="https://lh3.googleusercontent.com/d/1Ndola8V3NBqVVnb0o3vo7pQCcPuA8ol9" 
+                  src="https://lh3.googleusercontent.com/d/1bKCgrClSnZ740vDgDpjWALJKmc0wW8Hl" 
                   alt="Mehedi Hasan Abid" 
                   className="w-full h-full object-cover hover:scale-105 transition-transform duration-700"
                   referrerPolicy="no-referrer"
