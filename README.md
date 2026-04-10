@@ -36,8 +36,4 @@ I am a Software Engineering student with a strong academic background and a pass
 
 **Prerequisites:** Node.js  
 
-1. Install dependencies  
-```bash
-npm install
-GEMINI_API_KEY=your_api_key_here
-npm run dev
+
