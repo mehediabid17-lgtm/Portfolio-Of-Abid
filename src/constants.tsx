@@ -6,7 +6,8 @@ import {
   Wrench, 
   Brain, 
   Activity,
-  Award
+  Award,
+  Users
 } from 'lucide-react';
 
 export interface Project {
@@ -308,10 +309,22 @@ export const SKILL_CATEGORIES: SkillCategory[] = [
     title: "Software Engineering",
     icon: <Terminal className="w-5 h-5" />,
     skills: [
+      { name: "C Programming", level: 86 },
       { name: "React & TypeScript", level: 85 },
       { name: "System Architecture", level: 80 },
       { name: "API Development", level: 85 },
       { name: "Git & Version Control", level: 90 }
+    ]
+  },
+  {
+    title: "Soft Skills",
+    icon: <Users className="w-5 h-5" />,
+    skills: [
+      { name: "Leadership (CEO & Founder)", level: 95 },
+      { name: "Event Management", level: 90 },
+      { name: "Public Speaking", level: 85 },
+      { name: "Team Collaboration", level: 92 },
+      { name: "Strategic Planning", level: 88 }
     ]
   }
 ];

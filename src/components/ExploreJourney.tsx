@@ -5,7 +5,6 @@ import {
   ChevronRight, 
   Cpu, 
   Briefcase,
-  GraduationCap,
   BookOpen,
   Layers,
   Award,
@@ -18,13 +17,13 @@ const ExploreJourney = () => {
   const currentPath = location.pathname;
 
   const allPages = [
-    { title: "Home", desc: "Back to the beginning.", icon: <HomeIcon className="w-6 h-6" />, href: "/", color: "slate" },
-    { title: "Education", desc: "Academic background and certifications.", icon: <BookOpen className="w-6 h-6" />, href: "/education", color: "violet" },
-    { title: "Experience", desc: "Professional work and leadership roles.", icon: <Briefcase className="w-6 h-6" />, href: "/experience", color: "blue" },
-    { title: "Co-Curriculum", desc: "Extracurricular activities and awards.", icon: <Award className="w-6 h-6" />, href: "/co-curriculum", color: "amber" },
-    { title: "Projects", desc: "Showcase of my technical builds.", icon: <Layers className="w-6 h-6" />, href: "/projects", color: "emerald" },
-    { title: "Skills", desc: "Technical expertise and toolsets.", icon: <Cpu className="w-6 h-6" />, href: "/skills", color: "rose" },
-    { title: "Contact", desc: "Get in touch for collaborations.", icon: <Mail className="w-6 h-6" />, href: "/contact", color: "indigo" },
+    { title: "Home", desc: "Back to the beginning.", icon: <HomeIcon className="w-6 h-6" />, href: "/", bgColor: "bg-slate-500/10", textColor: "text-slate-400" },
+    { title: "Education", desc: "Academic background and certifications.", icon: <BookOpen className="w-6 h-6" />, href: "/education", bgColor: "bg-violet-500/10", textColor: "text-violet-400" },
+    { title: "Experience", desc: "Professional work and leadership roles.", icon: <Briefcase className="w-6 h-6" />, href: "/experience", bgColor: "bg-blue-500/10", textColor: "text-blue-400" },
+    { title: "Co-Curriculum", desc: "Extracurricular activities and awards.", icon: <Award className="w-6 h-6" />, href: "/co-curriculum", bgColor: "bg-amber-500/10", textColor: "text-amber-400" },
+    { title: "Projects", desc: "Showcase of my technical builds.", icon: <Layers className="w-6 h-6" />, href: "/projects", bgColor: "bg-emerald-500/10", textColor: "text-emerald-400" },
+    { title: "Skills", desc: "Technical expertise and toolsets.", icon: <Cpu className="w-6 h-6" />, href: "/skills", bgColor: "bg-rose-500/10", textColor: "text-rose-400" },
+    { title: "Contact", desc: "Get in touch for collaborations.", icon: <Mail className="w-6 h-6" />, href: "/contact", bgColor: "bg-indigo-500/10", textColor: "text-indigo-400" },
   ];
 
   // Logic: 
@@ -61,7 +60,7 @@ const ExploreJourney = () => {
                 to={item.href}
                 className="group block p-8 warp-card hover:border-violet-500/50 transition-all h-full"
               >
-                <div className={`w-12 h-12 rounded-xl bg-${item.color}-500/10 flex items-center justify-center text-${item.color}-400 mb-6 group-hover:scale-110 transition-transform`}>
+                <div className={`w-12 h-12 rounded-xl ${item.bgColor} flex items-center justify-center ${item.textColor} mb-6 group-hover:scale-110 transition-transform`}>
                   {item.icon}
                 </div>
                 <h3 className="text-xl font-bold text-white mb-2 flex items-center gap-2">
