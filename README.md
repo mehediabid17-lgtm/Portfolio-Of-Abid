@@ -1,39 +1,20 @@
 <div align="center">
-  <img width="200" src="https://github.com/your-username/repo-name/assets/your-image-id" alt="Profile Photo" style="border-radius: 50%;" />
+<img width="1200" height="475" alt="GHBanner" src="https://github.com/user-attachments/assets/0aa67016-6eaf-458a-adb2-6e31a0763ed6" />
 </div>
 
-<h1 align="center">Hi 👋, I'm Abid</h1>
-<h3 align="center">Software Engineering Student | Future Data Scientist 🚀</h3>
+# Run and deploy your AI Studio app
 
----
+This contains everything you need to run your app locally.
 
-## 🌐 Live Website  
-👉 https://portfolio-of-abid.vercel.app/
+View your app in AI Studio: https://ai.studio/apps/39b06e32-10d7-4ef0-96cc-91585caed84f
 
----
+## Run Locally
 
-## 👨‍💻 About Me  
-
-I am a Software Engineering student with a strong academic background and a passion for building intelligent systems. I aim to become a Data Science professional specializing in Machine Learning and AI.  
-
-- 🎓 Software Engineering Student  
-- 🚀 CEO at Agrapathik  
-- 💡 Interested in AI, Machine Learning & Data Science  
-- 🌱 Currently learning advanced technologies  
-
----
-
-## 🛠️ Tech Stack  
-
-- 💻 Languages: C, JavaScript  
-- 🌐 Web: HTML, CSS, React  
-- ⚙️ Tools: Git, GitHub, Node.js  
-- 📊 Future Focus: Machine Learning, AI  
-
----
-
-## 🚀 Run Locally  
-
-**Prerequisites:** Node.js  
+**Prerequisites:**  Node.js
 
 
+1. Install dependencies:
+   `npm install`
+2. Set the `GEMINI_API_KEY` in [.env.local](.env.local) to your Gemini API key
+3. Run the app:
+   `npm run dev`
