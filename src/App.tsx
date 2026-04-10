@@ -69,7 +69,7 @@ const Navbar = () => {
     { name: 'Home', href: '/' },
     { name: 'Education', href: '/education' },
     { name: 'Experience', href: '/experience' },
-    { name: 'Co-Curriculum', href: '/co-curriculum' },
+    { name: 'Certificates', href: '/certificates' },
     { name: 'Projects', href: '/projects' },
     { name: 'Skills', href: '/skills' },
     { name: 'Contact', href: '/contact' },
@@ -400,7 +400,7 @@ const AppContent = () => {
               <Route path="/" element={<Home />} />
               <Route path="/education" element={<Education />} />
               <Route path="/experience" element={<WorkExperience />} />
-              <Route path="/co-curriculum" element={<CoCurriculum />} />
+              <Route path="/certificates" element={<CoCurriculum />} />
               <Route path="/projects" element={<Projects />} />
               <Route path="/skills" element={<Skills />} />
               <Route path="/contact" element={<Contact />} />

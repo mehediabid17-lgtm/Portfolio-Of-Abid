@@ -27,7 +27,7 @@ const CoCurriculum = () => {
       <section className="py-12 relative overflow-hidden">
         <div className="max-w-7xl mx-auto px-6 relative z-10">
           <div className="text-center mb-16">
-            <h2 className="text-4xl font-bold text-white mb-4 tracking-tight">Co-Curricular</h2>
+            <h2 className="text-4xl font-bold text-white mb-4 tracking-tight">Certificates</h2>
             <p className="text-slate-500 max-w-2xl mx-auto text-sm">
               Activities and leadership roles beyond the curriculum.
             </p>
