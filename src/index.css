@@ -77,4 +77,42 @@
   .animate-cyber-flicker {
     animation: cyber-flicker 2s linear infinite;
   }
+
+  .warp-card {
+    @apply bg-white/[0.03] backdrop-blur-xl border border-white/10 rounded-3xl transition-all duration-500;
+    box-shadow: 
+      0 0 0 1px rgba(255, 255, 255, 0.05) inset,
+      0 20px 40px -20px rgba(0, 0, 0, 0.5);
+  }
+
+  .warp-card:hover {
+    @apply bg-white/[0.06] border-white/20 -translate-y-1;
+    box-shadow: 
+      0 0 0 1px rgba(255, 255, 255, 0.1) inset,
+      0 30px 60px -30px rgba(0, 0, 0, 0.6),
+      0 0 20px -5px rgba(124, 58, 237, 0.2);
+  }
+
+  .warp-glow {
+    position: relative;
+  }
+
+  .warp-glow::after {
+    content: '';
+    position: absolute;
+    inset: -1px;
+    background: linear-gradient(45deg, transparent, rgba(124, 58, 237, 0.3), transparent);
+    border-radius: inherit;
+    z-index: -1;
+    opacity: 0;
+    transition: opacity 0.5s;
+  }
+
+  .warp-glow:hover::after {
+    opacity: 1;
+  }
+
+  .glass-morphism {
+    @apply bg-white/5 backdrop-blur-md border border-white/10;
+  }
 }

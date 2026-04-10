@@ -245,29 +245,63 @@ const BackgroundEffect = () => {
         animate={{ 
           x: [0, 100, 0],
           y: [0, 50, 0],
-          scale: [1, 1.2, 1]
+          scale: [1, 1.2, 1],
+          opacity: [0.3, 0.5, 0.3]
         }}
         transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
-        className="absolute top-[-10%] left-[-10%] w-[50%] h-[50%] bg-violet-600/10 blur-[120px] rounded-full"
+        className="absolute top-[-10%] left-[-10%] w-[50%] h-[50%] bg-violet-600/20 blur-[120px] rounded-full"
       />
       <motion.div 
         animate={{ 
           x: [0, -100, 0],
           y: [0, 100, 0],
-          scale: [1, 1.1, 1]
+          scale: [1, 1.1, 1],
+          opacity: [0.2, 0.4, 0.2]
         }}
         transition={{ duration: 25, repeat: Infinity, ease: "linear" }}
-        className="absolute bottom-[-10%] right-[-10%] w-[50%] h-[50%] bg-blue-600/10 blur-[120px] rounded-full"
+        className="absolute bottom-[-10%] right-[-10%] w-[50%] h-[50%] bg-blue-600/20 blur-[120px] rounded-full"
       />
       <motion.div 
         animate={{ 
           x: [0, 50, 0],
           y: [0, -50, 0],
-          scale: [1, 1.3, 1]
+          scale: [1, 1.3, 1],
+          opacity: [0.1, 0.3, 0.1]
         }}
         transition={{ duration: 18, repeat: Infinity, ease: "linear" }}
-        className="absolute top-[20%] right-[10%] w-[30%] h-[30%] bg-indigo-600/5 blur-[100px] rounded-full"
+        className="absolute top-[20%] right-[10%] w-[30%] h-[30%] bg-indigo-600/15 blur-[100px] rounded-full"
       />
+      
+      {/* New Aesthetic Lights */}
+      <motion.div 
+        animate={{ 
+          x: [-50, 50, -50],
+          y: [50, -50, 50],
+          opacity: [0.1, 0.2, 0.1]
+        }}
+        transition={{ duration: 15, repeat: Infinity, ease: "easeInOut" }}
+        className="absolute top-[40%] left-[20%] w-[40%] h-[40%] bg-rose-500/10 blur-[150px] rounded-full"
+      />
+      <motion.div 
+        animate={{ 
+          scale: [1, 1.5, 1],
+          opacity: [0.05, 0.15, 0.05]
+        }}
+        transition={{ duration: 22, repeat: Infinity, ease: "easeInOut" }}
+        className="absolute bottom-[20%] left-[10%] w-[25%] h-[25%] bg-amber-500/10 blur-[100px] rounded-full"
+      />
+
+      {/* Aurora Effect */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        <motion.div 
+          animate={{ 
+            rotate: [0, 360],
+            scale: [1, 1.2, 1]
+          }}
+          transition={{ duration: 60, repeat: Infinity, ease: "linear" }}
+          className="absolute -top-[50%] -left-[50%] w-[200%] h-[200%] bg-[radial-gradient(circle_at_center,transparent_0%,rgba(139,92,246,0.03)_30%,transparent_70%)]"
+        />
+      </div>
       
       {/* Stars */}
       <div className="absolute inset-0">
@@ -298,6 +332,12 @@ const BackgroundEffect = () => {
 
       {/* Noise Texture Overlay */}
       <div className="absolute inset-0 opacity-[0.03] mix-blend-overlay pointer-events-none bg-[url('https://grainy-gradients.vercel.app/noise.svg')]" />
+      
+      {/* Aesthetic Vignette */}
+      <div className="absolute inset-0 pointer-events-none bg-[radial-gradient(circle_at_center,transparent_0%,rgba(11,14,20,0.4)_100%)]" />
+      
+      {/* Cinematic Lighting Overlay */}
+      <div className="absolute inset-0 pointer-events-none bg-gradient-to-tr from-violet-500/5 via-transparent to-blue-500/5" />
     </div>
   );
 };
