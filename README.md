@@ -6,7 +6,7 @@
 
 This contains everything you need to run your app locally.
 
-View your app in AI Studio: https://ai.studio/apps/39b06e32-10d7-4ef0-96cc-91585caed84f
+View your app in WEB : https://portfolio-of-abid.vercel.app/
 
 ## Run Locally
 
