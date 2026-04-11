@@ -27,36 +27,6 @@ const PageWrapper = ({ children }: { children: React.ReactNode }) => {
 };
 
 const Contact = () => {
-  const [status, setStatus] = React.useState<'idle' | 'sending' | 'success' | 'error'>('idle');
-
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    setStatus('sending');
-
-    const formData = new FormData(e.currentTarget);
-    const data = Object.fromEntries(formData.entries());
-
-    try {
-      const response = await fetch('https://formspree.io/f/mehedihasanabid17@gmail.com', {
-        method: 'POST',
-        body: JSON.stringify(data),
-        headers: {
-          'Accept': 'application/json',
-          'Content-Type': 'application/json'
-        }
-      });
-
-      if (response.ok) {
-        setStatus('success');
-        (e.target as HTMLFormElement).reset();
-      } else {
-        setStatus('error');
-      }
-    } catch (error) {
-      setStatus('error');
-    }
-  };
-
   return (
     <PageWrapper>
       <section className="py-12 relative overflow-hidden">
@@ -142,68 +112,58 @@ const Contact = () => {
               viewport={{ once: true }}
               className="p-8 warp-card"
             >
-              {status === 'success' ? (
-                <div className="h-full flex flex-col items-center justify-center text-center space-y-4 py-12">
-                  <div className="w-20 h-20 rounded-full bg-emerald-500/10 flex items-center justify-center text-emerald-500">
-                    <Send className="w-10 h-10" />
-                  </div>
-                  <h3 className="text-2xl font-bold text-white">Message Sent!</h3>
-                  <p className="text-slate-400">Thank you for reaching out. I'll get back to you soon.</p>
-                  <button 
-                    onClick={() => setStatus('idle')}
-                    className="text-violet-400 font-bold hover:text-violet-300 transition-colors"
-                  >
-                    Send another message
-                  </button>
-                </div>
-              ) : (
-                <form className="space-y-6" onSubmit={handleSubmit}>
-                  <div className="grid sm:grid-cols-2 gap-6">
-                    <div className="space-y-2">
-                      <label className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">Name</label>
-                      <input 
-                        type="text" 
-                        name="name"
-                        required
-                        placeholder="Enter name..."
-                        className="w-full px-5 py-4 bg-white/5 border border-white/10 rounded-xl text-white focus:outline-none focus:border-violet-600 transition-all"
-                      />
-                    </div>
-                    <div className="space-y-2">
-                      <label className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">Email</label>
-                      <input 
-                        type="email" 
-                        name="email"
-                        required
-                        placeholder="Enter email..."
-                        className="w-full px-5 py-4 bg-white/5 border border-white/10 rounded-xl text-white focus:outline-none focus:border-violet-600 transition-all"
-                      />
-                    </div>
-                  </div>
+              <form 
+                action="https://formspree.io/f/mehedihasanabid17@gmail.com"
+                method="POST"
+                className="space-y-6"
+              >
+                <div className="grid sm:grid-cols-2 gap-6">
                   <div className="space-y-2">
-                    <label className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">Message</label>
-                    <textarea 
-                      rows={5}
-                      name="message"
+                    <label className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">Name</label>
+                    <input 
+                      type="text" 
+                      name="name"
                       required
-                      placeholder="Type message here..."
-                      className="w-full px-5 py-4 bg-white/5 border border-white/10 rounded-xl text-white focus:outline-none focus:border-violet-600 transition-all resize-none"
+                      placeholder="Enter name..."
+                      className="w-full px-5 py-4 bg-white/5 border border-white/10 rounded-xl text-white focus:outline-none focus:border-violet-600 transition-all"
                     />
                   </div>
-                  
-                  {status === 'error' && (
-                    <p className="text-rose-500 text-sm text-center">Something went wrong. Please try again or email me directly.</p>
-                  )}
+                  <div className="space-y-2">
+                    <label className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">Email</label>
+                    <input 
+                      type="email" 
+                      name="email"
+                      required
+                      placeholder="Enter email..."
+                      className="w-full px-5 py-4 bg-white/5 border border-white/10 rounded-xl text-white focus:outline-none focus:border-violet-600 transition-all"
+                    />
+                  </div>
+                </div>
+                <div className="space-y-2">
+                  <label className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">Message</label>
+                  <textarea 
+                    rows={5}
+                    name="message"
+                    required
+                    placeholder="Type message here..."
+                    className="w-full px-5 py-4 bg-white/5 border border-white/10 rounded-xl text-white focus:outline-none focus:border-violet-600 transition-all resize-none"
+                  />
+                </div>
+                
+                {/* Anti-spam field */}
+                <input type="text" name="_gotcha" style={{ display: 'none' }} />
 
-                  <button 
-                    type="submit" 
-                    disabled={status === 'sending'}
-                    className="w-full py-4 bg-violet-600 text-white font-bold rounded-xl hover:bg-violet-500 transition-all flex items-center justify-center gap-2 shadow-lg shadow-violet-600/20 warp-glow disabled:opacity-50 disabled:cursor-not-allowed"
-                  >
-                    {status === 'sending' ? 'Sending...' : 'Send Message'} <Send className="w-4 h-4" />
-                  </button>
-                </form>
-              )}
+                <button 
+                  type="submit" 
+                  className="w-full py-4 bg-violet-600 text-white font-bold rounded-xl hover:bg-violet-500 transition-all flex items-center justify-center gap-2 shadow-lg shadow-violet-600/20 warp-glow"
+                >
+                  Send Message <Send className="w-4 h-4" />
+                </button>
+                
+                <p className="text-[10px] text-slate-600 text-center mt-4 italic">
+                  Note: You may be asked to complete a quick captcha to prevent spam.
+                </p>
+              </form>
             </motion.div>
           </div>
         </div>
