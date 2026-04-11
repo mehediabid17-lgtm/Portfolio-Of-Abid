@@ -87,7 +87,7 @@ export const EXPERIENCE: ExperienceItem[] = [
   {
     role: "SRM",
     company: "SRM - NHMSC Scout Group",
-    duration: "2019 - Present",
+    duration: "2021 - 2023",
     description: "Scouting is a voluntary, non-political, and non-formal educational movement for young people. It focuses on personal growth, leadership development, and community service, helping individuals become responsible global citizens and agents of change.",
     certificate: "https://lh3.googleusercontent.com/d/1aVX7YTYxAmYf46bH3Zj8qYg21AD7wbhC"
   },
@@ -101,7 +101,7 @@ export const EXPERIENCE: ExperienceItem[] = [
   {
     role: "Chief Executive",
     company: "Taan Raat Institute of Bangladesh",
-    duration: "2023 - Present",
+    duration: "2023 - 2024",
     description: "A platform designed to help individuals earn while learning new skills. Focused on building trust and creating opportunities for people to develop their own identity through events and learning programs.",
     certificate: "https://lh3.googleusercontent.com/d/1KFAi7lDAd65JkYkm6hjZa4NJ7s7RZTZI"
   },
@@ -143,7 +143,7 @@ export const EXPERIENCE: ExperienceItem[] = [
   {
     role: "Founder & CEO",
     company: "Agrapaathik (Community & Events)",
-    duration: "2023 - Present",
+    duration: "2025 - present",
     description: "An organization dedicated to community development and engagement. Purpose: Community support and engagement. Activities: Organizing events (workshops, drives, festivals). Services: Volunteer opportunities for social causes. Goal: Create social impact through active participation.",
     certificate: "https://lh3.googleusercontent.com/d/1MqUXwywXZ9ng9I9KxFZozTQB8OuVeoVS"
   }
@@ -151,81 +151,25 @@ export const EXPERIENCE: ExperienceItem[] = [
 
 export const CO_CURRICULAR: CoCurricularItem[] = [
   {
-    title: "Corporate Etiquette Course",
-    organization: "Professional Development Program",
-    year: "2024",
-    description: "Completed a comprehensive course on professional behavior, communication, and workplace ethics.",
-    certificate: "https://lh3.googleusercontent.com/d/1ZyAxDDf93SG4mxQdHtpFY4Pg0rF6jghf"
-  },
-  {
-    title: "Digital Literacy Course",
-    organization: "Online Certification",
-    year: "2023",
-    description: "Successfully completed a course focusing on essential digital skills and online safety.",
-    certificate: "https://lh3.googleusercontent.com/d/1IZ-OD_VcKRfW-c8KPVb9QT2NIWFA0xRq"
-  },
-  {
-    title: "Project Humanity",
-    organization: "Social Welfare Initiative",
-    year: "2023 - Present",
-    description: "Contributing to various social welfare activities and community support programs.",
-    certificate: "https://lh3.googleusercontent.com/d/1XgHxzeuy80bNG_bxfTZ9hx1EiSlqugsg"
-  },
-  {
-    title: "Lunchpad Participant",
-    organization: "UIHP @ UIU",
-    year: "2024",
-    description: "Participated in the Lunchpad program at United International University, focusing on innovation and entrepreneurship.",
-    certificate: "https://lh3.googleusercontent.com/d/1BgsKdQkcZ9OPyQhOEJAFvNEYBCcl0TxY"
-  },
-  {
-    title: "Scout Camp",
-    organization: "National Scout Group",
-    year: "2023",
-    description: "Participated in a national-level scout camp, focusing on leadership and survival skills.",
-    certificate: "https://lh3.googleusercontent.com/d/1748wF_IvXnB6ZIUEMmJIRNZoiTkPd5E2"
-  },
-  {
-    title: "Know Thyself",
-    organization: "Personal Development Workshop",
-    year: "2023",
-    description: "Attended a workshop focused on self-awareness, emotional intelligence, and personal growth.",
-    certificate: "https://lh3.googleusercontent.com/d/1mEYjDv5rN6IK_ypm_-Oa4Om-wkGnYjXo"
-  },
-  {
-    title: "Chief Executive",
-    organization: "Student Organization",
-    year: "2023 - 2024",
-    description: "Served as the Chief Executive, managing operations and leading a diverse team of volunteers.",
-    certificate: "https://lh3.googleusercontent.com/d/1bBeOoExDg6oSOEZQOoNTuw3FHVTHCPDQ"
-  },
-  {
-    title: "Chief Executive Officer (CEO)",
-    organization: "Agrapaathik",
-    year: "2023 - Present",
-    description: "Leading Agrapaathik, an organization dedicated to community development, social impact, and organizing impactful events.",
-    certificate: "https://lh3.googleusercontent.com/d/1SRg9qRwsQQaDSJRdXHdv1aeCKevmit-n"
-  },
-  {
-    title: "Recognized Video Editor",
-    organization: "Creative Media Awards",
-    year: "2022 - Present",
-    description: "Acknowledged for excellence in video editing and digital storytelling across various platforms.",
-    certificate: "https://lh3.googleusercontent.com/d/1anmYgKnbVeBJlcjnkovKZlYJ9618wmZH"
-  },
-  {
-    title: "Youth Empowerment Workshop",
-    organization: "Global Youth Forum",
-    year: "2022",
-    description: "Participated in a workshop dedicated to empowering young leaders and fostering social change.",
-    certificate: "https://lh3.googleusercontent.com/d/1_2Cbgcvs07wH8jyGBDX5ZB7Fpuu-jLRI"
-  },
-  {
-    title: "Database Management Course",
-    organization: "Professional Certification",
+    title: "Sawtul ilm",
+    organization: "Educational Platform",
     year: "2026",
-    description: "In-depth study of SQL, database design, and management systems.",
-    certificate: "https://lh3.googleusercontent.com/d/1q4AIllXCXpYOT3rBQughx1DMADP1KXje"
+    description: "Involved in educational initiatives and knowledge-sharing programs through the Sawtul ilm platform.",
+    certificate: "https://lh3.googleusercontent.com/d/1EEIhE9SeHbOR9wC6QyA9aOasUT1MZ9CV"
+  },
+  {
+    title: "Code Trap",
+    organization: "Coding Challenge",
+    year: "2026",
+    description: "Successfully completed the Code Trap challenge, showcasing proficiency in programming and debugging.",
+    certificate: "https://lh3.googleusercontent.com/d/1KTJR5XVsTQpkpDX7OHyVQpTytwzXSYvm"
+  },
+  {
+    title: "Breakout Algorithm",
+    organization: "Algorithm Competition",
+    year: "2026",
+    description: "Participated in the Breakout Algorithm competition, demonstrating problem-solving skills and algorithmic thinking.",
+    certificate: "https://lh3.googleusercontent.com/d/1wIiZBOK__3Up2AD9EW89CKuHDGdV21dU"
   },
   {
     title: "Computer Architecture",
@@ -235,25 +179,88 @@ export const CO_CURRICULAR: CoCurricularItem[] = [
     certificate: "https://lh3.googleusercontent.com/d/17iWjF6l0brFj07XcZgBqTJcZGaGJptHz"
   },
   {
-    title: "Block Out Algorithm",
-    organization: "Algorithm Competition",
-    year: "2024",
-    description: "Participated in the Block Out Algorithm competition, demonstrating problem-solving skills and algorithmic thinking.",
-    certificate: "https://lh3.googleusercontent.com/d/1wIiZBOK__3Up2AD9EW89CKuHDGdV21dU"
+    title: "Database Management Course",
+    organization: "Professional Certification",
+    year: "2026",
+    description: "In-depth study of SQL, database design, and management systems.",
+    certificate: "https://lh3.googleusercontent.com/d/1q4AIllXCXpYOT3rBQughx1DMADP1KXje"
   },
   {
-    title: "Code Trap",
-    organization: "Coding Challenge",
-    year: "2024",
-    description: "Successfully completed the Code Trap challenge, showcasing proficiency in programming and debugging.",
-    certificate: "https://lh3.googleusercontent.com/d/1KTJR5XVsTQpkpDX7OHyVQpTytwzXSYvm"
+    title: "Chief Executive Officer (CEO)",
+    organization: "Agrapaathik",
+    year: "2025 - present",
+    description: "Leading Agrapaathik, an organization dedicated to community development, social impact, and organizing impactful events.",
+    certificate: "https://lh3.googleusercontent.com/d/1SRg9qRwsQQaDSJRdXHdv1aeCKevmit-n"
   },
   {
-    title: "Sawtul ilm",
-    organization: "Educational Platform",
-    year: "2022 - Present",
-    description: "Involved in educational initiatives and knowledge-sharing programs through the Sawtul ilm platform.",
-    certificate: "https://lh3.googleusercontent.com/d/1EEIhE9SeHbOR9wC6QyA9aOasUT1MZ9CV"
+    title: "Know Thyself",
+    organization: "Personal Development Workshop",
+    year: "2025",
+    description: "Attended a workshop focused on self-awareness, emotional intelligence, and personal growth.",
+    certificate: "https://lh3.googleusercontent.com/d/1mEYjDv5rN6IK_ypm_-Oa4Om-wkGnYjXo"
+  },
+  {
+    title: "Microsoft Office Starter Course",
+    organization: "Digital Skills Program",
+    year: "2025",
+    description: "Completed a foundational course on Microsoft Office tools, including Word, Excel, and PowerPoint.",
+    certificate: "https://lh3.googleusercontent.com/d/11EcLgfnoKhUABZM9vCWkqRaBDGh9PrZl"
+  },
+  {
+    title: "Recognized Video Editor",
+    organization: "Creative Media Awards",
+    year: "2024",
+    description: "Acknowledged for excellence in video editing and digital storytelling across various platforms.",
+    certificate: "https://lh3.googleusercontent.com/d/1anmYgKnbVeBJlcjnkovKZlYJ9618wmZH"
+  },
+  {
+    title: "Lunchpad Participant",
+    organization: "UIHP @ UIU",
+    year: "2024",
+    description: "Participated in the Lunchpad program at United International University, focusing on innovation and entrepreneurship.",
+    certificate: "https://lh3.googleusercontent.com/d/1BgsKdQkcZ9OPyQhOEJAFvNEYBCcl0TxY"
+  },
+  {
+    title: "Chief Executive",
+    organization: "Student Organization",
+    year: "2023 - 2024",
+    description: "Served as the Chief Executive, managing operations and leading a diverse team of volunteers.",
+    certificate: "https://lh3.googleusercontent.com/d/1bBeOoExDg6oSOEZQOoNTuw3FHVTHCPDQ"
+  },
+  {
+    title: "Scout Camp",
+    organization: "National Scout Group",
+    year: "2023",
+    description: "Participated in a national-level scout camp, focusing on leadership and survival skills.",
+    certificate: "https://lh3.googleusercontent.com/d/1748wF_IvXnB6ZIUEMmJIRNZoiTkPd5E2"
+  },
+  {
+    title: "Project Humanity",
+    organization: "Social Welfare Initiative",
+    year: "2023",
+    description: "Contributing to various social welfare activities and community support programs.",
+    certificate: "https://lh3.googleusercontent.com/d/1XgHxzeuy80bNG_bxfTZ9hx1EiSlqugsg"
+  },
+  {
+    title: "Corporate Etiquette Course",
+    organization: "Professional Development Program",
+    year: "2023",
+    description: "Completed a comprehensive course on professional behavior, communication, and workplace ethics.",
+    certificate: "https://lh3.googleusercontent.com/d/1ZyAxDDf93SG4mxQdHtpFY4Pg0rF6jghf"
+  },
+  {
+    title: "Youth Empowerment Workshop",
+    organization: "Global Youth Forum",
+    year: "2022",
+    description: "Participated in a workshop dedicated to empowering young leaders and fostering social change.",
+    certificate: "https://lh3.googleusercontent.com/d/1_2Cbgcvs07wH8jyGBDX5ZB7Fpuu-jLRI"
+  },
+  {
+    title: "Digital Literacy Course",
+    organization: "Online Certification",
+    year: "2022",
+    description: "Successfully completed a course focusing on essential digital skills and online safety.",
+    certificate: "https://lh3.googleusercontent.com/d/1IZ-OD_VcKRfW-c8KPVb9QT2NIWFA0xRq"
   }
 ];
 
