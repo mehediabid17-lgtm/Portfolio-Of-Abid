@@ -77,8 +77,8 @@ const Navbar = () => {
 
   return (
     <nav className={cn(
-      "fixed top-0 left-0 right-0 z-50 transition-all duration-300 px-6 py-4",
-      isScrolled || location.pathname !== '/' ? "bg-black/80 backdrop-blur-md border-b border-white/5" : "bg-transparent"
+      "fixed top-0 left-0 right-0 z-50 transition-all duration-500 ease-in-out px-6 py-4",
+      isScrolled || location.pathname !== '/' ? "bg-black/80 backdrop-blur-md border-b border-white/5 py-3" : "bg-transparent py-5"
     )}>
       <div className="max-w-7xl mx-auto flex items-center justify-between">
         <motion.div 
@@ -236,28 +236,28 @@ const BackgroundEffect = () => {
           x: mousePos.x - 250,
           y: mousePos.y - 250,
         }}
-        transition={{ type: "spring", damping: 30, stiffness: 200, mass: 0.5 }}
-        className="absolute w-[500px] h-[500px] bg-violet-500/10 blur-[100px] rounded-full"
+        transition={{ type: "spring", damping: 35, stiffness: 150, mass: 0.5 }}
+        className="absolute w-[500px] h-[500px] bg-violet-500/15 blur-[120px] rounded-full will-change-transform"
       />
 
-      {/* Animated Blobs - Reduced count and simplified */}
+      {/* Animated Blobs - Optimized */}
       <motion.div 
         animate={{ 
-          x: [0, 50, 0],
-          y: [0, 30, 0],
-          opacity: [0.2, 0.4, 0.2]
+          x: [0, 40, 0],
+          y: [0, 20, 0],
+          opacity: [0.15, 0.3, 0.15]
         }}
-        transition={{ duration: 15, repeat: Infinity, ease: "linear" }}
-        className="absolute top-[-10%] left-[-10%] w-[60%] h-[60%] bg-violet-600/15 blur-[100px] rounded-full will-change-transform"
+        transition={{ duration: 12, repeat: Infinity, ease: "easeInOut" }}
+        className="absolute top-[-10%] left-[-10%] w-[60%] h-[60%] bg-violet-600/10 blur-[120px] rounded-full will-change-transform"
       />
       <motion.div 
         animate={{ 
-          x: [0, -50, 0],
-          y: [0, 50, 0],
-          opacity: [0.1, 0.3, 0.1]
+          x: [0, -40, 0],
+          y: [0, 40, 0],
+          opacity: [0.1, 0.25, 0.1]
         }}
-        transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
-        className="absolute bottom-[-10%] right-[-10%] w-[60%] h-[60%] bg-blue-600/15 blur-[100px] rounded-full will-change-transform"
+        transition={{ duration: 18, repeat: Infinity, ease: "easeInOut" }}
+        className="absolute bottom-[-10%] right-[-10%] w-[60%] h-[60%] bg-blue-600/10 blur-[120px] rounded-full will-change-transform"
       />
       
       {/* Aesthetic Lights - Simplified */}

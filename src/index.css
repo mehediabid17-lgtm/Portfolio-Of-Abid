@@ -9,6 +9,9 @@
 }
 
 @layer base {
+  html {
+    scroll-behavior: smooth;
+  }
   body {
     @apply bg-[var(--color-bg-dark)] text-slate-400 font-sans antialiased;
   }

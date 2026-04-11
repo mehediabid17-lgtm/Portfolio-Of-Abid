@@ -55,6 +55,7 @@ const ExploreJourney = () => {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, margin: "-50px" }}
               transition={{ delay: i * 0.05 }}
+              whileHover={{ y: -5 }}
               className="will-change-[opacity,transform]"
             >
               <Link 

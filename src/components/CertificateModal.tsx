@@ -17,6 +17,7 @@ const CertificateModal = ({ isOpen, onClose, imageUrl, title }: { isOpen: boolea
             initial={{ scale: 0.9, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
             exit={{ scale: 0.9, opacity: 0 }}
+            transition={{ type: "spring", damping: 25, stiffness: 200 }}
             className="relative max-w-5xl w-full warp-card p-2 overflow-hidden"
             onClick={(e) => e.stopPropagation()}
           >

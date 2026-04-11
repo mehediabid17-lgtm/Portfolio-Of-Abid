@@ -6,11 +6,11 @@ import ExploreJourney from './ExploreJourney';
 const PageWrapper = ({ children }: { children: React.ReactNode }) => {
   return (
     <motion.div
-      initial={{ opacity: 0, y: 20 }}
+      initial={{ opacity: 0, y: 15 }}
       animate={{ opacity: 1, y: 0 }}
-      exit={{ opacity: 0, y: -20 }}
-      transition={{ duration: 0.4 }}
-      className="pt-24 min-h-[calc(100vh-80px)]"
+      exit={{ opacity: 0, y: -15 }}
+      transition={{ type: "spring", damping: 25, stiffness: 120, mass: 0.5 }}
+      className="pt-24 min-h-[calc(100vh-80px)] will-change-[opacity,transform]"
     >
       {children}
     </motion.div>
