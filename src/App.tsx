@@ -240,88 +240,48 @@ const BackgroundEffect = () => {
         className="absolute w-[500px] h-[500px] bg-violet-500/10 blur-[100px] rounded-full"
       />
 
-      {/* Animated Blobs */}
-      <motion.div 
-        animate={{ 
-          x: [0, 100, 0],
-          y: [0, 50, 0],
-          scale: [1, 1.2, 1],
-          opacity: [0.3, 0.5, 0.3]
-        }}
-        transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
-        className="absolute top-[-10%] left-[-10%] w-[50%] h-[50%] bg-violet-600/20 blur-[120px] rounded-full"
-      />
-      <motion.div 
-        animate={{ 
-          x: [0, -100, 0],
-          y: [0, 100, 0],
-          scale: [1, 1.1, 1],
-          opacity: [0.2, 0.4, 0.2]
-        }}
-        transition={{ duration: 25, repeat: Infinity, ease: "linear" }}
-        className="absolute bottom-[-10%] right-[-10%] w-[50%] h-[50%] bg-blue-600/20 blur-[120px] rounded-full"
-      />
+      {/* Animated Blobs - Reduced count and simplified */}
       <motion.div 
         animate={{ 
           x: [0, 50, 0],
-          y: [0, -50, 0],
-          scale: [1, 1.3, 1],
+          y: [0, 30, 0],
+          opacity: [0.2, 0.4, 0.2]
+        }}
+        transition={{ duration: 15, repeat: Infinity, ease: "linear" }}
+        className="absolute top-[-10%] left-[-10%] w-[60%] h-[60%] bg-violet-600/15 blur-[100px] rounded-full will-change-transform"
+      />
+      <motion.div 
+        animate={{ 
+          x: [0, -50, 0],
+          y: [0, 50, 0],
           opacity: [0.1, 0.3, 0.1]
         }}
-        transition={{ duration: 18, repeat: Infinity, ease: "linear" }}
-        className="absolute top-[20%] right-[10%] w-[30%] h-[30%] bg-indigo-600/15 blur-[100px] rounded-full"
+        transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
+        className="absolute bottom-[-10%] right-[-10%] w-[60%] h-[60%] bg-blue-600/15 blur-[100px] rounded-full will-change-transform"
       />
       
-      {/* New Aesthetic Lights */}
+      {/* Aesthetic Lights - Simplified */}
       <motion.div 
         animate={{ 
-          x: [-50, 50, -50],
-          y: [50, -50, 50],
-          opacity: [0.1, 0.2, 0.1]
-        }}
-        transition={{ duration: 15, repeat: Infinity, ease: "easeInOut" }}
-        className="absolute top-[40%] left-[20%] w-[40%] h-[40%] bg-rose-500/10 blur-[150px] rounded-full"
-      />
-      <motion.div 
-        animate={{ 
-          scale: [1, 1.5, 1],
           opacity: [0.05, 0.15, 0.05]
         }}
-        transition={{ duration: 22, repeat: Infinity, ease: "easeInOut" }}
-        className="absolute bottom-[20%] left-[10%] w-[25%] h-[25%] bg-amber-500/10 blur-[100px] rounded-full"
+        transition={{ duration: 10, repeat: Infinity, ease: "easeInOut" }}
+        className="absolute top-[30%] right-[10%] w-[30%] h-[30%] bg-rose-500/10 blur-[120px] rounded-full will-change-transform"
       />
 
-      {/* Aurora Effect */}
-      <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <motion.div 
-          animate={{ 
-            rotate: [0, 360],
-            scale: [1, 1.2, 1]
-          }}
-          transition={{ duration: 60, repeat: Infinity, ease: "linear" }}
-          className="absolute -top-[50%] -left-[50%] w-[200%] h-[200%] bg-[radial-gradient(circle_at_center,transparent_0%,rgba(139,92,246,0.03)_30%,transparent_70%)]"
-        />
-      </div>
-      
-      {/* Stars */}
+      {/* Stars - Reduced count for performance */}
       <div className="absolute inset-0">
-        {[...Array(50)].map((_, i) => (
+        {[...Array(30)].map((_, i) => (
           <motion.div
             key={i}
-            initial={{ 
-              opacity: Math.random() * 0.5,
-              scale: Math.random() * 0.5 + 0.5
-            }}
-            animate={{ 
-              opacity: [0.2, 0.5, 0.2],
-              scale: [1, 1.2, 1]
-            }}
+            initial={{ opacity: Math.random() * 0.3 }}
+            animate={{ opacity: [0.1, 0.3, 0.1] }}
             transition={{ 
-              duration: 3 + Math.random() * 3, 
+              duration: 4 + Math.random() * 4, 
               repeat: Infinity,
               delay: Math.random() * 5
             }}
-            className="absolute w-[2px] h-[2px] bg-white rounded-full"
+            className="absolute w-[1px] h-[1px] bg-white/40 rounded-full"
             style={{ 
               top: `${Math.random() * 100}%`, 
               left: `${Math.random() * 100}%` 
@@ -349,34 +309,34 @@ const AppContent = () => {
     <div className="min-h-screen bg-[var(--color-bg-dark)] text-slate-300 selection:bg-violet-500/30 selection:text-violet-200 relative">
       <BackgroundEffect />
       
-      {/* Floating Data Packets */}
+      {/* Floating Data Packets - Reduced for performance */}
       <div className="fixed inset-0 pointer-events-none z-0 overflow-hidden">
-        {[...Array(10)].map((_, i) => (
+        {[...Array(5)].map((_, i) => (
           <motion.div
             key={i}
             initial={{ x: Math.random() * 100 + "%", y: "-10%" }}
             animate={{ y: "110%" }}
             transition={{ 
-              duration: 10 + Math.random() * 20, 
+              duration: 15 + Math.random() * 15, 
               repeat: Infinity, 
               ease: "linear",
-              delay: Math.random() * 20
+              delay: Math.random() * 10
             }}
-            className="absolute w-[1px] h-20 bg-gradient-to-b from-transparent via-violet-500/50 to-transparent"
+            className="absolute w-[1px] h-16 bg-gradient-to-b from-transparent via-violet-500/30 to-transparent will-change-transform"
           />
         ))}
-        {/* Tech Terms */}
-        {['CPU', 'GPU', 'CUDA', 'NEURAL', 'DATA', 'CYBER', 'ML', 'AI'].map((term, i) => (
+        {/* Tech Terms - Reduced */}
+        {['DATA', 'ML', 'AI'].map((term, i) => (
           <motion.div
             key={term}
             initial={{ x: Math.random() * 100 + "%", y: Math.random() * 100 + "%", opacity: 0 }}
             animate={{ opacity: [0, 0.1, 0] }}
             transition={{ 
-              duration: 5 + Math.random() * 5, 
+              duration: 8 + Math.random() * 8, 
               repeat: Infinity, 
-              delay: i * 2
+              delay: i * 4
             }}
-            className="absolute text-[8px] font-mono font-bold text-violet-400/20 tracking-[0.5em]"
+            className="absolute text-[8px] font-mono font-bold text-violet-400/10 tracking-[0.5em] will-change-opacity"
           >
             {term}
           </motion.div>

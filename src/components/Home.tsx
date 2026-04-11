@@ -24,11 +24,11 @@ import ExploreJourney from './ExploreJourney';
 const PageWrapper = ({ children }: { children: React.ReactNode }) => {
   return (
     <motion.div
-      initial={{ opacity: 0, y: 20 }}
+      initial={{ opacity: 0, y: 10 }}
       animate={{ opacity: 1, y: 0 }}
-      exit={{ opacity: 0, y: -20 }}
-      transition={{ duration: 0.4 }}
-      className="pt-24 min-h-[calc(100vh-80px)]"
+      exit={{ opacity: 0, y: -10 }}
+      transition={{ duration: 0.3 }}
+      className="pt-24 min-h-[calc(100vh-80px)] will-change-[opacity,transform]"
     >
       {children}
     </motion.div>
@@ -44,42 +44,28 @@ const Home = () => {
         <div className="absolute top-1/4 right-1/4 w-[400px] h-[400px] bg-violet-600/20 blur-[120px] rounded-full pointer-events-none" />
         <div className="absolute bottom-1/4 left-1/4 w-[400px] h-[400px] bg-blue-600/15 blur-[120px] rounded-full pointer-events-none" />
         
-        {/* Floating Icons */}
+        {/* Floating Icons - Optimized */}
         <div className="absolute inset-0 pointer-events-none overflow-hidden">
           <motion.div 
-            animate={{ y: [0, -20, 0], rotate: [0, 5, 0] }}
-            transition={{ duration: 5, repeat: Infinity }}
-            className="absolute top-[15%] left-[10%] text-violet-500/20"
+            animate={{ y: [0, -15, 0] }}
+            transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
+            className="absolute top-[15%] left-[10%] text-violet-500/10 will-change-transform"
           >
-            <Cpu className="w-24 h-24" />
+            <Cpu className="w-20 h-20" />
           </motion.div>
           <motion.div 
-            animate={{ y: [0, 20, 0], rotate: [0, -5, 0] }}
-            transition={{ duration: 7, repeat: Infinity }}
-            className="absolute bottom-[20%] right-[15%] text-blue-500/20"
+            animate={{ y: [0, 15, 0] }}
+            transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
+            className="absolute bottom-[20%] right-[15%] text-blue-500/10 will-change-transform"
           >
-            <Terminal className="w-32 h-32" />
+            <Terminal className="w-24 h-24" />
           </motion.div>
           <motion.div 
-            animate={{ scale: [1, 1.1, 1], opacity: [0.1, 0.2, 0.1] }}
-            transition={{ duration: 8, repeat: Infinity }}
-            className="absolute top-[40%] right-[5%] text-indigo-500/10"
-          >
-            <Code2 className="w-40 h-40" />
-          </motion.div>
-          <motion.div 
-            animate={{ x: [0, 30, 0], opacity: [0.05, 0.15, 0.05] }}
+            animate={{ opacity: [0.05, 0.1, 0.05] }}
             transition={{ duration: 10, repeat: Infinity }}
-            className="absolute top-[60%] left-[5%] text-violet-400/10"
+            className="absolute top-[40%] right-[5%] text-indigo-500/5 will-change-opacity"
           >
-            <Brain className="w-48 h-48" />
-          </motion.div>
-          <motion.div 
-            animate={{ rotate: [0, 360] }}
-            transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
-            className="absolute bottom-[10%] left-[20%] text-blue-400/5"
-          >
-            <Activity className="w-32 h-32" />
+            <Code2 className="w-32 h-32" />
           </motion.div>
         </div>
 

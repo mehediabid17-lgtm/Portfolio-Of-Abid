@@ -51,10 +51,11 @@ const ExploreJourney = () => {
           {displayPages.map((item, i) => (
             <motion.div
               key={item.href}
-              initial={{ opacity: 0, y: 20 }}
+              initial={{ opacity: 0, y: 10 }}
               whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: i * 0.1 }}
+              viewport={{ once: true, margin: "-50px" }}
+              transition={{ delay: i * 0.05 }}
+              className="will-change-[opacity,transform]"
             >
               <Link 
                 to={item.href}

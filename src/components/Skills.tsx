@@ -6,11 +6,11 @@ import ExploreJourney from './ExploreJourney';
 const PageWrapper = ({ children }: { children: React.ReactNode }) => {
   return (
     <motion.div
-      initial={{ opacity: 0, y: 20 }}
+      initial={{ opacity: 0, y: 10 }}
       animate={{ opacity: 1, y: 0 }}
-      exit={{ opacity: 0, y: -20 }}
-      transition={{ duration: 0.4 }}
-      className="pt-24 min-h-[calc(100vh-80px)]"
+      exit={{ opacity: 0, y: -10 }}
+      transition={{ duration: 0.3 }}
+      className="pt-24 min-h-[calc(100vh-80px)] will-change-[opacity,transform]"
     >
       {children}
     </motion.div>
@@ -33,11 +33,11 @@ const Skills = () => {
             {SKILL_CATEGORIES.map((cat, i) => (
               <motion.div
                 key={cat.title}
-                initial={{ opacity: 0, y: 20 }}
+                initial={{ opacity: 0, y: 10 }}
                 whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: i * 0.1 }}
-                className="p-8 warp-card"
+                viewport={{ once: true, margin: "-50px" }}
+                transition={{ delay: i * 0.05 }}
+                className="p-8 warp-card will-change-[opacity,transform]"
               >
                 <div className="flex items-center gap-3 mb-8">
                   <div className="w-10 h-10 rounded-lg bg-violet-500/10 flex items-center justify-center text-violet-400">
@@ -57,8 +57,8 @@ const Skills = () => {
                           initial={{ width: 0 }}
                           whileInView={{ width: `${skill.level}%` }}
                           viewport={{ once: true }}
-                          transition={{ duration: 1, delay: 0.5 }}
-                          className="h-full bg-gradient-to-r from-violet-600 to-blue-600"
+                          transition={{ duration: 0.8, delay: 0.2 }}
+                          className="h-full bg-gradient-to-r from-violet-600 to-blue-600 will-change-[width]"
                         />
                       </div>
                     </div>

@@ -79,10 +79,11 @@
   }
 
   .warp-card {
-    @apply bg-white/[0.03] backdrop-blur-xl border border-white/10 rounded-3xl transition-all duration-500;
+    @apply bg-white/[0.03] backdrop-blur-md border border-white/10 rounded-3xl transition-all duration-500;
     box-shadow: 
       0 0 0 1px rgba(255, 255, 255, 0.05) inset,
       0 20px 40px -20px rgba(0, 0, 0, 0.5);
+    will-change: transform, box-shadow, background-color;
   }
 
   .warp-card:hover {
