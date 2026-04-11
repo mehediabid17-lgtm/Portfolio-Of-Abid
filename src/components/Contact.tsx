@@ -27,6 +27,31 @@ const PageWrapper = ({ children }: { children: React.ReactNode }) => {
 };
 
 const Contact = () => {
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    const formData = new FormData(e.currentTarget);
+    const name = formData.get('name');
+    const email = formData.get('email');
+    const message = formData.get('message');
+    
+    const subject = encodeURIComponent(`Portfolio Inquiry from ${name}`);
+    const body = encodeURIComponent(`Name: ${name}\nEmail: ${email}\n\nMessage:\n${message}`);
+    
+    // This opens the Gmail compose window directly in a new tab
+    const gmailUrl = `https://mail.google.com/mail/?view=cm&fs=1&to=mehedihasanabid17@gmail.com&su=${subject}&body=${body}`;
+    
+    // Fallback for other mail clients
+    const mailtoUrl = `mailto:mehedihasanabid17@gmail.com?subject=${subject}&body=${body}`;
+    
+    // Try to open Gmail first as it's the most "direct" experience for Gmail users
+    const newWindow = window.open(gmailUrl, '_blank');
+    
+    // If pop-up is blocked or fails, use standard mailto
+    if (!newWindow || newWindow.closed || typeof newWindow.closed === 'undefined') {
+      window.location.href = mailtoUrl;
+    }
+  };
+
   return (
     <PageWrapper>
       <section className="py-12 relative overflow-hidden">
@@ -112,11 +137,7 @@ const Contact = () => {
               viewport={{ once: true }}
               className="p-8 warp-card"
             >
-              <form 
-                action="https://formspree.io/f/mehedihasanabid17@gmail.com"
-                method="POST"
-                className="space-y-6"
-              >
+              <form className="space-y-6" onSubmit={handleSubmit}>
                 <div className="grid sm:grid-cols-2 gap-6">
                   <div className="space-y-2">
                     <label className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">Name</label>
@@ -149,9 +170,6 @@ const Contact = () => {
                     className="w-full px-5 py-4 bg-white/5 border border-white/10 rounded-xl text-white focus:outline-none focus:border-violet-600 transition-all resize-none"
                   />
                 </div>
-                
-                {/* Anti-spam field */}
-                <input type="text" name="_gotcha" style={{ display: 'none' }} />
 
                 <button 
                   type="submit" 
@@ -161,7 +179,7 @@ const Contact = () => {
                 </button>
                 
                 <p className="text-[10px] text-slate-600 text-center mt-4 italic">
-                  Note: You may be asked to complete a quick captcha to prevent spam.
+                  This will open your email app to send the message directly.
                 </p>
               </form>
             </motion.div>
