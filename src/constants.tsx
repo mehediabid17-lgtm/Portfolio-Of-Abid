@@ -78,20 +78,6 @@ export const EXPERIENCE: ExperienceItem[] = [
     certificate: "https://scontent.fdac5-1.fna.fbcdn.net/v/t39.30808-6/332508474_6046392472048292_2890871221494787100_n.jpg?_nc_cat=109&ccb=1-7&_nc_sid=1d70fc&_nc_eui2=AeG4aaHSYtVWYBU08lEJB6wrsaCwPPc2vgGxoLA89za-AWDpJHA9U4CM4_qsfZ994Fep4ofSvdIErq-npseo3rwA&_nc_ohc=n1vhDmb8y5QQ7kNvwHEBvAb&_nc_oc=AdrGcQTv-WLHTGHIpzU3qDtpXNerUa54PecUMUsRpUH3XZMG64dCJLs5KcD6Cjm1J88&_nc_zt=23&_nc_ht=scontent.fdac5-1.fna&_nc_gid=lGUyD_2zJcsm0GP3ZInVYQ&_nc_ss=7a3a8&oh=00_Af3bvgDtwNTl1N17N1tDvMfk7GYwt68cS4uxm-B5fl_HTQ&oe=69DB1155"
   },
   {
-    role: "Deputy Organizer",
-    company: "Uttara Students Community - DIU",
-    duration: "2025-2026",
-    description: "Serving as the Deputy Organizer for the Uttara Students Community at Daffodil International University, coordinating community events and student engagement initiatives.",
-    certificate: "https://scontent.fdac5-2.fna.fbcdn.net/v/t39.30808-6/431013507_375259155460153_344758632154253066_n.jpg?_nc_cat=102&ccb=1-7&_nc_sid=1d70fc&_nc_eui2=AeFzHriOEjX_RCjQkkac1WEyYoFyBhJctxZigXIGEly3Fqk0-5xRcF6faeNaMv3OScEq8OiK8pYETEgna6mTAhQg&_nc_ohc=z5vjaA113jUQ7kNvwF9vKoP&_nc_oc=Adq8AOfX56bZOHhfS29gtc9Qyhrt8FQbXMDAX5g7ORIQJ9ZKAXFy0hXNPS08AZ1iHF0&_nc_zt=23&_nc_ht=scontent.fdac5-2.fna&_nc_gid=NIW2CeCS6j0B1dntWFkepA&_nc_ss=7a3a8&oh=00_Af3_UhYI_b_UDhGmckJxtp4EtdAtfFkcJSbl5MYJQfAxWQ&oe=69DC06E0"
-  },
-  {
-    role: "SRM",
-    company: "SRM - NHMSC Scout Group",
-    duration: "2021 - 2023",
-    description: "Scouting is a voluntary, non-political, and non-formal educational movement for young people. It focuses on personal growth, leadership development, and community service, helping individuals become responsible global citizens and agents of change.",
-    certificate: "https://lh3.googleusercontent.com/d/1aVX7YTYxAmYf46bH3Zj8qYg21AD7wbhC"
-  },
-  {
     role: "Sawtul ilm Co-Ordinator",
     company: "Grantha Shala",
     duration: "2026",
@@ -99,11 +85,18 @@ export const EXPERIENCE: ExperienceItem[] = [
     certificate: "https://lh3.googleusercontent.com/d/13T9VQfIHiQrZkNBoPeaqVod7UzRFqIHK"
   },
   {
-    role: "Chief Executive",
-    company: "Taan Raat Institute of Bangladesh",
-    duration: "2023 - 2024",
-    description: "A platform designed to help individuals earn while learning new skills. Focused on building trust and creating opportunities for people to develop their own identity through events and learning programs.",
-    certificate: "https://lh3.googleusercontent.com/d/1KFAi7lDAd65JkYkm6hjZa4NJ7s7RZTZI"
+    role: "Founder & CEO",
+    company: "Agrapaathik (Community & Events)",
+    duration: "2025 - present",
+    description: "An organization dedicated to community development and engagement. Purpose: Community support and engagement. Activities: Organizing events (workshops, drives, festivals). Services: Volunteer opportunities for social causes. Goal: Create social impact through active participation.",
+    certificate: "https://lh3.googleusercontent.com/d/1MqUXwywXZ9ng9I9KxFZozTQB8OuVeoVS"
+  },
+  {
+    role: "Deputy Organizer",
+    company: "Uttara Students Community - DIU",
+    duration: "2025-2026",
+    description: "Serving as the Deputy Organizer for the Uttara Students Community at Daffodil International University, coordinating community events and student engagement initiatives.",
+    certificate: "https://scontent.fdac5-2.fna.fbcdn.net/v/t39.30808-6/431013507_375259155460153_344758632154253066_n.jpg?_nc_cat=102&ccb=1-7&_nc_sid=1d70fc&_nc_eui2=AeFzHriOEjX_RCjQkkac1WEyYoFyBhJctxZigXIGEly3Fqk0-5xRcF6faeNaMv3OScEq8OiK8pYETEgna6mTAhQg&_nc_ohc=z5vjaA113jUQ7kNvwF9vKoP&_nc_oc=Adq8AOfX56bZOHhfS29gtc9Qyhrt8FQbXMDAX5g7ORIQJ9ZKAXFy0hXNPS08AZ1iHF0&_nc_zt=23&_nc_ht=scontent.fdac5-2.fna&_nc_gid=NIW2CeCS6j0B1dntWFkepA&_nc_ss=7a3a8&oh=00_Af3_UhYI_b_UDhGmckJxtp4EtdAtfFkcJSbl5MYJQfAxWQ&oe=69DC06E0"
   },
   {
     role: "Volunteer",
@@ -111,20 +104,6 @@ export const EXPERIENCE: ExperienceItem[] = [
     duration: "2024-2025",
     description: "Actively participated as a volunteer in various community service projects and leadership initiatives organized by the LEO Club of Dhaka Palthan Heritage.",
     certificate: "https://scontent.fdac5-1.fna.fbcdn.net/v/t39.30808-6/638882623_122208677726572133_6378724386412165192_n.jpg?_nc_cat=105&ccb=1-7&_nc_sid=1d70fc&_nc_eui2=AeGAxSdOZ4yn0mBjEbDVkF27OV540jGoQvU5XnjSMahC9eGFpXSLYpSTy8cfNn8CNTqNs10NDnhSPd0nvwFIGk3S&_nc_ohc=MSs5VsszBwsQ7kNvwH_V9-b&_nc_oc=AdpWzq6GfM4YTFhg73zDDFi54JsRkES0U5CY2euw6ZntCKBJI35K2PpMVtz0u-YGruY&_nc_zt=23&_nc_ht=scontent.fdac5-1.fna&_nc_gid=AFRXIJug95xQmpx_GeUwmA&_nc_ss=7a3a8&oh=00_Af3XMc3VDzsNnE8hzYFKTH5zEz1L6H-6nSx5wyCBhtMovw&oe=69DC106C"
-  },
-  {
-    role: "Calling Agent",
-    company: "EluvaTech",
-    duration: "2021 - 2022",
-    description: "Worked as a telemarketing agent, communicating with clients and promoting services effectively.",
-    certificate: "https://lh3.googleusercontent.com/d/1R4M0oQdd_IzAy1JOWj93NvxDD-cslzU_"
-  },
-  {
-    role: "Calling Agent (CA)",
-    company: "Essential-Infotech",
-    duration: "2022 - 2023",
-    description: "Handled telemarketing responsibilities, including customer interaction and service promotion.",
-    certificate: "https://lh3.googleusercontent.com/d/11QnqNI9UUax_uY-aLR3mUPNFCUvOUzLQ"
   },
   {
     role: "Chartered Accountant",
@@ -141,11 +120,32 @@ export const EXPERIENCE: ExperienceItem[] = [
     certificate: "https://lh3.googleusercontent.com/d/1x5W78trtBoo3pMqaM-rnX26nQ3JiAThQ"
   },
   {
-    role: "Founder & CEO",
-    company: "Agrapaathik (Community & Events)",
-    duration: "2025 - present",
-    description: "An organization dedicated to community development and engagement. Purpose: Community support and engagement. Activities: Organizing events (workshops, drives, festivals). Services: Volunteer opportunities for social causes. Goal: Create social impact through active participation.",
-    certificate: "https://lh3.googleusercontent.com/d/1MqUXwywXZ9ng9I9KxFZozTQB8OuVeoVS"
+    role: "Chief Executive",
+    company: "Taan Raat Institute of Bangladesh",
+    duration: "2023 - 2024",
+    description: "A platform designed to help individuals earn while learning new skills. Focused on building trust and creating opportunities for people to develop their own identity through events and learning programs.",
+    certificate: "https://lh3.googleusercontent.com/d/1KFAi7lDAd65JkYkm6hjZa4NJ7s7RZTZI"
+  },
+  {
+    role: "Calling Agent (CA)",
+    company: "Essential-Infotech",
+    duration: "2022 - 2023",
+    description: "Handled telemarketing responsibilities, including customer interaction and service promotion.",
+    certificate: "https://lh3.googleusercontent.com/d/11QnqNI9UUax_uY-aLR3mUPNFCUvOUzLQ"
+  },
+  {
+    role: "SRM",
+    company: "SRM - NHMSC Scout Group",
+    duration: "2021 - 2023",
+    description: "Scouting is a voluntary, non-political, and non-formal educational movement for young people. It focuses on personal growth, leadership development, and community service, helping individuals become responsible global citizens and agents of change.",
+    certificate: "https://lh3.googleusercontent.com/d/1aVX7YTYxAmYf46bH3Zj8qYg21AD7wbhC"
+  },
+  {
+    role: "Calling Agent",
+    company: "EluvaTech",
+    duration: "2021 - 2022",
+    description: "Worked as a telemarketing agent, communicating with clients and promoting services effectively.",
+    certificate: "https://lh3.googleusercontent.com/d/1R4M0oQdd_IzAy1JOWj93NvxDD-cslzU_"
   }
 ];
 
