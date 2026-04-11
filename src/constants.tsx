@@ -158,20 +158,6 @@ export const CO_CURRICULAR: CoCurricularItem[] = [
     certificate: "https://lh3.googleusercontent.com/d/1EEIhE9SeHbOR9wC6QyA9aOasUT1MZ9CV"
   },
   {
-    title: "Code Trap",
-    organization: "Coding Challenge",
-    year: "2026",
-    description: "Successfully completed the Code Trap challenge, showcasing proficiency in programming and debugging.",
-    certificate: "https://lh3.googleusercontent.com/d/1KTJR5XVsTQpkpDX7OHyVQpTytwzXSYvm"
-  },
-  {
-    title: "Breakout Algorithm",
-    organization: "Algorithm Competition",
-    year: "2026",
-    description: "Participated in the Breakout Algorithm competition, demonstrating problem-solving skills and algorithmic thinking.",
-    certificate: "https://lh3.googleusercontent.com/d/1wIiZBOK__3Up2AD9EW89CKuHDGdV21dU"
-  },
-  {
     title: "Computer Architecture",
     organization: "Online Course",
     year: "2026",
@@ -193,11 +179,11 @@ export const CO_CURRICULAR: CoCurricularItem[] = [
     certificate: "https://lh3.googleusercontent.com/d/1SRg9qRwsQQaDSJRdXHdv1aeCKevmit-n"
   },
   {
-    title: "Know Thyself",
-    organization: "Personal Development Workshop",
+    title: "Code Trap",
+    organization: "Coding Challenge",
     year: "2025",
-    description: "Attended a workshop focused on self-awareness, emotional intelligence, and personal growth.",
-    certificate: "https://lh3.googleusercontent.com/d/1mEYjDv5rN6IK_ypm_-Oa4Om-wkGnYjXo"
+    description: "Successfully completed the Code Trap challenge, showcasing proficiency in programming and debugging.",
+    certificate: "https://lh3.googleusercontent.com/d/1KTJR5XVsTQpkpDX7OHyVQpTytwzXSYvm"
   },
   {
     title: "Microsoft Office Starter Course",
@@ -205,6 +191,20 @@ export const CO_CURRICULAR: CoCurricularItem[] = [
     year: "2025",
     description: "Completed a foundational course on Microsoft Office tools, including Word, Excel, and PowerPoint.",
     certificate: "https://lh3.googleusercontent.com/d/11EcLgfnoKhUABZM9vCWkqRaBDGh9PrZl"
+  },
+  {
+    title: "Know Thyself",
+    organization: "Personal Development Workshop",
+    year: "2025",
+    description: "Attended a workshop focused on self-awareness, emotional intelligence, and personal growth.",
+    certificate: "https://lh3.googleusercontent.com/d/1mEYjDv5rN6IK_ypm_-Oa4Om-wkGnYjXo"
+  },
+  {
+    title: "Breakout Algorithm",
+    organization: "Algorithm Competition",
+    year: "2025",
+    description: "Participated in the Breakout Algorithm competition, demonstrating problem-solving skills and algorithmic thinking.",
+    certificate: "https://lh3.googleusercontent.com/d/1wIiZBOK__3Up2AD9EW89CKuHDGdV21dU"
   },
   {
     title: "Recognized Video Editor",
