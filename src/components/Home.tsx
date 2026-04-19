@@ -125,11 +125,11 @@ const Home = () => {
           >
             <div className="relative w-full aspect-square max-w-[500px] mx-auto">
               <div className="absolute inset-0 bg-violet-500/20 blur-[100px] rounded-full animate-pulse" />
-              <div className="relative z-10 w-full h-full rounded-3xl overflow-hidden border border-white/10 shadow-2xl shadow-violet-500/20">
+              <div className="relative z-10 w-full h-full rounded-3xl overflow-hidden border border-white/10 shadow-2xl shadow-violet-500/20 bg-white/5">
                 <img 
                   src="https://lh3.googleusercontent.com/d/13gola0am9SfPMxbJUjGR_V7IGSK9Ga-I" 
                   alt="Mehedi Hasan Abid" 
-                  className="w-full h-full object-cover"
+                  className="w-full h-full object-cover object-center"
                   referrerPolicy="no-referrer"
                   loading="lazy"
                   decoding="async"
@@ -170,11 +170,11 @@ const Home = () => {
               viewport={{ once: true }}
               className="relative"
             >
-              <div className="aspect-square max-w-[400px] mx-auto rounded-3xl overflow-hidden border border-white/10 shadow-2xl shadow-violet-500/10">
+              <div className="aspect-square max-w-[400px] mx-auto rounded-3xl overflow-hidden border border-white/10 shadow-2xl shadow-violet-500/10 bg-white/5">
                 <img 
                   src="https://lh3.googleusercontent.com/d/1bKCgrClSnZ740vDgDpjWALJKmc0wW8Hl" 
                   alt="Mehedi Hasan Abid" 
-                  className="w-full h-full object-cover hover:scale-105 transition-transform duration-700"
+                  className="w-full h-full object-cover object-center hover:scale-105 transition-transform duration-700"
                   referrerPolicy="no-referrer"
                   loading="lazy"
                   decoding="async"

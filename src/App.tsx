@@ -87,17 +87,17 @@ const Navbar = () => {
           className="flex items-center gap-3"
         >
           <Link to="/" className="flex items-center gap-3 group">
-              <div className="w-10 h-10 rounded-full overflow-hidden border-2 border-violet-500/20 group-hover:border-violet-500 transition-all">
+              <div className="w-10 h-10 rounded-full overflow-hidden border-2 border-violet-500/20 group-hover:border-violet-500 transition-all bg-white/5">
                 <img 
                   src="https://lh3.googleusercontent.com/d/1Ndola8V3NBqVVnb0o3vo7pQCcPuA8ol9" 
                   alt="Abid" 
-                  className="w-full h-full object-cover"
+                  className="w-full h-full object-cover object-center"
                   referrerPolicy="no-referrer"
                   loading="lazy"
                   decoding="async"
                 />
               </div>
-            <span className="text-2xl font-bold tracking-tighter text-white">
+            <span className="text-xl sm:text-2xl font-bold tracking-tighter text-white whitespace-nowrap">
               Portfolio Of <span className="text-violet-500">Abid</span>
             </span>
           </Link>

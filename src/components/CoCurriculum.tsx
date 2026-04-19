@@ -45,13 +45,13 @@ const CoCurriculum = () => {
                   className="warp-card overflow-hidden flex flex-col group"
                 >
                   <div 
-                    className="aspect-[16/10] overflow-hidden group relative cursor-pointer"
+                    className="aspect-[4/3] sm:aspect-[16/10] overflow-hidden group relative cursor-pointer bg-white/5"
                     onClick={() => setSelectedCert({ url: item.certificate, title: item.title })}
                   >
                     <img 
                       src={item.certificate} 
                       alt={`${item.title} Certificate`} 
-                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 grayscale-[0.3] group-hover:grayscale-0"
+                      className="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-700 grayscale-[0.3] group-hover:grayscale-0"
                       referrerPolicy="no-referrer"
                       loading="lazy"
                       decoding="async"

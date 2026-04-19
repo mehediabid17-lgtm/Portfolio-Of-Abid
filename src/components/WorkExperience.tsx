@@ -53,13 +53,13 @@ const WorkExperience = () => {
                   {item.certificate && (
                     <div>
                       <div 
-                        className="group relative aspect-[4/3] rounded-xl overflow-hidden border border-white/5 shadow-2xl shadow-blue-500/5 cursor-pointer"
+                        className="group relative aspect-[4/3] rounded-xl overflow-hidden border border-white/5 shadow-2xl shadow-blue-500/5 cursor-pointer bg-white/5"
                         onClick={() => setSelectedCert({ url: item.certificate!, title: item.role })}
                       >
                         <img 
                           src={item.certificate} 
                           alt={`${item.role} Certificate`} 
-                          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
+                          className="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-700"
                           referrerPolicy="no-referrer"
                           loading="lazy"
                           decoding="async"

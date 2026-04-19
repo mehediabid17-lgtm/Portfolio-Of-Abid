@@ -40,11 +40,11 @@ const Projects = () => {
                 transition={{ delay: i * 0.1 }}
                 className="group relative warp-card overflow-hidden"
               >
-                <div className="aspect-video overflow-hidden">
+                <div className="aspect-video overflow-hidden bg-white/5">
                   <img 
                     src={project.image} 
                     alt={project.title} 
-                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 grayscale-[0.3] group-hover:grayscale-0"
+                    className="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-500 grayscale-[0.3] group-hover:grayscale-0"
                     referrerPolicy="no-referrer"
                     loading="lazy"
                     decoding="async"

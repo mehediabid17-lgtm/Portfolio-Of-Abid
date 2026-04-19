@@ -35,9 +35,9 @@ const CertificateModal = ({ isOpen, onClose, imageUrl, title }: { isOpen: boolea
             >
               <X className="w-6 h-6" />
             </button>
-            <div className="p-4 sm:p-6">
-              <h3 className="text-xl sm:text-2xl font-bold text-white mb-6 pr-12">{title}</h3>
-              <div className="relative aspect-[16/10] w-full bg-white/5 rounded-xl overflow-hidden flex items-center justify-center">
+            <div className="p-4 sm:p-6 flex flex-col h-full max-h-[90vh]">
+              <h3 className="text-xl sm:text-2xl font-bold text-white mb-6 pr-12 shrink-0">{title}</h3>
+              <div className="relative flex-grow bg-white/5 rounded-xl overflow-hidden flex items-center justify-center min-h-[300px] sm:min-h-[400px]">
                 {isLoading && (
                   <div className="absolute inset-0 flex items-center justify-center z-10">
                     <Loader2 className="w-10 h-10 text-violet-500 animate-spin" />
@@ -48,11 +48,11 @@ const CertificateModal = ({ isOpen, onClose, imageUrl, title }: { isOpen: boolea
                   alt={title}
                   onLoad={() => setIsLoading(false)}
                   onError={() => setIsLoading(false)}
-                  className={`w-full h-full object-contain transition-opacity duration-500 ${isLoading ? 'opacity-0' : 'opacity-100'}`}
+                  className={`max-w-full max-h-[60vh] sm:max-h-[70vh] object-contain transition-opacity duration-500 shadow-2xl ${isLoading ? 'opacity-0' : 'opacity-100'}`}
                   referrerPolicy="no-referrer"
                 />
               </div>
-              <div className="mt-6 flex justify-end">
+              <div className="mt-6 flex justify-end shrink-0">
                 <button 
                   onClick={onClose}
                   className="px-6 py-2 bg-white/5 hover:bg-white/10 text-white rounded-lg transition-colors text-sm font-medium"
