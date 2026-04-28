@@ -15,10 +15,10 @@ import ExploreJourney from './ExploreJourney';
 const PageWrapper = ({ children }: { children: React.ReactNode }) => {
   return (
     <motion.div
-      initial={{ opacity: 0, y: 15 }}
+      initial={{ opacity: 0, y: 10 }}
       animate={{ opacity: 1, y: 0 }}
-      exit={{ opacity: 0, y: -15 }}
-      transition={{ type: "spring", damping: 25, stiffness: 120, mass: 0.5 }}
+      exit={{ opacity: 0, y: -10 }}
+      transition={{ type: "spring", damping: 30, stiffness: 100, mass: 1 }}
       className="pt-24 min-h-[calc(100vh-80px)] will-change-[opacity,transform]"
     >
       {children}
@@ -69,10 +69,12 @@ const Contact = () => {
               </p>
               
               <div className="space-y-6 mb-10">
-                <a 
+                <motion.a 
                   href="https://mail.google.com/mail/?view=cm&fs=1&to=mehedihasanabid17@gmail.com" 
                   target="_blank"
                   rel="noopener noreferrer"
+                  whileHover={{ y: -5 }}
+                  transition={{ type: "spring", damping: 15 }}
                   className="flex items-center gap-4 group p-4 warp-card transition-all hover:border-violet-500/50 block"
                 >
                   <div className="w-12 h-12 rounded-xl bg-violet-500/10 flex items-center justify-center text-violet-400 group-hover:bg-violet-600 group-hover:text-white transition-all">
@@ -82,12 +84,14 @@ const Contact = () => {
                     <p className="text-[10px] text-slate-500 uppercase font-bold tracking-widest">Email</p>
                     <p className="text-white">mehedihasanabid17@gmail.com</p>
                   </div>
-                </a>
+                </motion.a>
                 
-                <a 
+                <motion.a 
                   href="https://www.google.com/maps/search/?api=1&query=Uttara+Sector+6+Dhaka-1230+Bangladesh" 
                   target="_blank" 
                   rel="noopener noreferrer"
+                  whileHover={{ y: -5 }}
+                  transition={{ type: "spring", damping: 15 }}
                   className="flex items-center gap-4 group p-4 warp-card transition-all hover:border-blue-500/50 block"
                 >
                   <div className="w-12 h-12 rounded-xl bg-blue-500/10 flex items-center justify-center text-blue-400 group-hover:bg-blue-600 group-hover:text-white transition-all">
@@ -97,9 +101,14 @@ const Contact = () => {
                     <p className="text-[10px] text-slate-500 uppercase font-bold tracking-widest">Location</p>
                     <p className="text-white">Uttara Sector 6, Dhaka-1230, Bangladesh</p>
                   </div>
-                </a>
+                </motion.a>
 
-                <a href="tel:01905032251" className="flex items-center gap-4 group p-4 warp-card transition-all hover:border-emerald-500/50 block">
+                <motion.a 
+                  href="tel:01905032251" 
+                  whileHover={{ y: -5 }}
+                  transition={{ type: "spring", damping: 15 }}
+                  className="flex items-center gap-4 group p-4 warp-card transition-all hover:border-emerald-500/50 block"
+                >
                   <div className="w-12 h-12 rounded-xl bg-emerald-500/10 flex items-center justify-center text-emerald-400 group-hover:bg-emerald-600 group-hover:text-white transition-all">
                     <Phone className="w-5 h-5" />
                   </div>
@@ -107,7 +116,7 @@ const Contact = () => {
                     <p className="text-[10px] text-slate-500 uppercase font-bold tracking-widest">Phone</p>
                     <p className="text-white">01905032251</p>
                   </div>
-                </a>
+                </motion.a>
               </div>
 
               <div className="flex gap-4">

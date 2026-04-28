@@ -75,7 +75,7 @@ export const EXPERIENCE: ExperienceItem[] = [
     company: "Software Engineering Club, Daffodil International University (DIU_SEC)",
     duration: "2026 - Present",
     description: "Actively contributing to the Software Engineering Club at DIU, organizing technical events, workshops, and fostering a collaborative environment for software engineering students to enhance their skills.",
-    certificate: "https://scontent.fdac5-1.fna.fbcdn.net/v/t39.30808-6/332508474_6046392472048292_2890871221494787100_n.jpg?_nc_cat=109&ccb=1-7&_nc_sid=1d70fc&_nc_eui2=AeG4aaHSYtVWYBU08lEJB6wrsaCwPPc2vgGxoLA89za-AWDpJHA9U4CM4_qsfZ994Fep4ofSvdIErq-npseo3rwA&_nc_ohc=n1vhDmb8y5QQ7kNvwHEBvAb&_nc_oc=AdrGcQTv-WLHTGHIpzU3qDtpXNerUa54PecUMUsRpUH3XZMG64dCJLs5KcD6Cjm1J88&_nc_zt=23&_nc_ht=scontent.fdac5-1.fna&_nc_gid=lGUyD_2zJcsm0GP3ZInVYQ&_nc_ss=7a3a8&oh=00_Af3bvgDtwNTl1N17N1tDvMfk7GYwt68cS4uxm-B5fl_HTQ&oe=69DB1155"
+    certificate: "https://lh3.googleusercontent.com/d/1FY74w_yEIAukLg8OgF6Qc8WJ9JiALkZI"
   },
   {
     role: "Sawtul ilm Co-Ordinator",
@@ -96,14 +96,14 @@ export const EXPERIENCE: ExperienceItem[] = [
     company: "Uttara Students Community - DIU",
     duration: "2025-2026",
     description: "Serving as the Deputy Organizer for the Uttara Students Community at Daffodil International University, coordinating community events and student engagement initiatives.",
-    certificate: "https://scontent.fdac5-2.fna.fbcdn.net/v/t39.30808-6/431013507_375259155460153_344758632154253066_n.jpg?_nc_cat=102&ccb=1-7&_nc_sid=1d70fc&_nc_eui2=AeFzHriOEjX_RCjQkkac1WEyYoFyBhJctxZigXIGEly3Fqk0-5xRcF6faeNaMv3OScEq8OiK8pYETEgna6mTAhQg&_nc_ohc=z5vjaA113jUQ7kNvwF9vKoP&_nc_oc=Adq8AOfX56bZOHhfS29gtc9Qyhrt8FQbXMDAX5g7ORIQJ9ZKAXFy0hXNPS08AZ1iHF0&_nc_zt=23&_nc_ht=scontent.fdac5-2.fna&_nc_gid=NIW2CeCS6j0B1dntWFkepA&_nc_ss=7a3a8&oh=00_Af3_UhYI_b_UDhGmckJxtp4EtdAtfFkcJSbl5MYJQfAxWQ&oe=69DC06E0"
+    certificate: "https://lh3.googleusercontent.com/d/1pZO25b04wNRddgknc3qt0Nx-V-6T56Iv"
   },
   {
     role: "Volunteer",
     company: "LEO Club Of Dhaka Palthan Heritage",
     duration: "2024-2025",
     description: "Actively participated as a volunteer in various community service projects and leadership initiatives organized by the LEO Club of Dhaka Palthan Heritage.",
-    certificate: "https://scontent.fdac5-1.fna.fbcdn.net/v/t39.30808-6/638882623_122208677726572133_6378724386412165192_n.jpg?_nc_cat=105&ccb=1-7&_nc_sid=1d70fc&_nc_eui2=AeGAxSdOZ4yn0mBjEbDVkF27OV540jGoQvU5XnjSMahC9eGFpXSLYpSTy8cfNn8CNTqNs10NDnhSPd0nvwFIGk3S&_nc_ohc=MSs5VsszBwsQ7kNvwH_V9-b&_nc_oc=AdpWzq6GfM4YTFhg73zDDFi54JsRkES0U5CY2euw6ZntCKBJI35K2PpMVtz0u-YGruY&_nc_zt=23&_nc_ht=scontent.fdac5-1.fna&_nc_gid=AFRXIJug95xQmpx_GeUwmA&_nc_ss=7a3a8&oh=00_Af3XMc3VDzsNnE8hzYFKTH5zEz1L6H-6nSx5wyCBhtMovw&oe=69DC106C"
+    certificate: "https://lh3.googleusercontent.com/d/1zfYwTSUN-6vVwhqyYsvdYXyvn3Rrfjvp"
   },
   {
     role: "Chartered Accountant",

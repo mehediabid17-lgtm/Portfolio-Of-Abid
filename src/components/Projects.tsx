@@ -7,10 +7,10 @@ import ExploreJourney from './ExploreJourney';
 const PageWrapper = ({ children }: { children: React.ReactNode }) => {
   return (
     <motion.div
-      initial={{ opacity: 0, y: 15 }}
+      initial={{ opacity: 0, y: 10 }}
       animate={{ opacity: 1, y: 0 }}
-      exit={{ opacity: 0, y: -15 }}
-      transition={{ type: "spring", damping: 25, stiffness: 120, mass: 0.5 }}
+      exit={{ opacity: 0, y: -10 }}
+      transition={{ type: "spring", damping: 30, stiffness: 100, mass: 1 }}
       className="pt-24 min-h-[calc(100vh-80px)] will-change-[opacity,transform]"
     >
       {children}
@@ -32,14 +32,18 @@ const Projects = () => {
 
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
             {PROJECTS.map((project, i) => (
-              <motion.div
-                key={project.title}
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: i * 0.1 }}
-                className="group relative warp-card overflow-hidden"
-              >
+                <motion.div
+                  key={project.title}
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true, margin: "-50px" }}
+                  whileHover={{ y: -8 }}
+                  transition={{ 
+                    y: { type: "spring", damping: 25, stiffness: 100 },
+                    opacity: { duration: 0.4 }
+                  }}
+                  className="group relative warp-card overflow-hidden transition-shadow duration-500 hover:shadow-2xl hover:shadow-violet-500/10"
+                >
                 <div className="aspect-video overflow-hidden bg-white/5">
                   <img 
                     src={project.image} 

@@ -55,8 +55,10 @@ const Navbar = () => {
   const location = useLocation();
 
   useEffect(() => {
-    const handleScroll = () => setIsScrolled(window.scrollY > 50);
-    window.addEventListener('scroll', handleScroll);
+    const handleScroll = () => {
+      setIsScrolled(window.scrollY > 20);
+    };
+    window.addEventListener('scroll', handleScroll, { passive: true });
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
@@ -112,15 +114,22 @@ const Navbar = () => {
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: i * 0.1 }}
             >
-              <NavLink
-                to={link.href}
-                className={({ isActive }) => cn(
-                  "text-sm font-medium transition-colors",
-                  isActive ? "text-violet-400" : "text-slate-400 hover:text-white"
-                )}
-              >
-                {link.name}
-              </NavLink>
+                <NavLink
+                  to={link.href}
+                  className={({ isActive }) => cn(
+                    "relative text-sm font-medium transition-colors py-2 px-1",
+                    isActive ? "text-violet-400" : "text-slate-400 hover:text-white"
+                  )}
+                >
+                  {link.name}
+                  {location.pathname === link.href && (
+                    <motion.div
+                      layoutId="navbar-underline"
+                      className="absolute bottom-0 left-0 right-0 h-0.5 bg-violet-400 rounded-full"
+                      transition={{ type: "spring", bounce: 0.2, duration: 0.6 }}
+                    />
+                  )}
+                </NavLink>
             </motion.div>
           ))}
           <motion.a
@@ -129,6 +138,8 @@ const Navbar = () => {
             rel="noopener noreferrer"
             initial={{ opacity: 0, scale: 0.9 }}
             animate={{ opacity: 1, scale: 1 }}
+            whileHover={{ scale: 1.05, y: -2 }}
+            whileTap={{ scale: 0.95 }}
             className="bg-violet-600 text-white px-6 py-2 rounded-full text-sm font-semibold hover:bg-violet-500 transition-all warp-glow"
           >
             CV
@@ -226,78 +237,85 @@ const BackgroundEffect = () => {
   }, []);
 
   return (
-    <div className="fixed inset-0 pointer-events-none z-0 overflow-hidden">
-      {/* Grid Pattern */}
-      <div className="absolute inset-0 bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-[size:40px_40px] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_0%,#000_70%,transparent_100%)]" />
-      
-      {/* Mouse Follow Glow */}
-      <motion.div 
-        animate={{ 
-          x: mousePos.x - 250,
-          y: mousePos.y - 250,
+    <div className="fixed inset-0 pointer-events-none z-0 overflow-hidden bg-[#0a0a0c]">
+      {/* Dynamic Grid - More prominent like the video */}
+      <div 
+        className="absolute inset-0 bg-[linear-gradient(to_right,#ffffff08_1px,transparent_1px),linear-gradient(to_bottom,#ffffff08_1px,transparent_1px)] bg-[size:50px_50px]"
+        style={{
+          maskImage: 'radial-gradient(circle at center, black, transparent 80%)',
+          WebkitMaskImage: 'radial-gradient(circle at center, black, transparent 80%)'
         }}
-        transition={{ type: "spring", damping: 35, stiffness: 150, mass: 0.5 }}
-        className="absolute w-[500px] h-[500px] bg-violet-500/15 blur-[120px] rounded-full will-change-transform"
-      />
-
-      {/* Animated Blobs - Optimized */}
-      <motion.div 
-        animate={{ 
-          x: [0, 40, 0],
-          y: [0, 20, 0],
-          opacity: [0.15, 0.3, 0.15]
-        }}
-        transition={{ duration: 12, repeat: Infinity, ease: "easeInOut" }}
-        className="absolute top-[-10%] left-[-10%] w-[60%] h-[60%] bg-violet-600/10 blur-[120px] rounded-full will-change-transform"
-      />
-      <motion.div 
-        animate={{ 
-          x: [0, -40, 0],
-          y: [0, 40, 0],
-          opacity: [0.1, 0.25, 0.1]
-        }}
-        transition={{ duration: 18, repeat: Infinity, ease: "easeInOut" }}
-        className="absolute bottom-[-10%] right-[-10%] w-[60%] h-[60%] bg-blue-600/10 blur-[120px] rounded-full will-change-transform"
       />
       
-      {/* Aesthetic Lights - Simplified */}
-      <motion.div 
-        animate={{ 
-          opacity: [0.05, 0.15, 0.05]
-        }}
-        transition={{ duration: 10, repeat: Infinity, ease: "easeInOut" }}
-        className="absolute top-[30%] right-[10%] w-[30%] h-[30%] bg-rose-500/10 blur-[120px] rounded-full will-change-transform"
-      />
-
-      {/* Stars - Reduced count for performance */}
-      <div className="absolute inset-0">
-        {[...Array(30)].map((_, i) => (
+      {/* Moving Beams / Light Streaks */}
+      <div className="absolute inset-0 opacity-20">
+        {[...Array(3)].map((_, i) => (
           <motion.div
-            key={i}
-            initial={{ opacity: Math.random() * 0.3 }}
-            animate={{ opacity: [0.1, 0.3, 0.1] }}
+            key={`beam-h-${i}`}
+            initial={{ left: '-100%', top: `${25 * (i + 1)}%` }}
+            animate={{ left: '110%' }}
             transition={{ 
-              duration: 4 + Math.random() * 4, 
-              repeat: Infinity,
-              delay: Math.random() * 5
+              duration: 10 + i * 2, 
+              repeat: Infinity, 
+              ease: "linear",
+              delay: i * 3
             }}
-            className="absolute w-[1px] h-[1px] bg-white/40 rounded-full"
-            style={{ 
-              top: `${Math.random() * 100}%`, 
-              left: `${Math.random() * 100}%` 
+            className="absolute w-[400px] h-[1px] bg-gradient-to-r from-transparent via-violet-500 to-transparent blur-[2px]"
+          />
+        ))}
+        {[...Array(3)].map((_, i) => (
+          <motion.div
+            key={`beam-v-${i}`}
+            initial={{ top: '-100%', left: `${25 * (i + 1)}%` }}
+            animate={{ top: '110%' }}
+            transition={{ 
+              duration: 12 + i * 2, 
+              repeat: Infinity, 
+              ease: "linear",
+              delay: i * 4
             }}
+            className="absolute h-[400px] w-[1px] bg-gradient-to-b from-transparent via-blue-500 to-transparent blur-[2px]"
           />
         ))}
       </div>
+      
+      {/* Mouse Follow Glow - Refined */}
+      <motion.div 
+        animate={{ 
+          x: mousePos.x - 300,
+          y: mousePos.y - 300,
+        }}
+        transition={{ type: "spring", damping: 30, stiffness: 100, mass: 0.8 }}
+        className="absolute w-[600px] h-[600px] bg-violet-600/10 blur-[140px] rounded-full will-change-transform"
+      />
+
+      {/* Main Animated Blobs - Brighter and smoother */}
+      <motion.div 
+        animate={{ 
+          rotate: [0, 360],
+          scale: [1, 1.2, 1],
+          x: [0, 100, 0],
+          y: [0, 50, 0]
+        }}
+        transition={{ duration: 25, repeat: Infinity, ease: "linear" }}
+        className="absolute top-1/4 left-1/4 w-[500px] h-[500px] bg-violet-500/10 blur-[130px] rounded-full will-change-transform"
+      />
+      <motion.div 
+        animate={{ 
+          rotate: [360, 0],
+          scale: [1.2, 1, 1.2],
+          x: [0, -100, 0],
+          y: [0, -50, 0]
+        }}
+        transition={{ duration: 30, repeat: Infinity, ease: "linear" }}
+        className="absolute bottom-1/4 right-1/4 w-[500px] h-[500px] bg-blue-500/10 blur-[130px] rounded-full will-change-transform"
+      />
 
       {/* Noise Texture Overlay */}
-      <div className="absolute inset-0 opacity-[0.03] mix-blend-overlay pointer-events-none bg-[url('https://grainy-gradients.vercel.app/noise.svg')]" />
+      <div className="absolute inset-0 opacity-[0.02] mix-blend-overlay pointer-events-none bg-[url('https://grainy-gradients.vercel.app/noise.svg')]" />
       
-      {/* Aesthetic Vignette */}
-      <div className="absolute inset-0 pointer-events-none bg-[radial-gradient(circle_at_center,transparent_0%,rgba(11,14,20,0.4)_100%)]" />
-      
-      {/* Cinematic Lighting Overlay */}
-      <div className="absolute inset-0 pointer-events-none bg-gradient-to-tr from-violet-500/5 via-transparent to-blue-500/5" />
+      {/* Vignette for depth */}
+      <div className="absolute inset-0 pointer-events-none bg-[radial-gradient(circle_at_center,transparent_20%,rgba(0,0,0,0.6)_100%)]" />
     </div>
   );
 };

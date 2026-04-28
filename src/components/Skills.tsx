@@ -6,10 +6,10 @@ import ExploreJourney from './ExploreJourney';
 const PageWrapper = ({ children }: { children: React.ReactNode }) => {
   return (
     <motion.div
-      initial={{ opacity: 0, y: 15 }}
+      initial={{ opacity: 0, y: 10 }}
       animate={{ opacity: 1, y: 0 }}
-      exit={{ opacity: 0, y: -15 }}
-      transition={{ type: "spring", damping: 25, stiffness: 120, mass: 0.5 }}
+      exit={{ opacity: 0, y: -10 }}
+      transition={{ type: "spring", damping: 30, stiffness: 100, mass: 1 }}
       className="pt-24 min-h-[calc(100vh-80px)] will-change-[opacity,transform]"
     >
       {children}
@@ -33,11 +33,15 @@ const Skills = () => {
             {SKILL_CATEGORIES.map((cat, i) => (
               <motion.div
                 key={cat.title}
-                initial={{ opacity: 0, y: 10 }}
+                initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true, margin: "-50px" }}
-                transition={{ delay: i * 0.05 }}
-                className="p-8 warp-card will-change-[opacity,transform]"
+                whileHover={{ y: -5 }}
+                transition={{ 
+                  y: { type: "spring", damping: 25, stiffness: 100 },
+                  opacity: { duration: 0.4 }
+                }}
+                className="p-8 warp-card will-change-[opacity,transform] transition-shadow duration-500 hover:shadow-2xl hover:shadow-violet-500/10"
               >
                 <div className="flex items-center gap-3 mb-8">
                   <div className="w-10 h-10 rounded-lg bg-violet-500/10 flex items-center justify-center text-violet-400">
