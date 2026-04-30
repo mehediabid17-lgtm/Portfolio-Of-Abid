@@ -151,8 +151,8 @@ export const EXPERIENCE: ExperienceItem[] = [
 
 export const CO_CURRICULAR: CoCurricularItem[] = [
   {
-    title: "Certification of Achievement",
-    organization: "Professional Recognition",
+    title: "Seminar on Career Planning Roadmap",
+    organization: "Certification of Achievement",
     year: "2026",
     description: "Awarded for exceptional performance and dedication in professional development and community engagement initiatives.",
     certificate: "https://lh3.googleusercontent.com/d/10nYhle0WurcdfaBx-QuWou-lkQSqmK5t"
