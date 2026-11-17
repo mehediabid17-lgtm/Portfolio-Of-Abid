@@ -562,6 +562,7 @@ img, svg {
 .hero-section {
   position: relative;
   min-height: 80vh;
+  padding: 2.5rem 0 5.5rem;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -742,7 +743,7 @@ img, svg {
 }
 
 .hero-image-col {
-  display: none;
+  display: block;
   position: relative;
   animation: heroImageEnter 0.8s ease-out both;
 }
@@ -750,8 +751,8 @@ img, svg {
 .hero-image-frame-wrap {
   position: relative;
   width: 100%;
-  aspect-ratio: 1 / 1;
-  max-width: 500px;
+  aspect-ratio: 4 / 3;
+  max-width: 480px;
   margin: 0 auto;
 }
 
@@ -780,7 +781,7 @@ img, svg {
   width: 100%;
   height: 100%;
   object-fit: cover;
-  object-position: center;
+  object-position: 55% 20%;
 }
 
 .hero-deco-tr {
@@ -850,6 +851,7 @@ img, svg {
 }
 
 .about-image-wrap {
+  display: none;
   position: relative;
 }
 
@@ -2250,15 +2252,24 @@ img, svg {
   .mobile-menu {
     display: none;
   }
+  .hero-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
   .hero-title {
-    font-size: 4.5rem;
+    font-size: 3.75rem;
   }
   .hero-typewriter-wrap {
     font-size: 1.5rem;
     line-height: 2rem;
   }
+  .hero-image-frame-wrap {
+    max-width: 100%;
+  }
   .about-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .about-image-wrap {
+    display: block;
   }
   .vision-card {
     padding: 4rem;
@@ -2299,17 +2310,17 @@ img, svg {
     gap: 2rem;
   }
   .hero-grid {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1.15fr);
   }
   .hero-title {
-    font-size: 6rem;
+    font-size: 5.5rem;
   }
   .hero-typewriter-wrap {
     font-size: 1.875rem;
     line-height: 2.25rem;
   }
-  .hero-image-col {
-    display: block;
+  .hero-image-frame-wrap {
+    max-width: 660px;
   }
   .explore-grid {
     grid-template-columns: repeat(3, minmax(0, 1fr));
