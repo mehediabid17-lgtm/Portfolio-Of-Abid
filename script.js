@@ -39,7 +39,9 @@
     send: `<svg ${svgAttr}><path d="M14.536 21.686a.5.5 0 0 0 .937-.024l6.5-19a.496.496 0 0 0-.635-.635l-19 6.5a.5.5 0 0 0-.024.937l7.93 3.18a2 2 0 0 1 1.112 1.11z"/><path d="m21.854 2.147-10.94 10.939"/></svg>`,
     loader2: `<svg ${svgAttr}><path d="M21 12a9 9 0 1 1-6.219-8.56"/></svg>`,
     sun: `<svg ${svgAttr}><circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="m17.66 17.66 1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="m6.34 17.66-1.41 1.41"/><path d="m19.07 4.93-1.41 1.41"/></svg>`,
-    moon: `<svg ${svgAttr}><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/></svg>`
+    moon: `<svg ${svgAttr}><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/></svg>`,
+    bot: `<svg ${svgAttr}><path d="M12 8V4H8"/><rect width="16" height="12" x="4" y="8" rx="2"/><path d="M2 14h2"/><path d="M20 14h2"/><path d="M15 13v2"/><path d="M9 13v2"/></svg>`,
+    rotateCcw: `<svg ${svgAttr}><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>`
   };
 
   // --------------------------------------------------------------------------
@@ -361,6 +363,7 @@
   const PROJECTS = [
     {
       title: 'Banking Transaction Management System',
+      date: 'December 2025',
       description:
         'A secure and efficient system for managing bank transactions, account balances, and financial records with data-driven insights.',
       image:
@@ -371,6 +374,7 @@
     },
     {
       title: 'Agrapathik Social Organization Website',
+      date: 'In Progress',
       description:
         'A dedicated platform for Agrapaathik to showcase community impact, manage volunteer activities, and organize social events.',
       image: 'https://lh3.googleusercontent.com/d/1MqUXwywXZ9ng9I9KxFZozTQB8OuVeoVS',
@@ -380,6 +384,7 @@
     },
     {
       title: 'Personal Portfolio Website',
+      date: 'January 2026 – Updating',
       description:
         'A modern, responsive portfolio website built to highlight my expertise in Data Science, Machine Learning, and Software Engineering.',
       image: 'https://lh3.googleusercontent.com/d/1Ndola8V3NBqVVnb0o3vo7pQCcPuA8ol9',
@@ -896,6 +901,11 @@
                       .map((t) => `<span class="project-tech-tag">${escapeHtml(t)}</span>`)
                       .join('')}
                   </div>
+                  ${
+                    featuredProject.date
+                      ? `<span class="item-year-violet project-date">${escapeHtml(featuredProject.date)}</span>`
+                      : ''
+                  }
                   <h4 class="item-title-3xl">${escapeHtml(featuredProject.title)}</h4>
                   <p class="item-desc-lg">${escapeHtml(featuredProject.description)}</p>
                 </div>
@@ -1280,6 +1290,11 @@
                         .map((t) => `<span class="project-tech-tag">${escapeHtml(t)}</span>`)
                         .join('')}
                     </div>
+                    ${
+                      project.date
+                        ? `<span class="item-year-violet project-date">${escapeHtml(project.date)}</span>`
+                        : ''
+                    }
                     <h3 class="project-title">${escapeHtml(project.title)}</h3>
                     <p class="project-desc">${escapeHtml(project.description)}</p>
                     <div class="project-links">
@@ -1681,6 +1696,238 @@
   }
 
   // --------------------------------------------------------------------------
+  // Dedicated Portfolio Assistant Chatbot
+  // --------------------------------------------------------------------------
+  const CHATBOT_SUGGESTIONS = [
+    "What is Abid's education?",
+    'Tell me about his projects',
+    'What skills does he have?',
+    'How can I contact Abid?'
+  ];
+
+  const CHATBOT_WELCOME =
+    "Hi! I'm Abid's Portfolio Assistant. I answer questions strictly based on the information provided in this portfolio—ask me about his education, experience, certificates, skills, projects, or contact details.";
+
+  function formatChatbotReply(text) {
+    let safe = escapeHtml(text);
+    const linkPlaceholders = [];
+
+    // Convert Markdown links [label](https://...) into placeholders first
+    safe = safe.replace(/\[([^\]]+)\]\((https?:\/\/[^\s)]+)\)/g, (_match, label, url) => {
+      const idx = linkPlaceholders.length;
+      linkPlaceholders.push(
+        `<a href="${url}" target="_blank" rel="noopener noreferrer">${label}</a>`
+      );
+      return `__CHAT_LINK_${idx}__`;
+    });
+
+    // Linkify remaining bare http/https URLs
+    safe = safe.replace(
+      /(https?:\/\/[^\s<]+?)([.,!?;:)\]]*(?=\s|$))/g,
+      '<a href="$1" target="_blank" rel="noopener noreferrer">$1</a>$2'
+    );
+
+    // Restore Markdown link placeholders
+    safe = safe.replace(/__CHAT_LINK_(\d+)__/g, (_match, idx) => linkPlaceholders[Number(idx)] || '');
+
+    // Bold **text**
+    safe = safe.replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>');
+
+    // Convert newlines to <br>
+    safe = safe.replace(/\n/g, '<br>');
+    return safe;
+  }
+
+  function initChatbot() {
+    const launcher = document.getElementById('chatbot-launcher');
+    const launcherIcon = document.getElementById('chatbot-launcher-icon');
+    const panel = document.getElementById('chatbot-panel');
+    const headerIcon = document.getElementById('chatbot-header-icon');
+    const clearBtn = document.getElementById('chatbot-clear-btn');
+    const closeBtn = document.getElementById('chatbot-close-btn');
+    const messagesEl = document.getElementById('chatbot-messages');
+    const suggestionsEl = document.getElementById('chatbot-suggestions');
+    const form = document.getElementById('chatbot-form');
+    const input = document.getElementById('chatbot-input');
+    const sendBtn = document.getElementById('chatbot-send-btn');
+
+    if (
+      !launcher ||
+      !panel ||
+      !messagesEl ||
+      !suggestionsEl ||
+      !form ||
+      !input ||
+      !sendBtn
+    ) {
+      return;
+    }
+
+    if (launcherIcon) launcherIcon.innerHTML = ICONS.messageCircle;
+    if (headerIcon) headerIcon.innerHTML = ICONS.bot;
+    if (clearBtn) clearBtn.innerHTML = ICONS.rotateCcw;
+    if (closeBtn) closeBtn.innerHTML = ICONS.x;
+    sendBtn.innerHTML = ICONS.send;
+
+    let isOpen = false;
+    let isLoading = false;
+    let conversationHistory = [];
+    let uiMessages = [{ role: 'assistant', text: CHATBOT_WELCOME, isError: false }];
+
+    function scrollMessagesToBottom() {
+      messagesEl.scrollTop = messagesEl.scrollHeight;
+    }
+
+    function renderSuggestions() {
+      const showSuggestions = conversationHistory.length === 0 && !isLoading;
+      suggestionsEl.classList.toggle('hidden', !showSuggestions);
+      if (!showSuggestions) {
+        suggestionsEl.innerHTML = '';
+        return;
+      }
+
+      suggestionsEl.innerHTML = CHATBOT_SUGGESTIONS.map(
+        (prompt) =>
+          `<button type="button" class="chatbot-suggestion-btn" data-chat-suggestion="${escapeHtml(prompt)}">${escapeHtml(prompt)}</button>`
+      ).join('');
+    }
+
+    function renderMessages() {
+      const itemsHtml = uiMessages
+        .map((msg) => {
+          const roleClass = msg.role === 'user' ? 'user' : 'assistant';
+          const errorClass = msg.isError ? ' is-error' : '';
+          const bodyHtml =
+            msg.role === 'user' ? escapeHtml(msg.text) : formatChatbotReply(msg.text);
+          return `<div class="chatbot-msg ${roleClass}${errorClass}"><div class="chatbot-bubble">${bodyHtml}</div></div>`;
+        })
+        .join('');
+
+      const typingHtml = isLoading
+        ? `<div class="chatbot-msg assistant"><div class="chatbot-bubble"><div class="chatbot-typing" aria-label="Thinking"><span></span><span></span><span></span></div></div></div>`
+        : '';
+
+      messagesEl.innerHTML = itemsHtml + typingHtml;
+      scrollMessagesToBottom();
+      renderSuggestions();
+    }
+
+    function setOpenState(open) {
+      isOpen = open;
+      panel.classList.toggle('open', isOpen);
+      panel.setAttribute('aria-hidden', isOpen ? 'false' : 'true');
+      launcher.classList.toggle('is-hidden', isOpen);
+      launcher.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+
+      if (isOpen) {
+        window.setTimeout(() => {
+          input.focus();
+          scrollMessagesToBottom();
+        }, 120);
+      } else {
+        launcher.focus();
+      }
+    }
+
+    function setLoadingState(loading) {
+      isLoading = loading;
+      input.disabled = loading;
+      sendBtn.disabled = loading;
+      renderMessages();
+    }
+
+    function resetConversation() {
+      if (isLoading) return;
+      conversationHistory = [];
+      uiMessages = [{ role: 'assistant', text: CHATBOT_WELCOME, isError: false }];
+      renderMessages();
+      input.focus();
+    }
+
+    async function sendChatMessage(rawText) {
+      const text = rawText.trim();
+      if (!text || isLoading) return;
+
+      const historyPayload = conversationHistory.slice(-10);
+      uiMessages.push({ role: 'user', text, isError: false });
+      input.value = '';
+      setLoadingState(true);
+
+      try {
+        const res = await fetch('/api/chat', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            message: text,
+            history: historyPayload
+          })
+        });
+
+        let data = {};
+        try {
+          data = await res.json();
+        } catch (_parseErr) {
+          data = {};
+        }
+
+        if (!res.ok || typeof data.reply !== 'string') {
+          const errMessage =
+            typeof data.error === 'string' && data.error.trim()
+              ? data.error
+              : `Unable to reach the Portfolio Assistant (HTTP ${res.status}).`;
+          uiMessages.push({ role: 'assistant', text: errMessage, isError: true });
+          return;
+        }
+
+        conversationHistory.push({ role: 'user', text });
+        conversationHistory.push({ role: 'model', text: data.reply });
+        uiMessages.push({ role: 'assistant', text: data.reply, isError: false });
+      } catch (_networkErr) {
+        uiMessages.push({
+          role: 'assistant',
+          text: 'Network error while contacting the Portfolio Assistant. Please try again.',
+          isError: true
+        });
+      } finally {
+        setLoadingState(false);
+        if (isOpen) {
+          input.focus();
+        }
+      }
+    }
+
+    launcher.addEventListener('click', () => setOpenState(true));
+    if (closeBtn) {
+      closeBtn.addEventListener('click', () => setOpenState(false));
+    }
+    if (clearBtn) {
+      clearBtn.addEventListener('click', resetConversation);
+    }
+
+    suggestionsEl.addEventListener('click', (e) => {
+      const btn = e.target.closest('[data-chat-suggestion]');
+      if (!btn) return;
+      const suggestion = btn.getAttribute('data-chat-suggestion');
+      if (suggestion) {
+        sendChatMessage(suggestion);
+      }
+    });
+
+    form.addEventListener('submit', (e) => {
+      e.preventDefault();
+      sendChatMessage(input.value);
+    });
+
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && isOpen) {
+        setOpenState(false);
+      }
+    });
+
+    renderMessages();
+  }
+
+  // --------------------------------------------------------------------------
   // Global Event Delegation & Bootstrap
   // --------------------------------------------------------------------------
   function init() {
@@ -1692,6 +1939,7 @@
     initFloatingPackets();
     initMouseGlow();
     initCertificateModal();
+    initChatbot();
 
     if (mobileMenuToggle) {
       mobileMenuToggle.addEventListener('click', () => {
