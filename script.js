@@ -1856,10 +1856,14 @@ import appConfig from './config.json';
         }
 
         if (!res.ok || typeof data.reply !== 'string') {
-          const errMessage =
+          let errMessage =
             typeof data.error === 'string' && data.error.trim()
               ? data.error
               : `Unable to reach the Portfolio Assistant (HTTP ${res.status}).`;
+          if (res.status === 404 && !(typeof data.error === 'string' && data.error.trim())) {
+            errMessage =
+              'Portfolio Assistant backend (/api/chat) returned HTTP 404. Ensure the Node server (npm start) or serverless /api/chat route is deployed with GEMINI_API_KEY configured.';
+          }
           uiMessages.push({ role: 'assistant', text: errMessage, isError: true });
           return;
         }
