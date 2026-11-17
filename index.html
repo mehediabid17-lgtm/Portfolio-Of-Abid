@@ -4,17 +4,175 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Portfolio Of Abid</title>
-    <link rel="icon" type="image/png" href="https://lh3.googleusercontent.com/d/1bKCgrClSnZ740vDgDpjWALJKmc0wW8Hl" />
-    <link rel="apple-touch-icon" href="https://lh3.googleusercontent.com/d/1bKCgrClSnZ740vDgDpjWALJKmc0wW8Hl" />
+    <meta
+      name="description"
+      content="A modern, professional personal portfolio for Abid, a Data Science and Machine Learning student, featuring projects, skills, and contact information with a clean, dark-themed design."
+    />
+    <meta property="og:title" content="Portfolio Of Abid" />
+    <meta
+      property="og:description"
+      content="A modern, professional personal portfolio for Abid, a Data Science and Machine Learning student, featuring projects, skills, and contact information with a clean, dark-themed design."
+    />
+    <link
+      rel="icon"
+      type="image/png"
+      href="https://lh3.googleusercontent.com/d/1bKCgrClSnZ740vDgDpjWALJKmc0wW8Hl"
+    />
+    <link
+      rel="apple-touch-icon"
+      href="https://lh3.googleusercontent.com/d/1bKCgrClSnZ740vDgDpjWALJKmc0wW8Hl"
+    />
     <link rel="preconnect" href="https://lh3.googleusercontent.com" crossorigin />
     <link rel="preconnect" href="https://scontent.fdac5-1.fna.fbcdn.net" crossorigin />
     <link rel="preconnect" href="https://scontent.fdac5-2.fna.fbcdn.net" crossorigin />
     <link rel="preconnect" href="https://images.unsplash.com" crossorigin />
     <link rel="preconnect" href="https://grainy-gradients.vercel.app" crossorigin />
+    <link rel="stylesheet" href="./style.css" />
   </head>
   <body>
-    <div id="root"></div>
-    <script type="module" src="/src/main.tsx"></script>
+    <div id="app-shell" class="app-shell">
+      <!-- Fixed Ambient Background Effect -->
+      <div class="bg-effect" aria-hidden="true">
+        <div class="bg-grid"></div>
+
+        <div class="bg-beams">
+          <div class="beam-h beam-h-1"></div>
+          <div class="beam-h beam-h-2"></div>
+          <div class="beam-h beam-h-3"></div>
+          <div class="beam-v beam-v-1"></div>
+          <div class="beam-v beam-v-2"></div>
+          <div class="beam-v beam-v-3"></div>
+        </div>
+
+        <div id="mouse-glow" class="mouse-glow"></div>
+        <div class="bg-blob bg-blob-1"></div>
+        <div class="bg-blob bg-blob-2"></div>
+        <div class="bg-noise"></div>
+        <div class="bg-vignette"></div>
+      </div>
+
+      <!-- Floating Data Packets & Tech Terms -->
+      <div id="floating-packets" class="floating-layer" aria-hidden="true"></div>
+
+      <!-- Scanning Line -->
+      <div class="floating-layer" aria-hidden="true">
+        <div class="scan-line"></div>
+      </div>
+
+      <!-- Navbar -->
+      <nav id="navbar" class="navbar">
+        <div class="navbar-inner">
+          <div class="navbar-brand-wrap">
+            <a href="/" data-route="/" class="navbar-brand">
+              <div class="navbar-avatar">
+                <img
+                  src="https://lh3.googleusercontent.com/d/1Ndola8V3NBqVVnb0o3vo7pQCcPuA8ol9"
+                  alt="Abid"
+                  referrerpolicy="no-referrer"
+                  loading="lazy"
+                  decoding="async"
+                />
+              </div>
+              <span class="navbar-brand-text">
+                Portfolio Of <span class="text-violet-500">Abid</span>
+              </span>
+            </a>
+          </div>
+
+          <div class="navbar-right">
+            <!-- Desktop Nav -->
+            <div class="desktop-nav" id="desktop-nav">
+              <div class="nav-links-group" id="desktop-nav-links"></div>
+              <a
+                href="https://drive.google.com/file/d/1av2uOGhOnMayS2xQPic2vAB0hcpmdG3h/view?usp=sharing"
+                target="_blank"
+                rel="noopener noreferrer"
+                class="cv-btn warp-glow"
+              >
+                CV
+              </a>
+            </div>
+
+            <!-- Day / Night Mode Toggle -->
+            <button
+              type="button"
+              id="theme-toggle"
+              class="theme-toggle-btn"
+              aria-label="Switch to Day Mode"
+              title="Switch to Day Mode"
+            ></button>
+
+            <!-- Mobile Toggle -->
+            <button
+              type="button"
+              id="mobile-menu-toggle"
+              class="mobile-toggle"
+              aria-label="Toggle navigation menu"
+              aria-expanded="false"
+            ></button>
+          </div>
+        </div>
+
+        <!-- Mobile Menu -->
+        <div id="mobile-menu" class="mobile-menu">
+          <div class="mobile-menu-inner" id="mobile-nav-links"></div>
+        </div>
+      </nav>
+
+      <!-- Main Route View + Footer -->
+      <div class="content-layer">
+        <main id="page-root"></main>
+
+        <footer class="footer">
+          <div class="footer-inner">
+            <div class="footer-brand-col">
+              <a href="/" data-route="/" class="footer-brand">
+                Portfolio Of <span class="text-violet-500">Abid</span>
+              </a>
+              <p class="footer-copy">
+                © <span id="footer-year"></span> Mehedi Hasan Abid. All rights reserved.
+              </p>
+            </div>
+
+            <div class="footer-links">
+              <a href="/" data-route="/" class="footer-link">Home</a>
+              <a href="/projects" data-route="/projects" class="footer-link">Projects</a>
+            </div>
+          </div>
+        </footer>
+      </div>
+    </div>
+
+    <!-- Certificate Modal -->
+    <div id="certificate-modal" class="cert-modal" aria-hidden="true" role="dialog" aria-modal="true">
+      <div class="cert-modal-card warp-card" id="cert-modal-card">
+        <button
+          type="button"
+          id="cert-modal-close-icon"
+          class="cert-modal-close-btn"
+          aria-label="Close modal"
+        ></button>
+        <div class="cert-modal-body">
+          <h3 id="cert-modal-title" class="cert-modal-title"></h3>
+          <div class="cert-modal-img-wrap">
+            <div id="cert-modal-loader" class="cert-modal-loader"></div>
+            <img
+              id="cert-modal-img"
+              src=""
+              alt=""
+              class="cert-modal-img is-loading"
+              referrerpolicy="no-referrer"
+            />
+          </div>
+          <div class="cert-modal-footer">
+            <button type="button" id="cert-modal-close-btn" class="cert-modal-close-text-btn">
+              Close Preview
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script type="module" src="./script.js"></script>
   </body>
 </html>
-
