@@ -1675,12 +1675,26 @@ import appConfig from './config.json';
     // Restore Markdown link placeholders
     safe = safe.replace(/__CHAT_LINK_(\d+)__/g, (_match, idx) => linkPlaceholders[Number(idx)] || '');
 
-    // Bold **text**
+    // Inline code `text` and bold **text**
+    safe = safe.replace(/`([^`]+)`/g, '<code class="chatbot-code">$1</code>');
     safe = safe.replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>');
 
-    // Convert newlines to <br>
-    safe = safe.replace(/\n/g, '<br>');
-    return safe;
+    // Format line-by-line for clean bullet items and headings without raw markdown symbols
+    const lines = safe.split('\n');
+    const formattedLines = lines.map((line) => {
+      const trimmed = line.trim();
+      if (/^#{1,3}\s+/.test(trimmed)) {
+        return `<strong class="chatbot-heading">${trimmed.replace(/^#{1,3}\s+/, '')}</strong>`;
+      }
+      if (/^[-*]\s+/.test(trimmed)) {
+        return `<span class="chatbot-bullet-line"><span class="chatbot-bullet-dot" aria-hidden="true">•</span><span>${trimmed.replace(/^[-*]\s+/, '')}</span></span>`;
+      }
+      return line;
+    });
+
+    return formattedLines
+      .join('<br>')
+      .replace(/(<\/span>)<br>(<span class="chatbot-bullet-line">)/g, '$1$2');
   }
 
   function initChatbot() {
@@ -1778,6 +1792,7 @@ import appConfig from './config.json';
       isLoading = loading;
       input.disabled = loading;
       sendBtn.disabled = loading;
+      if (clearBtn) clearBtn.disabled = loading;
       renderMessages();
     }
 
@@ -1799,10 +1814,16 @@ import appConfig from './config.json';
       input.value = '';
       setLoadingState(true);
 
+      const controller = typeof AbortController !== 'undefined' ? new AbortController() : null;
+      const timeoutId = controller
+        ? window.setTimeout(() => controller.abort(), 25000)
+        : null;
+
       try {
         const res = await fetch('/api/chat', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
+          signal: controller ? controller.signal : undefined,
           body: JSON.stringify({
             message: text,
             history: historyPayload
@@ -1828,13 +1849,19 @@ import appConfig from './config.json';
         conversationHistory.push({ role: 'user', text });
         conversationHistory.push({ role: 'model', text: data.reply });
         uiMessages.push({ role: 'assistant', text: data.reply, isError: false });
-      } catch (_networkErr) {
+      } catch (err) {
+        const isTimeout = err && err.name === 'AbortError';
         uiMessages.push({
           role: 'assistant',
-          text: 'Network error while contacting the Portfolio Assistant. Please try again.',
+          text: isTimeout
+            ? 'The Portfolio Assistant took too long to respond. Please try your question again.'
+            : 'Network error while contacting the Portfolio Assistant. Please try again.',
           isError: true
         });
       } finally {
+        if (timeoutId !== null) {
+          window.clearTimeout(timeoutId);
+        }
         setLoadingState(false);
         if (isOpen) {
           input.focus();

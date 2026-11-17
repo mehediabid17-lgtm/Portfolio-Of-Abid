@@ -158,10 +158,22 @@ function sanitizeHistory(rawHistory) {
       typeof item.text === 'string'
     ) {
       const trimmed = item.text.trim().slice(0, maxLen);
-      if (trimmed) {
+      if (!trimmed) continue;
+
+      if (cleaned.length === 0 && item.role !== 'user') {
+        continue;
+      }
+      const prev = cleaned[cleaned.length - 1];
+      if (prev && prev.role === item.role) {
+        prev.text = `${prev.text}\n${trimmed}`.slice(0, maxLen);
+      } else {
         cleaned.push({ role: item.role, text: trimmed });
       }
     }
+  }
+
+  if (cleaned.length > 0 && cleaned[cleaned.length - 1].role !== 'model') {
+    cleaned.pop();
   }
   return cleaned;
 }

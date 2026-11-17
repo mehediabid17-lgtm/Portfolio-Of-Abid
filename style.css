@@ -3003,6 +3003,11 @@ img, svg {
   color: #ffffff;
 }
 
+.chatbot-icon-btn:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
 .chatbot-icon-btn svg {
   width: 1rem;
   height: 1rem;
@@ -3072,6 +3077,33 @@ img, svg {
 
 .chatbot-msg.user .chatbot-bubble a {
   color: #ffffff;
+}
+
+.chatbot-bullet-line {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.45rem;
+  margin-top: 0.3rem;
+}
+
+.chatbot-bullet-dot {
+  color: #a78bfa;
+  font-weight: 700;
+  flex-shrink: 0;
+}
+
+.chatbot-heading {
+  display: block;
+  margin-top: 0.35rem;
+  margin-bottom: 0.15rem;
+}
+
+.chatbot-code {
+  padding: 0.1rem 0.35rem;
+  border-radius: 0.35rem;
+  background-color: rgba(139, 92, 246, 0.18);
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  font-size: 0.8em;
 }
 
 .chatbot-typing {

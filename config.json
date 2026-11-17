@@ -12,14 +12,14 @@
     "retryDelayMs": 400,
     "models": [
       {
+        "model": "gemini-3.1-flash-lite",
+        "thinkingLevel": "MINIMAL",
+        "timeoutMs": 9000
+      },
+      {
         "model": "gemini-4-hydrogen",
         "thinkingLevel": "LOW",
         "timeoutMs": 10000
-      },
-      {
-        "model": "gemini-3.1-flash-lite",
-        "thinkingLevel": "MINIMAL",
-        "timeoutMs": 12000
       },
       {
         "model": "gemini-3.1-flash-lite",
