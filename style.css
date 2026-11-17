@@ -3287,6 +3287,15 @@ img, svg {
   color: #ffffff;
 }
 
+[data-theme="day"] .chatbot-bullet-dot {
+  color: #7c3aed;
+}
+
+[data-theme="day"] .chatbot-code {
+  background-color: rgba(124, 58, 237, 0.12);
+  color: #5b21b6;
+}
+
 [data-theme="day"] .chatbot-suggestion-btn {
   background-color: rgba(124, 58, 237, 0.08);
   border-color: rgba(124, 58, 237, 0.22);

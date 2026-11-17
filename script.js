@@ -967,7 +967,7 @@ import appConfig from './config.json';
                 <div class="hero-image-pulse"></div>
                 <div class="hero-image-card">
                   <img
-                    src="${escapeHtml(PROFILE.heroImage || '/assets/aistudio/abid_2_a121571a.jpeg')}"
+                    src="${escapeHtml(PROFILE.heroImage || '/assets/aistudio/abid_final_1530903f.png')}"
                     alt="Mehedi Hasan Abid"
                     loading="eager"
                     decoding="async"
