@@ -179,6 +179,13 @@ function sanitizeHistory(rawHistory) {
 }
 
 function extractReadableErrorMessage(err) {
+  if (err instanceof Error && (err.name === 'TimeoutError' || err.name === 'AbortError')) {
+    return {
+      status: 504,
+      message: 'The Portfolio Assistant took too long to respond. Please try again.',
+    };
+  }
+
   const rawMessage = err instanceof Error ? err.message : 'Unexpected server error.';
   let status =
     typeof err === 'object' && err !== null && typeof err.status === 'number'
@@ -216,7 +223,7 @@ function resolveThinkingLevel(levelName) {
 async function generatePortfolioReply(ai, contents) {
   const attempts = Array.isArray(appConfig.chatbot.models)
     ? appConfig.chatbot.models
-    : [{ model: 'gemini-4-hydrogen', thinkingLevel: 'LOW', timeoutMs: 10000 }];
+    : [{ model: 'gemini-3.1-flash-lite', thinkingLevel: 'MINIMAL', timeoutMs: 9000 }];
   const retryDelayMs = appConfig.chatbot.retryDelayMs || 400;
   let lastError;
 
@@ -256,6 +263,13 @@ async function startServer() {
   const HOST = appConfig.server.host || '0.0.0.0';
 
   app.use(express.json({ limit: appConfig.server.jsonBodyLimit || '100kb' }));
+  app.use((err, _req, res, next) => {
+    if (err instanceof SyntaxError && 'body' in err) {
+      res.status(400).json({ error: 'Invalid JSON request body.' });
+      return;
+    }
+    next(err);
+  });
 
   app.get('/api/portfolio', (_req, res) => {
     res.json(portfolioData);

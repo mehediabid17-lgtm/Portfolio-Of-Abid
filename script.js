@@ -1248,12 +1248,12 @@ import appConfig from './config.json';
                     <div class="project-links">
                       ${
                         project.link && project.link !== '#'
-                          ? `<a href="${escapeHtml(project.link)}" class="project-link-demo">Live Demo ${ICONS.externalLink}</a>`
+                          ? `<a href="${escapeHtml(project.link)}" target="_blank" rel="noopener noreferrer" class="project-link-demo">Live Demo ${ICONS.externalLink}</a>`
                           : ''
                       }
                       ${
                         project.github && project.github !== '#'
-                          ? `<a href="${escapeHtml(project.github)}" class="project-link-source">Source ${ICONS.github}</a>`
+                          ? `<a href="${escapeHtml(project.github)}" target="_blank" rel="noopener noreferrer" class="project-link-source">Source ${ICONS.github}</a>`
                           : ''
                       }
                     </div>
@@ -1518,6 +1518,9 @@ import appConfig from './config.json';
 
     certModal.classList.add('open');
     certModal.setAttribute('aria-hidden', 'false');
+    if (certModalCloseIcon) {
+      certModalCloseIcon.focus();
+    }
   }
 
   function closeCertificateModal() {
@@ -1569,19 +1572,27 @@ import appConfig from './config.json';
     form.addEventListener('submit', (e) => {
       e.preventDefault();
       const formData = new FormData(form);
-      const name = formData.get('name');
-      const email = formData.get('email');
-      const message = formData.get('message');
+      const name = String(formData.get('name') || '').trim();
+      const email = String(formData.get('email') || '').trim();
+      const message = String(formData.get('message') || '').trim();
 
       const subject = encodeURIComponent(`Portfolio Inquiry from ${name}`);
       const body = encodeURIComponent(`Name: ${name}\nEmail: ${email}\n\nMessage:\n${message}`);
-
-      const gmailUrl = `https://mail.google.com/mail/?view=cm&fs=1&to=mehedihasanabid17@gmail.com&su=${subject}&body=${body}`;
       const mailtoUrl = `mailto:mehedihasanabid17@gmail.com?subject=${subject}&body=${body}`;
+      const gmailUrl = `https://mail.google.com/mail/?view=cm&fs=1&to=mehedihasanabid17@gmail.com&su=${subject}&body=${body}`;
 
-      const newWindow = window.open(gmailUrl, '_blank');
-      if (!newWindow || newWindow.closed || typeof newWindow.closed === 'undefined') {
-        window.location.href = mailtoUrl;
+      const tempLink = document.createElement('a');
+      tempLink.href = gmailUrl;
+      tempLink.target = '_blank';
+      tempLink.rel = 'noopener noreferrer';
+      tempLink.style.display = 'none';
+      document.body.appendChild(tempLink);
+      tempLink.click();
+      document.body.removeChild(tempLink);
+
+      const noteEl = form.querySelector('.form-note');
+      if (noteEl) {
+        noteEl.innerHTML = `Opening Gmail compose &mdash; or <a href="${escapeHtml(mailtoUrl)}" class="text-violet-400">open your default mail app</a>.`;
       }
     });
   }
@@ -1679,7 +1690,7 @@ import appConfig from './config.json';
     safe = safe.replace(/`([^`]+)`/g, '<code class="chatbot-code">$1</code>');
     safe = safe.replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>');
 
-    // Format line-by-line for clean bullet items and headings without raw markdown symbols
+    // Format line-by-line for clean bullet/numbered items and headings without raw markdown symbols
     const lines = safe.split('\n');
     const formattedLines = lines.map((line) => {
       const trimmed = line.trim();
@@ -1688,6 +1699,10 @@ import appConfig from './config.json';
       }
       if (/^[-*]\s+/.test(trimmed)) {
         return `<span class="chatbot-bullet-line"><span class="chatbot-bullet-dot" aria-hidden="true">•</span><span>${trimmed.replace(/^[-*]\s+/, '')}</span></span>`;
+      }
+      const numMatch = trimmed.match(/^(\d+\.)\s+(.+)$/);
+      if (numMatch) {
+        return `<span class="chatbot-bullet-line"><span class="chatbot-bullet-dot" aria-hidden="true">${numMatch[1]}</span><span>${numMatch[2]}</span></span>`;
       }
       return line;
     });
@@ -1769,6 +1784,9 @@ import appConfig from './config.json';
       messagesEl.innerHTML = itemsHtml + typingHtml;
       scrollMessagesToBottom();
       renderSuggestions();
+      if (clearBtn) {
+        clearBtn.disabled = isLoading || (conversationHistory.length === 0 && uiMessages.length <= 1);
+      }
     }
 
     function setOpenState(open) {
