@@ -1,0 +1,44 @@
+{
+  "server": {
+    "defaultPort": 3000,
+    "host": "0.0.0.0",
+    "jsonBodyLimit": "100kb"
+  },
+  "chatbot": {
+    "maxMessageLength": 600,
+    "maxHistoryMessages": 10,
+    "maxHistoryMessageLength": 1500,
+    "userAgent": "aistudio-build",
+    "retryDelayMs": 400,
+    "models": [
+      {
+        "model": "gemini-4-hydrogen",
+        "thinkingLevel": "LOW",
+        "timeoutMs": 10000
+      },
+      {
+        "model": "gemini-3.1-flash-lite",
+        "thinkingLevel": "MINIMAL",
+        "timeoutMs": 12000
+      },
+      {
+        "model": "gemini-3.1-flash-lite",
+        "thinkingLevel": "MINIMAL",
+        "timeoutMs": 12000
+      }
+    ],
+    "welcomeMessage": "Hi! I'm Abid's Portfolio Assistant. I answer questions strictly based on the information provided in this portfolio—ask me about his education, experience, certificates, skills, projects, or contact details.",
+    "suggestions": [
+      "What is Abid's education?",
+      "Tell me about his projects",
+      "What skills does he have?",
+      "How can I contact Abid?"
+    ]
+  },
+  "updatesFeed": {
+    "limit": 10,
+    "minProjects": 3,
+    "minExperiences": 3,
+    "minCertificates": 3
+  }
+}

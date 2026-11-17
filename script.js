@@ -1,6 +1,8 @@
 // ============================================================================
-// Portfolio Of Abid — Vanilla JavaScript
+// Portfolio Of Abid — Vanilla JavaScript (JSON-driven)
 // ============================================================================
+import portfolioData from './portfolio-data.json';
+import appConfig from './config.json';
 
 (function () {
   'use strict';
@@ -45,406 +47,27 @@
   };
 
   // --------------------------------------------------------------------------
-  // Portfolio Data (Kept Identical)
+  // Portfolio Data & Configuration (Loaded from JSON)
   // --------------------------------------------------------------------------
-  const NAV_LINKS = [
-    { name: 'Home', href: '/' },
-    { name: 'Education', href: '/education' },
-    { name: 'Experience', href: '/experience' },
-    { name: 'Certificates', href: '/certificates' },
-    { name: 'Projects', href: '/projects' },
-    { name: 'Contact', href: '/contact' }
-  ];
+  const PROFILE = portfolioData.profile;
+  const NAV_LINKS = portfolioData.navLinks;
 
-  const JOURNEY_PAGES = [
-    {
-      title: 'Home',
-      desc: 'Back to the beginning.',
-      icon: ICONS.home,
-      href: '/',
-      bgColor: 'bg-slate-soft',
-      textColor: 'text-slate-400'
-    },
-    {
-      title: 'Education',
-      desc: 'Academic background and certifications.',
-      icon: ICONS.bookOpen,
-      href: '/education',
-      bgColor: 'bg-violet-soft',
-      textColor: 'text-violet-400'
-    },
-    {
-      title: 'Experience',
-      desc: 'Professional work and leadership roles.',
-      icon: ICONS.briefcase,
-      href: '/experience',
-      bgColor: 'bg-blue-soft',
-      textColor: 'text-blue-400'
-    },
-    {
-      title: 'Certificates',
-      desc: 'Extracurricular activities and awards.',
-      icon: ICONS.award,
-      href: '/certificates',
-      bgColor: 'bg-amber-soft',
-      textColor: 'text-amber-400'
-    },
-    {
-      title: 'Projects',
-      desc: 'Showcase of my technical builds.',
-      icon: ICONS.layers,
-      href: '/projects',
-      bgColor: 'bg-emerald-soft',
-      textColor: 'text-emerald-400'
-    },
-    {
-      title: 'Contact',
-      desc: 'Get in touch for collaborations.',
-      icon: ICONS.mail,
-      href: '/contact',
-      bgColor: 'bg-indigo-soft',
-      textColor: 'text-indigo-400'
-    }
-  ];
+  const JOURNEY_PAGES = portfolioData.journeyPages.map((page) => ({
+    ...page,
+    icon: ICONS[page.iconKey] || ICONS.home
+  }));
 
-  const EDUCATION = [
-    {
-      degree: 'Bachelor of Science (BSc) in Software Engineering (SWE)',
-      institution: 'Daffodil International University',
-      year: '2025 - Running',
-      description:
-        'Currently pursuing a degree in Software Engineering with a strong focus on Data Science and Machine Learning. Actively engaged in building data-driven applications and exploring advanced statistical models.'
-    },
-    {
-      degree: 'Higher Secondary Certificate (HSC)',
-      institution: 'Nawab Habibullah Model School And College',
-      year: '2022 - 2023',
-      description:
-        'Science Group. Achieved a perfect GPA of 5.00 / 5.00. Developed a strong foundation in Mathematics, Physics, and Chemistry.'
-    },
-    {
-      degree: 'Secondary School Certificate (SSC)',
-      institution: 'Nawab Habibullah Model School And College',
-      year: '2019 - 2021',
-      description:
-        'Science Group. Achieved a perfect GPA of 5.00 / 5.00. This was the beginning of my journey into the world of science and technology.'
-    }
-  ];
+  const EDUCATION = portfolioData.education;
+  const EXPERIENCE = portfolioData.experience;
+  const CO_CURRICULAR = portfolioData.certificates;
+  const PROJECTS = portfolioData.projects;
 
-  const EXPERIENCE = [
-    {
-      role: 'Executive',
-      company: 'Software Engineering Club, Daffodil International University (DIU_SEC)',
-      duration: '2026 - Present',
-      description:
-        'Actively contributing to the Software Engineering Club at DIU, organizing technical events, workshops, and fostering a collaborative environment for software engineering students to enhance their skills.',
-      certificate: 'https://lh3.googleusercontent.com/d/1FY74w_yEIAukLg8OgF6Qc8WJ9JiALkZI'
-    },
-    {
-      role: 'Sawtul ilm Co-Ordinator',
-      company: 'Grantha Shala',
-      duration: '2026',
-      description:
-        'Serving as the Sawtul ilm Co-Ordinator at Grantha Shala, managing educational programs and coordinating knowledge-sharing initiatives.',
-      certificate: 'https://lh3.googleusercontent.com/d/13T9VQfIHiQrZkNBoPeaqVod7UzRFqIHK'
-    },
-    {
-      role: 'Founder & CEO',
-      company: 'Agrapaathik (Community & Events)',
-      duration: '2025 - present',
-      description:
-        'An organization dedicated to community development and engagement. Purpose: Community support and engagement. Activities: Organizing events (workshops, drives, festivals). Services: Volunteer opportunities for social causes. Goal: Create social impact through active participation.',
-      certificate: 'https://lh3.googleusercontent.com/d/1MqUXwywXZ9ng9I9KxFZozTQB8OuVeoVS'
-    },
-    {
-      role: 'Deputy Organizer',
-      company: 'Uttara Students Community - DIU',
-      duration: '2025-2026',
-      description:
-        'Serving as the Deputy Organizer for the Uttara Students Community at Daffodil International University, coordinating community events and student engagement initiatives.',
-      certificate: 'https://lh3.googleusercontent.com/d/1pZO25b04wNRddgknc3qt0Nx-V-6T56Iv'
-    },
-    {
-      role: 'Volunteer',
-      company: 'LEO Club Of Dhaka Palthan Heritage',
-      duration: '2024-2025',
-      description:
-        'Actively participated as a volunteer in various community service projects and leadership initiatives organized by the LEO Club of Dhaka Palthan Heritage.',
-      certificate: 'https://lh3.googleusercontent.com/d/1zfYwTSUN-6vVwhqyYsvdYXyvn3Rrfjvp'
-    },
-    {
-      role: 'Chartered Accountant',
-      company: 'Professional Role',
-      duration: '2024 - 2024',
-      description:
-        'A professional role involving financial services such as accounting, auditing, and financial management. (Associated with ACI Logistics Limited).',
-      certificate: 'https://lh3.googleusercontent.com/d/1HCk1S0KIaXcGLjZPEJdzCV7-f9AM9_JB'
-    },
-    {
-      role: 'Founder & CEO',
-      company: 'Aspire (Clothing Brand)',
-      duration: '2023 - Present',
-      description:
-        'A fashion brand where tradition meets modern style, focusing on unique and stylish clothing.',
-      certificate: 'https://lh3.googleusercontent.com/d/1x5W78trtBoo3pMqaM-rnX26nQ3JiAThQ'
-    },
-    {
-      role: 'Chief Executive',
-      company: 'Taan Raat Institute of Bangladesh',
-      duration: '2023 - 2024',
-      description:
-        'A platform designed to help individuals earn while learning new skills. Focused on building trust and creating opportunities for people to develop their own identity through events and learning programs.',
-      certificate: 'https://lh3.googleusercontent.com/d/1KFAi7lDAd65JkYkm6hjZa4NJ7s7RZTZI'
-    },
-    {
-      role: 'Calling Agent (CA)',
-      company: 'Essential-Infotech',
-      duration: '2022 - 2023',
-      description:
-        'Handled telemarketing responsibilities, including customer interaction and service promotion.',
-      certificate: 'https://lh3.googleusercontent.com/d/11QnqNI9UUax_uY-aLR3mUPNFCUvOUzLQ'
-    },
-    {
-      role: 'SRM',
-      company: 'SRM - NHMSC Scout Group',
-      duration: '2021 - 2023',
-      description:
-        'Scouting is a voluntary, non-political, and non-formal educational movement for young people. It focuses on personal growth, leadership development, and community service, helping individuals become responsible global citizens and agents of change.',
-      certificate: 'https://lh3.googleusercontent.com/d/1aVX7YTYxAmYf46bH3Zj8qYg21AD7wbhC'
-    },
-    {
-      role: 'Calling Agent',
-      company: 'EluvaTech',
-      duration: '2021 - 2022',
-      description:
-        'Worked as a telemarketing agent, communicating with clients and promoting services effectively.',
-      certificate: 'https://lh3.googleusercontent.com/d/1R4M0oQdd_IzAy1JOWj93NvxDD-cslzU_'
-    }
-  ];
+  const SKILL_CATEGORIES = portfolioData.skillCategories.map((cat) => ({
+    ...cat,
+    icon: ICONS[cat.iconKey] || ICONS.code2
+  }));
 
-  const CO_CURRICULAR = [
-    {
-      title: 'Seminar on Career Planning Roadmap',
-      organization: 'Certification of Achievement',
-      year: '2026',
-      description:
-        'Awarded for exceptional performance and dedication in professional development and community engagement initiatives.',
-      certificate: 'https://lh3.googleusercontent.com/d/10nYhle0WurcdfaBx-QuWou-lkQSqmK5t'
-    },
-    {
-      title: 'Sawtul ilm',
-      organization: 'Educational Platform',
-      year: '2026',
-      description:
-        'Involved in educational initiatives and knowledge-sharing programs through the Sawtul ilm platform.',
-      certificate: 'https://lh3.googleusercontent.com/d/1EEIhE9SeHbOR9wC6QyA9aOasUT1MZ9CV'
-    },
-    {
-      title: 'Computer Architecture',
-      organization: 'Online Course',
-      year: '2026',
-      description:
-        'Comprehensive study of computer architecture, instruction sets, and hardware-software interface.',
-      certificate: 'https://lh3.googleusercontent.com/d/17iWjF6l0brFj07XcZgBqTJcZGaGJptHz'
-    },
-    {
-      title: 'Database Management Course',
-      organization: 'Professional Certification',
-      year: '2026',
-      description: 'In-depth study of SQL, database design, and management systems.',
-      certificate: 'https://lh3.googleusercontent.com/d/1q4AIllXCXpYOT3rBQughx1DMADP1KXje'
-    },
-    {
-      title: 'Chief Executive Officer (CEO)',
-      organization: 'Agrapaathik',
-      year: '2025 - present',
-      description:
-        'Leading Agrapaathik, an organization dedicated to community development, social impact, and organizing impactful events.',
-      certificate: 'https://lh3.googleusercontent.com/d/1SRg9qRwsQQaDSJRdXHdv1aeCKevmit-n'
-    },
-    {
-      title: 'Code Trap',
-      organization: 'Coding Challenge',
-      year: '2025',
-      description:
-        'Successfully completed the Code Trap challenge, showcasing proficiency in programming and debugging.',
-      certificate: 'https://lh3.googleusercontent.com/d/1KTJR5XVsTQpkpDX7OHyVQpTytwzXSYvm'
-    },
-    {
-      title: 'Microsoft Office Starter Course',
-      organization: 'Digital Skills Program',
-      year: '2025',
-      description:
-        'Completed a foundational course on Microsoft Office tools, including Word, Excel, and PowerPoint.',
-      certificate: 'https://lh3.googleusercontent.com/d/11EcLgfnoKhUABZM9vCWkqRaBDGh9PrZl'
-    },
-    {
-      title: 'Know Thyself',
-      organization: 'Personal Development Workshop',
-      year: '2025',
-      description:
-        'Attended a workshop focused on self-awareness, emotional intelligence, and personal growth.',
-      certificate: 'https://lh3.googleusercontent.com/d/1mEYjDv5rN6IK_ypm_-Oa4Om-wkGnYjXo'
-    },
-    {
-      title: 'Breakout Algorithm',
-      organization: 'Algorithm Competition',
-      year: '2025',
-      description:
-        'Participated in the Breakout Algorithm competition, demonstrating problem-solving skills and algorithmic thinking.',
-      certificate: 'https://lh3.googleusercontent.com/d/1wIiZBOK__3Up2AD9EW89CKuHDGdV21dU'
-    },
-    {
-      title: 'Recognized Video Editor',
-      organization: 'Creative Media Awards',
-      year: '2024',
-      description:
-        'Acknowledged for excellence in video editing and digital storytelling across various platforms.',
-      certificate: 'https://lh3.googleusercontent.com/d/1anmYgKnbVeBJlcjnkovKZlYJ9618wmZH'
-    },
-    {
-      title: 'Lunchpad Participant',
-      organization: 'UIHP @ UIU',
-      year: '2024',
-      description:
-        'Participated in the Lunchpad program at United International University, focusing on innovation and entrepreneurship.',
-      certificate: 'https://lh3.googleusercontent.com/d/1BgsKdQkcZ9OPyQhOEJAFvNEYBCcl0TxY'
-    },
-    {
-      title: 'Chief Executive',
-      organization: 'Student Organization',
-      year: '2023 - 2024',
-      description:
-        'Served as the Chief Executive, managing operations and leading a diverse team of volunteers.',
-      certificate: 'https://lh3.googleusercontent.com/d/1bBeOoExDg6oSOEZQOoNTuw3FHVTHCPDQ'
-    },
-    {
-      title: 'Scout Camp',
-      organization: 'National Scout Group',
-      year: '2023',
-      description:
-        'Participated in a national-level scout camp, focusing on leadership and survival skills.',
-      certificate: 'https://lh3.googleusercontent.com/d/1748wF_IvXnB6ZIUEMmJIRNZoiTkPd5E2'
-    },
-    {
-      title: 'Project Humanity',
-      organization: 'Social Welfare Initiative',
-      year: '2023',
-      description:
-        'Contributing to various social welfare activities and community support programs.',
-      certificate: 'https://lh3.googleusercontent.com/d/1XgHxzeuy80bNG_bxfTZ9hx1EiSlqugsg'
-    },
-    {
-      title: 'Corporate Etiquette Course',
-      organization: 'Professional Development Program',
-      year: '2023',
-      description:
-        'Completed a comprehensive course on professional behavior, communication, and workplace ethics.',
-      certificate: 'https://lh3.googleusercontent.com/d/1ZyAxDDf93SG4mxQdHtpFY4Pg0rF6jghf'
-    },
-    {
-      title: 'Youth Empowerment Workshop',
-      organization: 'Global Youth Forum',
-      year: '2022',
-      description:
-        'Participated in a workshop dedicated to empowering young leaders and fostering social change.',
-      certificate: 'https://lh3.googleusercontent.com/d/1_2Cbgcvs07wH8jyGBDX5ZB7Fpuu-jLRI'
-    },
-    {
-      title: 'Digital Literacy Course',
-      organization: 'Online Certification',
-      year: '2022',
-      description:
-        'Successfully completed a course focusing on essential digital skills and online safety.',
-      certificate: 'https://lh3.googleusercontent.com/d/1IZ-OD_VcKRfW-c8KPVb9QT2NIWFA0xRq'
-    }
-  ];
-
-  const PROJECTS = [
-    {
-      title: 'Banking Transaction Management System',
-      date: 'December 2025',
-      description:
-        'A secure and efficient system for managing bank transactions, account balances, and financial records with data-driven insights.',
-      image:
-        'https://images.unsplash.com/photo-1563986768609-322da13575f3?auto=format&fit=crop&q=80&w=1200&h=800',
-      tech: ['C', 'File Handling', 'Data Management'],
-      link: '',
-      github: 'https://github.com/mehediabid17-lgtm/Banking_Transaction_Management_System'
-    },
-    {
-      title: 'Agrapathik Social Organization Website',
-      date: 'In Progress',
-      description:
-        'A dedicated platform for Agrapaathik to showcase community impact, manage volunteer activities, and organize social events.',
-      image: 'https://lh3.googleusercontent.com/d/1MqUXwywXZ9ng9I9KxFZozTQB8OuVeoVS',
-      tech: ['React', 'Tailwind CSS', 'Firebase', 'Motion'],
-      link: '#',
-      github: '#'
-    },
-    {
-      title: 'Personal Portfolio Website',
-      date: 'January 2026 – Updating',
-      description:
-        'A modern, responsive portfolio website built to highlight my expertise in Data Science, Machine Learning, and Software Engineering.',
-      image: 'https://lh3.googleusercontent.com/d/1Ndola8V3NBqVVnb0o3vo7pQCcPuA8ol9',
-      tech: ['React', 'TypeScript', 'Tailwind CSS', 'Motion'],
-      link: 'https://portfolio-of-abid.vercel.app/',
-      github: 'https://github.com/mehediabid17-lgtm/Portfolio-Of-Abid'
-    }
-  ];
-
-  const SKILL_CATEGORIES = [
-    {
-      title: 'Data Science',
-      icon: ICONS.code2,
-      skills: [
-        { name: 'Python (Pandas, NumPy)', level: 90 },
-        { name: 'SQL & Database Design', level: 85 },
-        { name: 'Statistical Modeling', level: 80 },
-        { name: 'Data Visualization', level: 85 }
-      ]
-    },
-    {
-      title: 'Machine Learning',
-      icon: ICONS.brain,
-      skills: [
-        { name: 'Scikit-Learn', level: 85 },
-        { name: 'Neural Networks', level: 75 },
-        { name: 'Predictive Analytics', level: 80 },
-        { name: 'Deep Learning', level: 70 }
-      ]
-    },
-    {
-      title: 'Software Engineering',
-      icon: ICONS.terminal,
-      skills: [
-        { name: 'C Programming', level: 86 },
-        { name: 'React & TypeScript', level: 85 },
-        { name: 'System Architecture', level: 80 },
-        { name: 'API Development', level: 85 },
-        { name: 'Git & Version Control', level: 90 }
-      ]
-    },
-    {
-      title: 'Soft Skills',
-      icon: ICONS.users,
-      skills: [
-        { name: 'Leadership (CEO & Founder)', level: 95 },
-        { name: 'Event Management', level: 90 },
-        { name: 'Public Speaking', level: 85 },
-        { name: 'Team Collaboration', level: 92 },
-        { name: 'Strategic Planning', level: 88 }
-      ]
-    }
-  ];
-
-  const TYPEWRITER_WORDS = [
-    'Software Engineering Student',
-    'ML Enthusiast',
-    'Problem Solver',
-    'Data Science Enthusiast'
-  ];
+  const TYPEWRITER_WORDS = PROFILE.typewriterWords;
 
   // --------------------------------------------------------------------------
   // State & DOM References
@@ -468,9 +91,14 @@
   const certModalCloseIcon = document.getElementById('cert-modal-close-icon');
   const certModalCloseBtn = document.getElementById('cert-modal-close-btn');
 
+  const CUSTOM_MILESTONES = Array.isArray(portfolioData.customMilestones)
+    ? [...portfolioData.customMilestones]
+    : [];
+
   let isMobileMenuOpen = false;
   let currentPath = '/';
   let currentTheme = 'night';
+  let updatesFilter = 'all';
   let typewriterTimer = null;
   let revealObserver = null;
 
@@ -694,6 +322,325 @@
       </section>
     `;
   }
+
+  const TIMELINE_MONTHS = {
+    january: 0,
+    jan: 0,
+    february: 1,
+    feb: 1,
+    march: 2,
+    mar: 2,
+    april: 3,
+    apr: 3,
+    may: 4,
+    june: 5,
+    jun: 5,
+    july: 6,
+    jul: 6,
+    august: 7,
+    aug: 7,
+    september: 8,
+    sep: 8,
+    sept: 8,
+    october: 9,
+    oct: 9,
+    november: 10,
+    nov: 10,
+    december: 11,
+    dec: 11
+  };
+
+  function parseMilestoneSortScore(dateStr, updatedAt, priorityOffset = 0) {
+    const text = String(dateStr || '').trim();
+    const lower = text.toLowerCase();
+
+    const yearMatches = text.match(/\b(20\d{2})\b/g);
+    const maxYear = yearMatches ? Math.max(...yearMatches.map((y) => Number(y))) : null;
+
+    let month = null;
+    for (const [name, idx] of Object.entries(TIMELINE_MONTHS)) {
+      if (new RegExp(`\\b${name}\\b`, 'i').test(lower)) {
+        month = idx;
+        break;
+      }
+    }
+
+    const isOngoing = /\b(present|updating|in progress|running|ongoing)\b/i.test(lower);
+    const isRange = /20\d{2}\s*-\s*20\d{2}/.test(lower);
+
+    let derivedUtc = 0;
+    if (maxYear !== null) {
+      let resolvedMonth = month !== null ? month : 5;
+      let dayBias = 15;
+      if (isOngoing) {
+        dayBias = 28;
+        resolvedMonth = month !== null ? Math.min(10, Math.max(month + 8, 9)) : 8;
+      } else if (isRange && maxYear === 2026 && month === null) {
+        resolvedMonth = 1;
+      }
+      derivedUtc = Date.UTC(maxYear, resolvedMonth, dayBias);
+    } else if (isOngoing) {
+      derivedUtc = Date.UTC(2026, 10, 16);
+    }
+
+    let finalUtc = derivedUtc;
+    if (updatedAt) {
+      const parsed = Date.parse(updatedAt);
+      if (!Number.isNaN(parsed)) {
+        finalUtc = Math.max(derivedUtc, parsed);
+      }
+    }
+
+    return finalUtc * 1000 + priorityOffset;
+  }
+
+  function getLatestUpdatesFeed(limit = 10) {
+    const projectItems = PROJECTS.map((item, idx) => ({
+      id: `project-${idx}`,
+      category: 'Project',
+      categoryRoute: '/projects',
+      categoryLabel: 'Projects',
+      title: item.title,
+      subtitle: item.tech.join(' · '),
+      dateLabel: item.date || 'Project',
+      description: item.description,
+      liveUrl: item.link && item.link !== '#' ? item.link : '',
+      githubUrl: item.github && item.github !== '#' ? item.github : '',
+      certUrl: '',
+      sortScore: parseMilestoneSortScore(item.date, item.updatedAt, 900 - idx)
+    })).sort((a, b) => b.sortScore - a.sortScore);
+
+    const experienceItems = EXPERIENCE.map((item, idx) => ({
+      id: `exp-${idx}`,
+      category: 'Experience',
+      categoryRoute: '/experience',
+      categoryLabel: 'Experience',
+      title: item.role,
+      subtitle: item.company,
+      dateLabel: item.duration,
+      description: item.description,
+      liveUrl: '',
+      githubUrl: '',
+      certUrl: item.certificate || '',
+      sortScore: parseMilestoneSortScore(item.duration, item.updatedAt, 850 - idx)
+    })).sort((a, b) => b.sortScore - a.sortScore);
+
+    const certificateItems = CO_CURRICULAR.map((item, idx) => ({
+      id: `cert-${idx}`,
+      category: 'Certificate',
+      categoryRoute: '/certificates',
+      categoryLabel: 'Certificates',
+      title: item.title,
+      subtitle: item.organization,
+      dateLabel: item.year,
+      description: item.description,
+      liveUrl: '',
+      githubUrl: '',
+      certUrl: item.certificate || '',
+      sortScore: parseMilestoneSortScore(item.year, item.updatedAt, 800 - idx)
+    })).sort((a, b) => b.sortScore - a.sortScore);
+
+    const customItems = CUSTOM_MILESTONES.map((item, idx) => {
+      const cat = item.category || 'Milestone';
+      const routeMap = {
+        Project: '/projects',
+        Experience: '/experience',
+        Certificate: '/certificates'
+      };
+      const labelMap = {
+        Project: 'Projects',
+        Experience: 'Experience',
+        Certificate: 'Certificates'
+      };
+      return {
+        id: `custom-${idx}`,
+        category: cat,
+        categoryRoute: item.route || routeMap[cat] || '/',
+        categoryLabel: labelMap[cat] || 'Journey',
+        title: item.title,
+        subtitle: item.subtitle || 'Milestone Update',
+        dateLabel: item.date || 'New',
+        description: item.description || '',
+        liveUrl: item.liveUrl || '',
+        githubUrl: item.githubUrl || '',
+        certUrl: item.certUrl || '',
+        sortScore: parseMilestoneSortScore(item.date, item.updatedAt, 999 + (CUSTOM_MILESTONES.length - idx))
+      };
+    }).sort((a, b) => b.sortScore - a.sortScore);
+
+    // Ensure configured minimum key projects + balanced mix of work experiences & certificates + any custom milestones
+    const feedConfig = appConfig.updatesFeed || {};
+    const targetLimit = limit || feedConfig.limit || 10;
+    const minProjects = typeof feedConfig.minProjects === 'number' ? feedConfig.minProjects : 3;
+    const selectedProjects = projectItems.slice(0, minProjects);
+    const remainingSlots = Math.max(0, targetLimit - selectedProjects.length);
+
+    const pickedCustom = customItems.slice(0, remainingSlots);
+    const slotsAfterCustom = Math.max(0, remainingSlots - pickedCustom.length);
+
+    const minExp = typeof feedConfig.minExperiences === 'number' ? feedConfig.minExperiences : 3;
+    const minCert = typeof feedConfig.minCertificates === 'number' ? feedConfig.minCertificates : 3;
+    const minExpCount = Math.min(minExp, experienceItems.length, slotsAfterCustom);
+    const minCertCount = Math.min(minCert, certificateItems.length, Math.max(0, slotsAfterCustom - minExpCount));
+
+    const pickedExp = experienceItems.slice(0, minExpCount);
+    const pickedCert = certificateItems.slice(0, minCertCount);
+
+    const overflowPool = [
+      ...experienceItems.slice(minExpCount),
+      ...certificateItems.slice(minCertCount)
+    ].sort((a, b) => b.sortScore - a.sortScore);
+
+    const extraNeeded = Math.max(0, slotsAfterCustom - pickedExp.length - pickedCert.length);
+    const pickedExtra = overflowPool.slice(0, extraNeeded);
+
+    return [
+      ...pickedCustom,
+      ...selectedProjects,
+      ...pickedExp,
+      ...pickedCert,
+      ...pickedExtra
+    ]
+      .sort((a, b) => b.sortScore - a.sortScore)
+      .slice(0, targetLimit);
+  }
+
+  function renderHomeLatestUpdatesSection() {
+    const feed = getLatestUpdatesFeed(appConfig.updatesFeed?.limit || 10);
+    const counts = {
+      all: feed.length,
+      Project: feed.filter((item) => item.category === 'Project').length,
+      Experience: feed.filter((item) => item.category === 'Experience').length,
+      Certificate: feed.filter((item) => item.category === 'Certificate').length
+    };
+
+    const visibleItems =
+      updatesFilter === 'all'
+        ? feed
+        : feed.filter((item) => item.category === updatesFilter);
+
+    const filterButtons = [
+      { id: 'all', label: `All (${counts.all})` },
+      { id: 'Project', label: `Projects (${counts.Project})` },
+      { id: 'Experience', label: `Experience (${counts.Experience})` },
+      { id: 'Certificate', label: `Certificates (${counts.Certificate})` }
+    ];
+
+    return `
+      <section id="latest-updates-section" class="updates-section">
+        <div class="container-xl">
+          <div class="section-header-center updates-header">
+            <span class="updates-kicker">Timeline &amp; Activity</span>
+            <h2 class="page-title">Latest Updates: <span class="text-violet-500">News &amp; Milestones</span></h2>
+
+            <div class="updates-filters" role="group" aria-label="Filter latest updates">
+              ${filterButtons
+                .map(
+                  (btn) => `
+                <button
+                  type="button"
+                  class="updates-filter-btn${updatesFilter === btn.id ? ' active' : ''}"
+                  data-updates-filter="${btn.id}"
+                  aria-pressed="${updatesFilter === btn.id ? 'true' : 'false'}"
+                >
+                  ${escapeHtml(btn.label)}
+                </button>
+              `
+                )
+                .join('')}
+            </div>
+          </div>
+
+          <div class="updates-timeline">
+            ${visibleItems
+              .map((item, idx) => {
+                const nodeModifier =
+                  item.category === 'Project'
+                    ? 'is-project'
+                    : item.category === 'Experience'
+                    ? 'is-experience'
+                    : 'is-certificate';
+                const isNewestOverall = item.id === feed[0]?.id;
+
+                return `
+                  <article class="updates-item reveal-up" style="transition-delay: ${Math.min(idx * 35, 240)}ms">
+                    <div class="updates-rail-col" aria-hidden="true">
+                      <span class="updates-node ${nodeModifier}"></span>
+                    </div>
+
+                    <div class="warp-card updates-card">
+                      <div class="updates-meta">
+                        ${isNewestOverall ? '<span class="updates-latest-label">Latest</span><span class="updates-sep" aria-hidden="true">&middot;</span>' : ''}
+                        <span class="updates-meta-date">${escapeHtml(item.dateLabel)}</span>
+                        <span class="updates-sep" aria-hidden="true">&middot;</span>
+                        <span class="updates-meta-cat ${nodeModifier}">${escapeHtml(item.category)}</span>
+                        <span class="updates-sep" aria-hidden="true">&middot;</span>
+                        <span class="updates-meta-org">${escapeHtml(item.subtitle)}</span>
+                      </div>
+
+                      <h3 class="updates-card-title">${escapeHtml(item.title)}</h3>
+                      <p class="updates-card-desc">${escapeHtml(item.description)}</p>
+
+                      <div class="updates-card-actions">
+                        ${
+                          item.certUrl
+                            ? `<button type="button" class="updates-action-btn" data-cert-url="${escapeHtml(item.certUrl)}" data-cert-title="${escapeHtml(item.title)}">View Certificate ${ICONS.externalLink}</button>`
+                            : ''
+                        }
+                        ${
+                          item.liveUrl
+                            ? `<a href="${escapeHtml(item.liveUrl)}" target="_blank" rel="noopener noreferrer" class="updates-action-link">Live Demo ${ICONS.externalLink}</a>`
+                            : ''
+                        }
+                        ${
+                          item.githubUrl
+                            ? `<a href="${escapeHtml(item.githubUrl)}" target="_blank" rel="noopener noreferrer" class="updates-action-link updates-action-muted">Source ${ICONS.github}</a>`
+                            : ''
+                        }
+                        <a href="${escapeHtml(item.categoryRoute)}" data-route="${escapeHtml(item.categoryRoute)}" class="updates-action-route">
+                          Explore ${escapeHtml(item.categoryLabel)} ${ICONS.chevronRight}
+                        </a>
+                      </div>
+                    </div>
+                  </article>
+                `;
+              })
+              .join('')}
+          </div>
+        </div>
+      </section>
+    `;
+  }
+
+  function refreshLatestUpdatesSection(makeVisibleImmediately = false) {
+    const existing = document.getElementById('latest-updates-section');
+    if (!existing) return;
+    existing.outerHTML = renderHomeLatestUpdatesSection();
+    if (makeVisibleImmediately) {
+      document
+        .querySelectorAll('#latest-updates-section .reveal-up')
+        .forEach((el) => el.classList.add('is-visible'));
+    } else {
+      initObservers();
+    }
+  }
+
+  window.PortfolioUpdates = {
+    add(milestone) {
+      if (!milestone || !milestone.title) return getLatestUpdatesFeed(10);
+      CUSTOM_MILESTONES.unshift({
+        ...milestone,
+        updatedAt: milestone.updatedAt || new Date().toISOString()
+      });
+      if (currentPath === '/') {
+        refreshLatestUpdatesSection(true);
+      }
+      return getLatestUpdatesFeed(10);
+    },
+    getFeed() {
+      return getLatestUpdatesFeed(10);
+    }
+  };
 
   function renderHomeSkillsSection() {
     return `
@@ -1111,6 +1058,8 @@
           </div>
         </section>
 
+        ${renderHomeLatestUpdatesSection()}
+
         ${renderHomeSkillsSection()}
 
         ${renderHomeExploreJourney()}
@@ -1323,12 +1272,16 @@
 
 
   function renderContactPage() {
-    const socials = [
-      { icon: ICONS.github, href: 'https://github.com/mehediabid17-lgtm' },
-      { icon: ICONS.linkedin, href: 'https://www.linkedin.com/in/mehediabid/' },
-      { icon: ICONS.facebook, href: 'https://www.facebook.com/mehedihasan.abid' },
-      { icon: ICONS.messageCircle, href: 'https://wa.me/8801905032251' }
-    ];
+    const socialIconMap = {
+      github: ICONS.github,
+      linkedin: ICONS.linkedin,
+      facebook: ICONS.facebook,
+      whatsapp: ICONS.messageCircle
+    };
+    const socials = (PROFILE.socials || []).map((s) => ({
+      icon: socialIconMap[s.name] || ICONS.externalLink,
+      href: s.url
+    }));
 
     return `
       <div class="page-wrapper">
@@ -1696,17 +1649,10 @@
   }
 
   // --------------------------------------------------------------------------
-  // Dedicated Portfolio Assistant Chatbot
+  // Dedicated Portfolio Assistant Chatbot (Configured via config.json)
   // --------------------------------------------------------------------------
-  const CHATBOT_SUGGESTIONS = [
-    "What is Abid's education?",
-    'Tell me about his projects',
-    'What skills does he have?',
-    'How can I contact Abid?'
-  ];
-
-  const CHATBOT_WELCOME =
-    "Hi! I'm Abid's Portfolio Assistant. I answer questions strictly based on the information provided in this portfolio—ask me about his education, experience, certificates, skills, projects, or contact details.";
+  const CHATBOT_SUGGESTIONS = appConfig.chatbot.suggestions || [];
+  const CHATBOT_WELCOME = appConfig.chatbot.welcomeMessage || '';
 
   function formatChatbotReply(text) {
     let safe = escapeHtml(text);
@@ -1848,7 +1794,8 @@
       const text = rawText.trim();
       if (!text || isLoading) return;
 
-      const historyPayload = conversationHistory.slice(-10);
+      const maxHistory = appConfig.chatbot.maxHistoryMessages || 10;
+      const historyPayload = conversationHistory.slice(-maxHistory);
       uiMessages.push({ role: 'user', text, isError: false });
       input.value = '';
       setLoadingState(true);
@@ -1965,8 +1912,18 @@
       }
     });
 
-    // Delegate route link/card clicks and certificate modal clicks
+    // Delegate route link/card clicks, updates filter tabs, and certificate modal clicks
     document.addEventListener('click', (e) => {
+      const updatesFilterBtn = e.target.closest('[data-updates-filter]');
+      if (updatesFilterBtn) {
+        const nextFilter = updatesFilterBtn.getAttribute('data-updates-filter') || 'all';
+        if (nextFilter !== updatesFilter) {
+          updatesFilter = nextFilter;
+          refreshLatestUpdatesSection(true);
+        }
+        return;
+      }
+
       const routeTrigger = e.target.closest('[data-route]');
       if (routeTrigger) {
         if (routeTrigger.tagName === 'A' && (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey || e.button !== 0)) {
