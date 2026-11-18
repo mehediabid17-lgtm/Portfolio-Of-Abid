@@ -50,11 +50,6 @@ import appConfig from './config.json';
   const PROFILE = portfolioData.profile;
   const NAV_LINKS = portfolioData.navLinks;
 
-  const JOURNEY_PAGES = portfolioData.journeyPages.map((page) => ({
-    ...page,
-    icon: ICONS[page.iconKey] || ICONS.home
-  }));
-
   const EDUCATION = portfolioData.education;
   const EXPERIENCE = portfolioData.experience;
   const CO_CURRICULAR = portfolioData.certificates;
@@ -79,7 +74,7 @@ import appConfig from './config.json';
   const pageRoot = document.getElementById('page-root');
   const mouseGlow = document.getElementById('mouse-glow');
   const floatingPackets = document.getElementById('floating-packets');
-  const footerYear = document.getElementById('footer-year');
+  const footerConnect = document.getElementById('footer-connect');
 
   const certModal = document.getElementById('certificate-modal');
   const certModalCard = document.getElementById('cert-modal-card');
@@ -99,6 +94,19 @@ import appConfig from './config.json';
   let updatesFilter = 'all';
   let typewriterTimer = null;
   let revealObserver = null;
+  let lastNavbarScrolled = null;
+  const prefersReducedMotionQuery =
+    typeof window.matchMedia === 'function'
+      ? window.matchMedia('(prefers-reduced-motion: reduce)')
+      : null;
+  const isTouchOrMobileQuery =
+    typeof window.matchMedia === 'function'
+      ? window.matchMedia('(max-width: 767px), (hover: none)')
+      : null;
+  const hasFinePointerHoverQuery =
+    typeof window.matchMedia === 'function'
+      ? window.matchMedia('(hover: hover) and (pointer: fine)')
+      : null;
 
   // --------------------------------------------------------------------------
   // Helpers
@@ -174,6 +182,14 @@ import appConfig from './config.json';
   // --------------------------------------------------------------------------
   function initFloatingPackets() {
     if (!floatingPackets) return;
+    if (
+      (isTouchOrMobileQuery && isTouchOrMobileQuery.matches) ||
+      (prefersReducedMotionQuery && prefersReducedMotionQuery.matches)
+    ) {
+      floatingPackets.innerHTML = '';
+      return;
+    }
+
     let html = '';
 
     for (let i = 0; i < 5; i++) {
@@ -197,28 +213,57 @@ import appConfig from './config.json';
 
   function initMouseGlow() {
     if (!mouseGlow) return;
+    if (
+      !hasFinePointerHoverQuery ||
+      !hasFinePointerHoverQuery.matches ||
+      (prefersReducedMotionQuery && prefersReducedMotionQuery.matches)
+    ) {
+      return;
+    }
+
     let targetX = 0;
     let targetY = 0;
     let currentX = 0;
     let currentY = 0;
+    let hasMoved = false;
+    let rafId = null;
+
+    function tick() {
+      const dx = targetX - currentX;
+      const dy = targetY - currentY;
+
+      if (Math.abs(dx) < 0.3 && Math.abs(dy) < 0.3) {
+        currentX = targetX;
+        currentY = targetY;
+        mouseGlow.style.transform = `translate3d(${currentX - 300}px, ${currentY - 300}px, 0)`;
+        rafId = null;
+        return;
+      }
+
+      currentX += dx * 0.14;
+      currentY += dy * 0.14;
+      mouseGlow.style.transform = `translate3d(${currentX - 300}px, ${currentY - 300}px, 0)`;
+      rafId = window.requestAnimationFrame(tick);
+    }
 
     window.addEventListener(
       'mousemove',
       (e) => {
         targetX = e.clientX;
         targetY = e.clientY;
+        if (!hasMoved) {
+          hasMoved = true;
+          currentX = targetX;
+          currentY = targetY;
+          mouseGlow.style.transform = `translate3d(${currentX - 300}px, ${currentY - 300}px, 0)`;
+          return;
+        }
+        if (rafId === null) {
+          rafId = window.requestAnimationFrame(tick);
+        }
       },
       { passive: true }
     );
-
-    function tick() {
-      currentX += (targetX - currentX) * 0.1;
-      currentY += (targetY - currentY) * 0.1;
-      mouseGlow.style.transform = `translate3d(${currentX - 300}px, ${currentY - 300}px, 0)`;
-      window.requestAnimationFrame(tick);
-    }
-
-    window.requestAnimationFrame(tick);
   }
 
   // --------------------------------------------------------------------------
@@ -227,6 +272,8 @@ import appConfig from './config.json';
   function updateNavbarScrollState() {
     if (!navbar) return;
     const isScrolled = window.scrollY > 20 || currentPath !== '/';
+    if (isScrolled === lastNavbarScrolled) return;
+    lastNavbarScrolled = isScrolled;
     navbar.classList.toggle('scrolled', isScrolled);
   }
 
@@ -281,45 +328,8 @@ import appConfig from './config.json';
   }
 
   // --------------------------------------------------------------------------
-  // Shared ExploreJourney Section (for subpages) & Home Sections
+  // Home & Shared Page Sections
   // --------------------------------------------------------------------------
-  function renderExploreJourney() {
-    const displayPages = JOURNEY_PAGES.filter((page) => page.href !== currentPath);
-
-    return `
-      <section class="explore-section">
-        <div class="container-xl">
-          <div class="section-header-center">
-            <h2 class="explore-title">Explore My Journey</h2>
-            <p class="explore-sub">
-              Dive deeper into my academic background, professional experiences, and the projects I've built.
-            </p>
-          </div>
-
-          <div class="explore-grid">
-            ${displayPages
-              .map(
-                (item) => `
-              <div class="explore-card-wrap reveal-scale">
-                <a href="${item.href}" data-route="${item.href}" class="warp-card explore-card">
-                  <div class="explore-card-icon ${item.bgColor} ${item.textColor}">
-                    ${item.icon}
-                  </div>
-                  <h3 class="explore-card-title">
-                    ${escapeHtml(item.title)}
-                    <span class="explore-card-chevron">${ICONS.chevronRight}</span>
-                  </h3>
-                  <p class="explore-card-desc">${escapeHtml(item.desc)}</p>
-                </a>
-              </div>
-            `
-              )
-              .join('')}
-          </div>
-        </div>
-      </section>
-    `;
-  }
 
   const TIMELINE_MONTHS = {
     january: 0,
@@ -561,7 +571,7 @@ import appConfig from './config.json';
                 const isNewestOverall = item.id === feed[0]?.id;
 
                 return `
-                  <article class="updates-item reveal-up" style="transition-delay: ${Math.min(idx * 35, 240)}ms">
+                  <article class="updates-item reveal-up" style="transition-delay: ${Math.min(idx * 20, 80)}ms">
                     <div class="updates-rail-col" aria-hidden="true">
                       <span class="updates-node ${nodeModifier}"></span>
                     </div>
@@ -685,17 +695,74 @@ import appConfig from './config.json';
     `;
   }
 
-  function renderHomeExploreJourney() {
-    const featuredEducation =
-      EDUCATION.find((item) => item.degree.includes('Bachelor of Science (BSc) in Software Engineering')) ||
-      EDUCATION[0];
-    const featuredExperience =
-      EXPERIENCE.find((item) => item.role === 'Executive' && item.company.includes('DIU_SEC')) ||
-      EXPERIENCE[0];
+  function renderExploreJourney() {
     const featuredCertificate =
       CO_CURRICULAR.find((item) => item.title === 'Code Trap') || CO_CURRICULAR[0];
+    const certificatePreviews = [
+      featuredCertificate,
+      ...CO_CURRICULAR.filter((item) => item !== featuredCertificate).slice(0, 2)
+    ].filter(Boolean);
+
     const featuredProject =
       PROJECTS.find((item) => item.title === 'Agrapathik Social Organization Website') || PROJECTS[0];
+    const projectPreviews = [
+      featuredProject,
+      ...PROJECTS.filter((item) => item !== featuredProject).slice(0, 2)
+    ].filter(Boolean);
+
+    const envelopeCategories = [
+      {
+        name: 'Education',
+        href: '/education',
+        accent: 'violet',
+        icon: ICONS.bookOpen,
+        summary: `${EDUCATION.length} Academic Records · 2019–Present`,
+        previews: EDUCATION.slice(0, 3).map((item) => ({
+          title: item.degree,
+          meta: item.year,
+          sub: item.institution
+        }))
+      },
+      {
+        name: 'Experience',
+        href: '/experience',
+        accent: 'blue',
+        icon: ICONS.briefcase,
+        summary: `${EXPERIENCE.length} Roles · Leadership & Tech`,
+        previews: EXPERIENCE.slice(0, 3).map((item) => ({
+          title: item.role,
+          meta: item.duration,
+          sub: item.company,
+          image: item.certificate
+        }))
+      },
+      {
+        name: 'Certificates',
+        href: '/certificates',
+        accent: 'amber',
+        icon: ICONS.award,
+        summary: `${CO_CURRICULAR.length} Verified Credentials`,
+        previews: certificatePreviews.map((item) => ({
+          title: item.title,
+          meta: item.year,
+          sub: item.organization,
+          image: item.certificate
+        }))
+      },
+      {
+        name: 'Projects',
+        href: '/projects',
+        accent: 'emerald',
+        icon: ICONS.layers,
+        summary: `${PROJECTS.length} Builds · Code & Web`,
+        previews: projectPreviews.map((item) => ({
+          title: item.title,
+          meta: item.date || 'Featured',
+          sub: Array.isArray(item.tech) ? item.tech.slice(0, 3).join(' · ') : '',
+          image: item.image
+        }))
+      }
+    ];
 
     return `
       <section class="explore-section">
@@ -703,220 +770,118 @@ import appConfig from './config.json';
           <div class="section-header-center">
             <h2 class="explore-title">Explore My Journey</h2>
             <p class="explore-sub">
-              Dive deeper into my academic background, professional experiences, and the projects I've built.
+              Click any envelope to explore the full archive of my academic background, experiences, certificates, and builds.
             </p>
           </div>
 
-          <div class="journey-showcase-list">
-            <!-- 1. Education -->
-            <div class="journey-showcase-item reveal-up">
-              <div class="journey-item-header" data-route="/education" role="link" tabindex="0">
-                <div class="journey-item-icon bg-violet-soft text-violet-400">
-                  ${ICONS.bookOpen}
-                </div>
-                <h3 class="journey-item-label">Education</h3>
-              </div>
+          <div class="envelope-grid">
+            ${envelopeCategories
+              .map((cat) => {
+                // Reverse order in DOM so index 2 renders at the back/top and index 0 renders at the front/bottom
+                const stackedPreviews = [
+                  cat.previews[2] ? { ...cat.previews[2], tier: 'back' } : null,
+                  cat.previews[1] ? { ...cat.previews[1], tier: 'mid' } : null,
+                  cat.previews[0] ? { ...cat.previews[0], tier: 'front' } : null
+                ].filter(Boolean);
 
-              <div class="warp-card edu-card journey-card-interactive" data-route="/education" role="link" tabindex="0">
-                <div>
-                  <span class="item-year-violet">${escapeHtml(featuredEducation.year)}</span>
-                  <h4 class="item-title-3xl">${escapeHtml(featuredEducation.degree)}</h4>
-                  <p class="item-org-xl">${escapeHtml(featuredEducation.institution)}</p>
-                  <p class="item-desc-lg">${escapeHtml(featuredEducation.description)}</p>
-                </div>
-              </div>
+                return `
+              <a
+                href="${cat.href}"
+                data-route="${cat.href}"
+                class="envelope-card envelope-accent-${cat.accent} reveal-up"
+                aria-label="Check all the ${escapeHtml(cat.name)}"
+              >
+                <div class="envelope-stage">
+                  <div class="envelope-shell">
+                    <!-- Open Top Flap -->
+                    <div class="envelope-flap" aria-hidden="true">
+                      <svg class="envelope-flap-svg" viewBox="0 0 400 184" preserveAspectRatio="none">
+                        <path
+                          class="envelope-flap-fill"
+                          d="M 1 183 L 180 17 Q 200 2 220 17 L 399 183 Z"
+                          vector-effect="non-scaling-stroke"
+                        />
+                      </svg>
+                    </div>
 
-              <div class="explore-more-wrap">
-                <a href="/education" data-route="/education" class="explore-more-btn warp-glow">
-                  Explore more ${ICONS.chevronRight}
-                </a>
-              </div>
-            </div>
+                    <!-- Recessed Inner Envelope Cavity -->
+                    <div class="envelope-cavity" aria-hidden="true"></div>
 
-            <!-- 2. Experience -->
-            <div class="journey-showcase-item reveal-up">
-              <div class="journey-item-header" data-route="/experience" role="link" tabindex="0">
-                <div class="journey-item-icon bg-blue-soft text-blue-400">
-                  ${ICONS.briefcase}
-                </div>
-                <h3 class="journey-item-label">Experience</h3>
-              </div>
+                    <!-- Peeking Preview Items Inside Envelope -->
+                    <div class="envelope-sheets">
+                      ${stackedPreviews
+                        .map((preview) =>
+                          preview.image
+                            ? `
+                        <div class="envelope-sheet envelope-sheet--visual envelope-sheet--${preview.tier}">
+                          <div class="envelope-sheet-fallback">
+                            <span class="envelope-sheet-title">${escapeHtml(preview.title)}</span>
+                          </div>
+                          <img
+                            class="envelope-sheet-img"
+                            src="${escapeHtml(preview.image)}"
+                            alt="${escapeHtml(preview.title)}"
+                            referrerpolicy="no-referrer"
+                            loading="lazy"
+                            decoding="async"
+                            onerror="this.style.display='none'"
+                          />
+                          <div class="envelope-sheet-caption">
+                            <span class="envelope-sheet-caption-title">${escapeHtml(preview.title)}</span>
+                            <span class="envelope-sheet-caption-meta">${escapeHtml(preview.meta)}</span>
+                          </div>
+                        </div>
+                      `
+                            : `
+                        <div class="envelope-sheet envelope-sheet--${preview.tier}">
+                          <div class="envelope-sheet-row">
+                            <span class="envelope-sheet-title">${escapeHtml(preview.title)}</span>
+                            <span class="envelope-sheet-meta">${escapeHtml(preview.meta)}</span>
+                          </div>
+                          ${
+                            preview.tier === 'front' && preview.sub
+                              ? `<p class="envelope-sheet-sub">${escapeHtml(preview.sub)}</p>`
+                              : ''
+                          }
+                        </div>
+                      `
+                        )
+                        .join('')}
+                    </div>
 
-              <div class="warp-card exp-card journey-card-interactive" data-route="/experience" role="link" tabindex="0">
-                <div>
-                  <span class="item-year-blue">${escapeHtml(featuredExperience.duration)}</span>
-                  <h4 class="item-title-3xl">${escapeHtml(featuredExperience.role)}</h4>
-                  <p class="item-org-xl">${escapeHtml(featuredExperience.company)}</p>
-                  <p class="item-desc-lg">${escapeHtml(featuredExperience.description)}</p>
-                </div>
-                ${
-                  featuredExperience.certificate
-                    ? `
-                  <div>
-                    <div class="exp-cert-box">
-                      <img
-                        src="${escapeHtml(featuredExperience.certificate)}"
-                        alt="${escapeHtml(featuredExperience.role)} Certificate"
-                        referrerpolicy="no-referrer"
-                        loading="lazy"
-                        decoding="async"
-                      />
-                      <div class="exp-cert-overlay">
-                        <span class="exp-cert-pill">
-                          Explore Experience ${ICONS.chevronRight}
-                        </span>
+                    <!-- Front Envelope Pocket (Mail Cover) -->
+                    <div class="envelope-pocket">
+                      <svg class="envelope-pocket-svg" viewBox="0 0 400 190" preserveAspectRatio="none" aria-hidden="true">
+                        <path
+                          class="envelope-pocket-fill"
+                          d="M 1 1 L 186 33 Q 200 36 214 33 L 399 1 L 399 172 Q 399 189 382 189 L 18 189 Q 1 189 1 172 Z"
+                          vector-effect="non-scaling-stroke"
+                        />
+                        <path
+                          class="envelope-pocket-crease"
+                          d="M 1 2 L 154 114 M 399 2 L 246 114 M 14 188 L 154 114 Q 200 94 246 114 L 386 188"
+                          fill="none"
+                          vector-effect="non-scaling-stroke"
+                        />
+                      </svg>
+
+                      <div class="envelope-pocket-content">
+                        <div class="envelope-seal" aria-hidden="true">
+                          ${cat.icon}
+                        </div>
+                        <p class="envelope-meta-line">${escapeHtml(cat.summary)}</p>
+                        <div class="envelope-front-cta">
+                          <span class="envelope-front-label">Check all the ${escapeHtml(cat.name)}</span>
+                          <span class="envelope-front-arrow" aria-hidden="true">${ICONS.chevronRight}</span>
+                        </div>
                       </div>
                     </div>
                   </div>
-                `
-                    : ''
-                }
-              </div>
-
-              <div class="explore-more-wrap">
-                <a href="/experience" data-route="/experience" class="explore-more-btn warp-glow">
-                  Explore more ${ICONS.chevronRight}
-                </a>
-              </div>
-            </div>
-
-            <!-- 3. Certificates (Code Trap) -->
-            <div class="journey-showcase-item reveal-up">
-              <div class="journey-item-header" data-route="/certificates" role="link" tabindex="0">
-                <div class="journey-item-icon bg-amber-soft text-amber-400">
-                  ${ICONS.award}
                 </div>
-                <h3 class="journey-item-label">Certificates</h3>
-              </div>
-
-              <div class="warp-card exp-card journey-card-interactive" data-route="/certificates" role="link" tabindex="0">
-                <div>
-                  <span class="item-year-violet">${escapeHtml(featuredCertificate.year)}</span>
-                  <h4 class="item-title-3xl">${escapeHtml(featuredCertificate.title)}</h4>
-                  <p class="item-org-xl">${escapeHtml(featuredCertificate.organization)}</p>
-                  <p class="item-desc-lg">${escapeHtml(featuredCertificate.description)}</p>
-                </div>
-                <div>
-                  <div class="exp-cert-box">
-                    <img
-                      src="${escapeHtml(featuredCertificate.certificate)}"
-                      alt="${escapeHtml(featuredCertificate.title)} Certificate"
-                      referrerpolicy="no-referrer"
-                      loading="lazy"
-                      decoding="async"
-                    />
-                    <div class="cert-overlay">
-                      <span class="cert-pill warp-glow">
-                        Explore Certificates ${ICONS.chevronRight}
-                      </span>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              <div class="explore-more-wrap">
-                <a href="/certificates" data-route="/certificates" class="explore-more-btn warp-glow">
-                  Explore more ${ICONS.chevronRight}
-                </a>
-              </div>
-            </div>
-
-            <!-- 4. Projects (Agrapathik Social Organization Website) -->
-            <div class="journey-showcase-item reveal-up">
-              <div class="journey-item-header" data-route="/projects" role="link" tabindex="0">
-                <div class="journey-item-icon bg-emerald-soft text-emerald-400">
-                  ${ICONS.layers}
-                </div>
-                <h3 class="journey-item-label">Projects</h3>
-              </div>
-
-              <div class="warp-card journey-project-card journey-card-interactive" data-route="/projects" role="link" tabindex="0">
-                <div class="journey-project-thumb">
-                  <img
-                    src="${escapeHtml(featuredProject.image)}"
-                    alt="${escapeHtml(featuredProject.title)}"
-                    referrerpolicy="no-referrer"
-                    loading="lazy"
-                    decoding="async"
-                  />
-                </div>
-                <div>
-                  <div class="project-tech-list">
-                    ${featuredProject.tech
-                      .map((t) => `<span class="project-tech-tag">${escapeHtml(t)}</span>`)
-                      .join('')}
-                  </div>
-                  ${
-                    featuredProject.date
-                      ? `<span class="item-year-violet project-date">${escapeHtml(featuredProject.date)}</span>`
-                      : ''
-                  }
-                  <h4 class="item-title-3xl">${escapeHtml(featuredProject.title)}</h4>
-                  <p class="item-desc-lg">${escapeHtml(featuredProject.description)}</p>
-                </div>
-              </div>
-
-              <div class="explore-more-wrap">
-                <a href="/projects" data-route="/projects" class="explore-more-btn warp-glow">
-                  Explore more ${ICONS.chevronRight}
-                </a>
-              </div>
-            </div>
-
-            <!-- 5. Contact -->
-            <div class="journey-showcase-item reveal-up">
-              <div class="journey-item-header" data-route="/contact" role="link" tabindex="0">
-                <div class="journey-item-icon bg-indigo-soft text-indigo-400">
-                  ${ICONS.mail}
-                </div>
-                <h3 class="journey-item-label">Contact</h3>
-              </div>
-
-              <div class="warp-card journey-contact-card journey-card-interactive" data-route="/contact" role="link" tabindex="0">
-                <h4 class="item-title-3xl">Connect</h4>
-                <p class="item-desc-lg">
-                  I'm always open to new opportunities and collaborations. Feel free to reach out via any of the channels below.
-                </p>
-
-                <div class="journey-contact-channels">
-                  <div class="warp-card contact-channel-card violet">
-                    <div class="contact-channel-icon violet">
-                      ${ICONS.mail}
-                    </div>
-                    <div>
-                      <p class="contact-channel-label">Email</p>
-                      <p class="contact-channel-val">mehedihasanabid17@gmail.com</p>
-                    </div>
-                  </div>
-
-                  <div class="warp-card contact-channel-card blue">
-                    <div class="contact-channel-icon blue">
-                      ${ICONS.mapPin}
-                    </div>
-                    <div>
-                      <p class="contact-channel-label">Location</p>
-                      <p class="contact-channel-val">Uttara Sector 6, Dhaka-1230, Bangladesh</p>
-                    </div>
-                  </div>
-
-                  <div class="warp-card contact-channel-card emerald">
-                    <div class="contact-channel-icon emerald">
-                      ${ICONS.phone}
-                    </div>
-                    <div>
-                      <p class="contact-channel-label">Phone</p>
-                      <p class="contact-channel-val">01905032251</p>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              <div class="explore-more-wrap">
-                <a href="/contact" data-route="/contact" class="explore-more-btn warp-glow">
-                  Explore more ${ICONS.chevronRight}
-                </a>
-              </div>
-            </div>
+              </a>
+            `;
+              })
+              .join('')}
           </div>
         </div>
       </section>
@@ -968,6 +933,7 @@ import appConfig from './config.json';
                     src="${escapeHtml(PROFILE.heroImage || '/assets/aistudio/abid_final_1530903f.png')}"
                     alt="Mehedi Hasan Abid"
                     loading="eager"
+                    fetchpriority="high"
                     decoding="async"
                   />
                 </div>
@@ -1059,7 +1025,7 @@ import appConfig from './config.json';
 
         ${renderHomeSkillsSection()}
 
-        ${renderHomeExploreJourney()}
+        ${renderExploreJourney()}
       </div>
     `;
   }
@@ -1427,6 +1393,11 @@ import appConfig from './config.json';
     let isDeleting = false;
 
     function step() {
+      if (document.hidden) {
+        typewriterTimer = window.setTimeout(step, 500);
+        return;
+      }
+
       const currentEl = document.getElementById('typewriter-text');
       if (!currentEl) return;
 
@@ -1495,7 +1466,7 @@ import appConfig from './config.json';
           observer.unobserve(el);
         });
       },
-      { threshold: 0.05, rootMargin: '0px 0px -30px 0px' }
+      { threshold: 0.01, rootMargin: '100px 0px 100px 0px' }
     );
 
     revealElements.forEach((el) => revealObserver.observe(el));
@@ -1513,6 +1484,11 @@ import appConfig from './config.json';
     certModalImg.classList.add('is-loading');
     certModalImg.alt = title || 'Certificate';
     certModalImg.src = url;
+
+    if (certModalImg.complete && certModalImg.naturalWidth > 0) {
+      certModalLoader.classList.add('hidden');
+      certModalImg.classList.remove('is-loading');
+    }
 
     certModal.classList.add('open');
     certModal.setAttribute('aria-hidden', 'false');
@@ -1637,6 +1613,14 @@ import appConfig from './config.json';
     }
   }
 
+  function scrollToPageTopInstant() {
+    try {
+      window.scrollTo({ top: 0, left: 0, behavior: 'instant' });
+    } catch (_) {
+      window.scrollTo(0, 0);
+    }
+  }
+
   function navigateTo(targetPath, pushHistory = true) {
     const nextPath = normalizePath(targetPath);
     if (isMobileMenuOpen) {
@@ -1652,18 +1636,80 @@ import appConfig from './config.json';
     }
 
     currentPath = nextPath;
-    window.scrollTo(0, 0);
+    scrollToPageTopInstant();
     renderCurrentPage();
   }
 
   // --------------------------------------------------------------------------
   // Global Event Delegation & Bootstrap
   // --------------------------------------------------------------------------
-  function init() {
-    if (footerYear) {
-      footerYear.textContent = String(new Date().getFullYear());
-    }
+  function renderFooterConnect() {
+    if (!footerConnect) return;
 
+    const phone = String(PROFILE.phone || '').trim();
+    const phoneHref = `tel:${phone.replace(/[^+\d]/g, '')}`;
+    const email = String(PROFILE.email || '').trim();
+    const footerSocialConfigs = [
+      { key: 'facebook', label: 'Facebook', icon: ICONS.facebook },
+      { key: 'linkedin', label: 'LinkedIn', icon: ICONS.linkedin },
+      { key: 'whatsapp', label: 'WhatsApp', icon: ICONS.messageCircle }
+    ];
+
+    const socialLinks = footerSocialConfigs
+      .map((cfg) => {
+        const match = (PROFILE.socials || []).find((s) => s.name === cfg.key);
+        return match ? { ...cfg, url: match.url } : null;
+      })
+      .filter(Boolean);
+
+    footerConnect.innerHTML = `
+      ${
+        phone
+          ? `<a href="${escapeHtml(phoneHref)}" class="footer-phone-link" aria-label="Call ${escapeHtml(phone)}">
+              ${ICONS.phone}
+              <span>${escapeHtml(phone)}</span>
+            </a>`
+          : ''
+      }
+      <div class="footer-socials" aria-label="Social and email links">
+        ${socialLinks
+          .map(
+            (social) => `
+          <a
+            href="${escapeHtml(social.url)}"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="footer-social-btn"
+            aria-label="${escapeHtml(social.label)}"
+            title="${escapeHtml(social.label)}"
+          >
+            ${social.icon}
+          </a>
+        `
+          )
+          .join('')}
+        ${
+          email
+            ? `<a
+                href="mailto:${escapeHtml(email)}"
+                class="footer-social-btn"
+                aria-label="Email ${escapeHtml(email)}"
+                title="${escapeHtml(email)}"
+              >
+                ${ICONS.mail}
+              </a>`
+            : ''
+        }
+      </div>
+      <a href="/contact" data-route="/contact" class="footer-contact-btn">
+        ${ICONS.mail}
+        <span>Contact</span>
+      </a>
+    `;
+  }
+
+  function init() {
+    renderFooterConnect();
     initTheme();
     initFloatingPackets();
     initMouseGlow();
@@ -1680,7 +1726,7 @@ import appConfig from './config.json';
     window.addEventListener('popstate', () => {
       currentPath = getInitialPath();
       isMobileMenuOpen = false;
-      window.scrollTo(0, 0);
+      scrollToPageTopInstant();
       renderCurrentPage();
     });
 
@@ -1688,7 +1734,7 @@ import appConfig from './config.json';
       if (window.location.protocol === 'file:') {
         currentPath = getInitialPath();
         isMobileMenuOpen = false;
-        window.scrollTo(0, 0);
+        scrollToPageTopInstant();
         renderCurrentPage();
       }
     });
