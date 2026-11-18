@@ -95,6 +95,7 @@ import appConfig from './config.json';
   let typewriterTimer = null;
   let revealObserver = null;
   let lastNavbarScrolled = null;
+  let scrollTickPending = false;
   const prefersReducedMotionQuery =
     typeof window.matchMedia === 'function'
       ? window.matchMedia('(prefers-reduced-motion: reduce)')
@@ -679,7 +680,7 @@ import appConfig from './config.json';
                         <span class="skill-pct">${skill.level}%</span>
                       </div>
                       <div class="skill-track">
-                        <div class="skill-bar" data-level="${skill.level}"></div>
+                        <div class="skill-bar" style="width: ${skill.level}%" data-level="${skill.level}"></div>
                       </div>
                     </div>
                   `
@@ -1446,9 +1447,7 @@ import appConfig from './config.json';
 
     if (!('IntersectionObserver' in window)) {
       revealElements.forEach((el) => el.classList.add('is-visible'));
-      skillBars.forEach((bar) => {
-        bar.style.width = `${bar.getAttribute('data-level') || 0}%`;
-      });
+      skillBars.forEach((bar) => bar.classList.add('is-visible'));
       return;
     }
 
@@ -1457,12 +1456,7 @@ import appConfig from './config.json';
         entries.forEach((entry) => {
           if (!entry.isIntersecting) return;
           const el = entry.target;
-
-          if (el.classList.contains('skill-bar')) {
-            el.style.width = `${el.getAttribute('data-level') || 0}%`;
-          } else {
-            el.classList.add('is-visible');
-          }
+          el.classList.add('is-visible');
           observer.unobserve(el);
         });
       },
@@ -1721,7 +1715,18 @@ import appConfig from './config.json';
       });
     }
 
-    window.addEventListener('scroll', updateNavbarScrollState, { passive: true });
+    window.addEventListener(
+      'scroll',
+      () => {
+        if (scrollTickPending) return;
+        scrollTickPending = true;
+        window.requestAnimationFrame(() => {
+          scrollTickPending = false;
+          updateNavbarScrollState();
+        });
+      },
+      { passive: true }
+    );
 
     window.addEventListener('popstate', () => {
       currentPath = getInitialPath();

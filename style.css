@@ -92,6 +92,7 @@ img, svg {
   background-color: var(--color-bg-dark);
   color: #cbd5e1;
   position: relative;
+  overflow-x: clip;
 }
 
 .content-layer {
@@ -110,10 +111,11 @@ img, svg {
 /* Cards & Effects */
 .warp-card {
   background-color: rgba(255, 255, 255, 0.03);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
   border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: 1.5rem;
+  contain: layout style;
   transition:
     transform 0.35s cubic-bezier(0.4, 0, 0.2, 1),
     background-color 0.3s ease,
@@ -192,6 +194,7 @@ img, svg {
   opacity: 0.055;
   filter: grayscale(100%) contrast(1.4) invert(1);
   mix-blend-mode: screen;
+  transform: translateZ(0);
   user-select: none;
   -webkit-user-drag: none;
 }
@@ -200,6 +203,7 @@ img, svg {
   position: absolute;
   inset: 0;
   opacity: 0.2;
+  transform: translateZ(0);
 }
 
 .beam-h {
@@ -242,6 +246,7 @@ img, svg {
   width: 500px;
   height: 500px;
   border-radius: 9999px;
+  transform: translateZ(0);
 }
 
 .bg-blob-1 {
@@ -548,35 +553,39 @@ img, svg {
 }
 
 .reveal-up {
-  opacity: 0;
-  transform: translateY(24px);
   transition: opacity 0.55s ease, transform 0.55s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
-.reveal-left {
+.reveal-up:not(.is-visible) {
   opacity: 0;
-  transform: translateX(-40px);
+  transform: translate3d(0, 24px, 0);
+}
+
+.reveal-left {
   transition: opacity 0.6s ease, transform 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.reveal-left:not(.is-visible) {
+  opacity: 0;
+  transform: translate3d(-40px, 0, 0);
 }
 
 .reveal-right {
-  opacity: 0;
-  transform: translateX(40px);
   transition: opacity 0.6s ease, transform 0.6s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
-.reveal-scale {
+.reveal-right:not(.is-visible) {
   opacity: 0;
-  transform: scale(0.95);
+  transform: translate3d(40px, 0, 0);
+}
+
+.reveal-scale {
   transition: opacity 0.45s ease, transform 0.45s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
-.reveal-up.is-visible,
-.reveal-left.is-visible,
-.reveal-right.is-visible,
-.reveal-scale.is-visible {
-  opacity: 1;
-  transform: none;
+.reveal-scale:not(.is-visible) {
+  opacity: 0;
+  transform: scale3d(0.95, 0.95, 1);
 }
 
 /* Home Hero */
@@ -2014,9 +2023,14 @@ img, svg {
 
 .skill-bar {
   height: 100%;
-  width: 0%;
   background: linear-gradient(to right, #7c3aed, #2563eb);
-  transition: width 0.8s cubic-bezier(0.22, 1, 0.36, 1) 0.15s;
+  transform-origin: left center;
+  transform: scaleX(0);
+  transition: transform 0.8s cubic-bezier(0.22, 1, 0.36, 1) 0.15s;
+}
+
+.skill-bar.is-visible {
+  transform: scaleX(1);
 }
 
 /* Contact */
@@ -2712,44 +2726,44 @@ img, svg {
 @keyframes pageEnter {
   from {
     opacity: 0;
-    transform: translateY(10px);
+    transform: translate3d(0, 10px, 0);
   }
   to {
     opacity: 1;
-    transform: translateY(0);
+    transform: translate3d(0, 0, 0);
   }
 }
 
 @keyframes slideInLeft {
   from {
     opacity: 0;
-    transform: translateX(-20px);
+    transform: translate3d(-20px, 0, 0);
   }
   to {
     opacity: 1;
-    transform: translateX(0);
+    transform: translate3d(0, 0, 0);
   }
 }
 
 @keyframes heroFadeUp {
   from {
     opacity: 0;
-    transform: translateY(20px);
+    transform: translate3d(0, 20px, 0);
   }
   to {
     opacity: 1;
-    transform: translateY(0);
+    transform: translate3d(0, 0, 0);
   }
 }
 
 @keyframes heroImageEnter {
   from {
     opacity: 0;
-    transform: scale(0.8);
+    transform: scale3d(0.8, 0.8, 1);
   }
   to {
     opacity: 1;
-    transform: scale(1);
+    transform: scale3d(1, 1, 1);
   }
 }
 
@@ -2759,18 +2773,18 @@ img, svg {
 }
 
 @keyframes floatUpDown {
-  0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(-15px); }
+  0%, 100% { transform: translate3d(0, 0, 0); }
+  50% { transform: translate3d(0, -15px, 0); }
 }
 
 @keyframes floatDownUp {
-  0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(15px); }
+  0%, 100% { transform: translate3d(0, 0, 0); }
+  50% { transform: translate3d(0, 15px, 0); }
 }
 
 @keyframes arrowBounce {
-  0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(10px); }
+  0%, 100% { transform: translate3d(0, 0, 0); }
+  50% { transform: translate3d(0, 10px, 0); }
 }
 
 @keyframes pulseOpacity {
@@ -3719,13 +3733,32 @@ img, svg {
   }
 
   .reveal-up,
+  .reveal-up:not(.is-visible),
   .reveal-left,
+  .reveal-left:not(.is-visible),
   .reveal-right,
-  .reveal-scale {
+  .reveal-right:not(.is-visible),
+  .reveal-scale,
+  .reveal-scale:not(.is-visible) {
     opacity: 1;
     transform: none;
     transition: none;
   }
+
+  .skill-bar {
+    transform: scaleX(1);
+    transition: none;
+  }
+}
+
+.about-section,
+.vision-section,
+.updates-section,
+.home-skills-section,
+.explore-section,
+.page-section,
+.footer {
+  contain: layout style;
 }
 
 
