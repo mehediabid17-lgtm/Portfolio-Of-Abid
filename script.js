@@ -942,12 +942,12 @@ import appConfig from './config.json';
                 <div class="hero-image-card">
                   <picture>
                     <source
-                      srcset="/assets/aistudio/abid_final_1530903f_640.webp 640w, /assets/aistudio/abid_final_1530903f.webp 1200w"
+                      srcset="/images/hero-abid-640.webp 640w, /images/hero-abid.webp 1200w"
                       sizes="(max-width: 767px) 88vw, 512px"
                       type="image/webp"
                     />
                     <img
-                      src="${escapeHtml(PROFILE.heroImage || '/assets/aistudio/abid_final_1530903f.png')}"
+                      src="${escapeHtml(PROFILE.heroImage || '/images/hero-abid.png')}"
                       alt="Mehedi Hasan Abid"
                       width="1536"
                       height="1024"

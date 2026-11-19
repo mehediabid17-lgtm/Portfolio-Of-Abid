@@ -6,7 +6,7 @@
     "badge": "Software Engineering & Data Science",
     "focus": "Machine Learning & Analytics",
     "educationSummary": "Data Science & SWE Student",
-    "heroImage": "/assets/aistudio/abid_final_1530903f.png",
+    "heroImage": "/images/hero-abid.png",
     "cvUrl": "https://drive.google.com/file/d/1av2uOGhOnMayS2xQPic2vAB0hcpmdG3h/view?usp=sharing",
     "email": "mehedihasanabid17@gmail.com",
     "location": "Uttara Sector 6, Dhaka-1230, Bangladesh",
@@ -321,7 +321,7 @@
       "title": "Banking Transaction Management System",
       "date": "December 2025",
       "description": "A secure and efficient system for managing bank transactions, account balances, and financial records with data-driven insights.",
-      "image": "/assets/aistudio/bank_0-1_ce9cef13.webp",
+      "image": "/images/banking-system.webp",
       "tech": ["C", "File Handling", "Data Management"],
       "link": "",
       "github": "https://github.com/mehediabid17-lgtm/Banking_Transaction_Management_System"
