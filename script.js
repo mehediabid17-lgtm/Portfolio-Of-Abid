@@ -6,6 +6,7 @@ import appConfig from './config.json';
 
 (function () {
   'use strict';
+  window.__PORTFOLIO_BOOTING__ = true;
 
   // --------------------------------------------------------------------------
   // Lucide-compatible SVG Icons
@@ -41,8 +42,7 @@ import appConfig from './config.json';
     send: `<svg ${svgAttr}><path d="M14.536 21.686a.5.5 0 0 0 .937-.024l6.5-19a.496.496 0 0 0-.635-.635l-19 6.5a.5.5 0 0 0-.024.937l7.93 3.18a2 2 0 0 1 1.112 1.11z"/><path d="m21.854 2.147-10.94 10.939"/></svg>`,
     loader2: `<svg ${svgAttr}><path d="M21 12a9 9 0 1 1-6.219-8.56"/></svg>`,
     sun: `<svg ${svgAttr}><circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="m17.66 17.66 1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="m6.34 17.66-1.41 1.41"/><path d="m19.07 4.93-1.41 1.41"/></svg>`,
-    moon: `<svg ${svgAttr}><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/></svg>`,
-    refreshCw: `<svg ${svgAttr}><path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"/><path d="M21 3v5h-5"/><path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"/><path d="M8 16H3v5"/></svg>`
+    moon: `<svg ${svgAttr}><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/></svg>`
   };
 
   // --------------------------------------------------------------------------
@@ -142,6 +142,11 @@ import appConfig from './config.json';
   function applyTheme(theme) {
     currentTheme = theme === 'day' ? 'day' : 'night';
     document.documentElement.setAttribute('data-theme', currentTheme);
+
+    const themeMeta = document.getElementById('theme-color-meta');
+    if (themeMeta) {
+      themeMeta.setAttribute('content', currentTheme === 'day' ? '#f8fafc' : '#0b0e14');
+    }
 
     try {
       window.localStorage.setItem('portfolio-theme', currentTheme);
@@ -279,6 +284,17 @@ import appConfig from './config.json';
     navbar.classList.toggle('scrolled', isScrolled);
   }
 
+  function updateMobileMenuDom() {
+    if (mobileMenuToggle) {
+      mobileMenuToggle.innerHTML = isMobileMenuOpen ? ICONS.x : ICONS.menu;
+      mobileMenuToggle.setAttribute('aria-expanded', String(isMobileMenuOpen));
+    }
+
+    if (mobileMenu) {
+      mobileMenu.classList.toggle('open', isMobileMenuOpen);
+    }
+  }
+
   function renderNavbar() {
     if (desktopNavLinks) {
       desktopNavLinks.innerHTML = NAV_LINKS.map((link) => {
@@ -314,19 +330,12 @@ import appConfig from './config.json';
         `;
     }
 
-    if (mobileMenuToggle) {
-      mobileMenuToggle.innerHTML = isMobileMenuOpen ? ICONS.x : ICONS.menu;
-      mobileMenuToggle.setAttribute('aria-expanded', String(isMobileMenuOpen));
-    }
-
-    if (mobileMenu) {
-      mobileMenu.classList.toggle('open', isMobileMenuOpen);
-    }
+    updateMobileMenuDom();
   }
 
   function setMobileMenu(open) {
-    isMobileMenuOpen = open;
-    renderNavbar();
+    isMobileMenuOpen = Boolean(open);
+    updateMobileMenuDom();
   }
 
   // --------------------------------------------------------------------------
@@ -764,7 +773,7 @@ import appConfig from './config.json';
           image: item.image
         }))
       }
-    ];
+    ].filter((cat) => normalizePath(cat.href) !== normalizePath(currentPath));
 
     return `
       <section class="explore-section">
@@ -931,13 +940,22 @@ import appConfig from './config.json';
               <div class="hero-image-frame-wrap">
                 <div class="hero-image-pulse"></div>
                 <div class="hero-image-card">
-                  <img
-                    src="${escapeHtml(PROFILE.heroImage || '/assets/aistudio/abid_final_1530903f.png')}"
-                    alt="Mehedi Hasan Abid"
-                    loading="eager"
-                    fetchpriority="high"
-                    decoding="async"
-                  />
+                  <picture>
+                    <source
+                      srcset="/assets/aistudio/abid_final_1530903f_640.webp 640w, /assets/aistudio/abid_final_1530903f.webp 1200w"
+                      sizes="(max-width: 767px) 88vw, 512px"
+                      type="image/webp"
+                    />
+                    <img
+                      src="${escapeHtml(PROFILE.heroImage || '/assets/aistudio/abid_final_1530903f.png')}"
+                      alt="Mehedi Hasan Abid"
+                      width="1536"
+                      height="1024"
+                      loading="eager"
+                      fetchpriority="high"
+                      decoding="async"
+                    />
+                  </picture>
                 </div>
                 <div class="hero-deco-tr"></div>
                 <div class="hero-deco-bl"></div>
@@ -960,8 +978,11 @@ import appConfig from './config.json';
                   <img
                     src="https://lh3.googleusercontent.com/d/1bKCgrClSnZ740vDgDpjWALJKmc0wW8Hl"
                     alt="Mehedi Hasan Abid"
+                    width="800"
+                    height="800"
                     referrerpolicy="no-referrer"
                     loading="lazy"
+                    fetchpriority="low"
                     decoding="async"
                   />
                 </div>
@@ -1435,40 +1456,46 @@ import appConfig from './config.json';
   // --------------------------------------------------------------------------
   // Scroll Reveal & Skill Bars Observer
   // --------------------------------------------------------------------------
+  let revealCheckTimer = null;
+  let pendingRevealNodes = [];
+
+  function checkPendingReveals() {
+    if (!pendingRevealNodes.length) return;
+    const vh = window.innerHeight || document.documentElement.clientHeight || 800;
+    const remaining = [];
+    for (let i = 0; i < pendingRevealNodes.length; i += 1) {
+      const el = pendingRevealNodes[i];
+      if (!el || !el.isConnected || el.classList.contains('is-visible')) continue;
+      const rect = el.getBoundingClientRect();
+      if (rect.top <= vh + 140 && rect.bottom >= -140) {
+        el.classList.add('is-visible');
+        if (revealObserver) revealObserver.unobserve(el);
+      } else {
+        remaining.push(el);
+      }
+    }
+    pendingRevealNodes = remaining;
+  }
+
   function initObservers() {
     if (revealObserver) {
       revealObserver.disconnect();
       revealObserver = null;
+    }
+    if (revealCheckTimer !== null) {
+      window.clearTimeout(revealCheckTimer);
+      revealCheckTimer = null;
     }
 
     const revealElements = document.querySelectorAll(
       '.reveal-up, .reveal-left, .reveal-right, .reveal-scale'
     );
     const skillBars = document.querySelectorAll('.skill-bar');
-
-    function revealInViewportNow() {
-      const vh = window.innerHeight || document.documentElement.clientHeight || 800;
-      revealElements.forEach((el) => {
-        if (el.classList.contains('is-visible')) return;
-        const rect = el.getBoundingClientRect();
-        if (rect.top <= vh + 120 && rect.bottom >= -120) {
-          el.classList.add('is-visible');
-          if (revealObserver) revealObserver.unobserve(el);
-        }
-      });
-      skillBars.forEach((bar) => {
-        if (bar.classList.contains('is-visible')) return;
-        const rect = bar.getBoundingClientRect();
-        if (rect.top <= vh + 120 && rect.bottom >= -120) {
-          bar.classList.add('is-visible');
-          if (revealObserver) revealObserver.unobserve(bar);
-        }
-      });
-    }
+    pendingRevealNodes = [...revealElements, ...skillBars];
 
     if (!('IntersectionObserver' in window)) {
-      revealElements.forEach((el) => el.classList.add('is-visible'));
-      skillBars.forEach((bar) => bar.classList.add('is-visible'));
+      pendingRevealNodes.forEach((el) => el.classList.add('is-visible'));
+      pendingRevealNodes = [];
       return;
     }
 
@@ -1481,13 +1508,13 @@ import appConfig from './config.json';
           observer.unobserve(el);
         });
       },
-      { threshold: 0.01, rootMargin: '100px 0px 100px 0px' }
+      { threshold: 0.01, rootMargin: '120px 0px 120px 0px' }
     );
 
-    revealElements.forEach((el) => revealObserver.observe(el));
-    skillBars.forEach((bar) => revealObserver.observe(bar));
+    pendingRevealNodes.forEach((el) => revealObserver.observe(el));
 
-    window.requestAnimationFrame(revealInViewportNow);
+    window.requestAnimationFrame(checkPendingReveals);
+    revealCheckTimer = window.setTimeout(checkPendingReveals, 250);
   }
 
   // --------------------------------------------------------------------------
@@ -1729,213 +1756,6 @@ import appConfig from './config.json';
     `;
   }
 
-  // --------------------------------------------------------------------------
-  // Ask About Abid Chatbot
-  // --------------------------------------------------------------------------
-  function initChatbot() {
-    const panel = document.getElementById('chatbot-panel');
-    const toggleBtn = document.getElementById('chatbot-toggle-btn');
-    const toggleIcon = document.getElementById('chatbot-toggle-icon');
-    const closeBtn = document.getElementById('chatbot-close-btn');
-    const clearBtn = document.getElementById('chatbot-clear-btn');
-    const messagesEl = document.getElementById('chatbot-messages');
-    const suggestionsEl = document.getElementById('chatbot-suggestions');
-    const form = document.getElementById('chatbot-form');
-    const input = document.getElementById('chatbot-input');
-    const sendBtn = document.getElementById('chatbot-send-btn');
-
-    if (!panel || !toggleBtn || !messagesEl || !form || !input || !sendBtn) return;
-
-    if (toggleIcon) toggleIcon.innerHTML = ICONS.messageCircle;
-    if (closeBtn) closeBtn.innerHTML = ICONS.x;
-    if (clearBtn) clearBtn.innerHTML = ICONS.refreshCw;
-    sendBtn.innerHTML = ICONS.send;
-
-    const INITIAL_GREETING =
-      "Hi! I'm Abid's portfolio assistant. Ask me anything about Abid's background, education, experience, skills, projects, certificates, or contact info.";
-    const QUICK_QUESTIONS = [
-      'Who is Abid?',
-      'What are his projects?',
-      'Tell me about his skills',
-      'How can I contact Abid?'
-    ];
-
-    let isOpen = false;
-    let isSending = false;
-    let chatHistory = [];
-
-    function formatSafeReply(text) {
-      return escapeHtml(text)
-        .replace(/\*\*([^*\n]+)\*\*/g, '<strong>$1</strong>')
-        .replace(/\n/g, '<br />');
-    }
-
-    function scrollToBottom() {
-      messagesEl.scrollTop = messagesEl.scrollHeight;
-    }
-
-    function appendMessage(role, text, isError = false) {
-      const row = document.createElement('div');
-      row.className = `chatbot-msg-row ${role === 'user' ? 'is-user' : 'is-bot'}`;
-
-      const bubble = document.createElement('div');
-      bubble.className = `chatbot-bubble ${role === 'user' ? 'is-user' : 'is-bot'}${isError ? ' is-error' : ''}`;
-      bubble.innerHTML = role === 'user' ? escapeHtml(text).replace(/\n/g, '<br />') : formatSafeReply(text);
-
-      row.appendChild(bubble);
-      messagesEl.appendChild(row);
-      scrollToBottom();
-    }
-
-    function appendTypingIndicator() {
-      const row = document.createElement('div');
-      row.className = 'chatbot-msg-row is-bot';
-      row.id = 'chatbot-typing-row';
-
-      const bubble = document.createElement('div');
-      bubble.className = 'chatbot-bubble is-bot chatbot-typing';
-      bubble.setAttribute('aria-label', 'Assistant is typing');
-      bubble.innerHTML = '<span></span><span></span><span></span>';
-
-      row.appendChild(bubble);
-      messagesEl.appendChild(row);
-      scrollToBottom();
-      return row;
-    }
-
-    function renderSuggestions(show) {
-      if (!suggestionsEl) return;
-      if (!show) {
-        suggestionsEl.innerHTML = '';
-        suggestionsEl.hidden = true;
-        return;
-      }
-      suggestionsEl.hidden = false;
-      suggestionsEl.innerHTML = QUICK_QUESTIONS.map(
-        (q) =>
-          `<button type="button" class="chatbot-suggestion-btn" data-chat-prompt="${escapeHtml(q)}">${escapeHtml(q)}</button>`
-      ).join('');
-    }
-
-    function resetChat() {
-      chatHistory = [];
-      messagesEl.innerHTML = '';
-      appendMessage('model', INITIAL_GREETING);
-      renderSuggestions(true);
-    }
-
-    function setChatOpen(open) {
-      isOpen = Boolean(open);
-      panel.classList.toggle('is-open', isOpen);
-      panel.setAttribute('aria-hidden', String(!isOpen));
-      toggleBtn.setAttribute('aria-expanded', String(isOpen));
-      toggleBtn.classList.toggle('is-active', isOpen);
-
-      if (isOpen && (!isTouchOrMobileQuery || !isTouchOrMobileQuery.matches)) {
-        window.setTimeout(() => input.focus(), 60);
-      }
-    }
-
-    async function handleSendMessage(rawText) {
-      const message = String(rawText || '').trim();
-      if (!message || isSending) return;
-
-      isSending = true;
-      sendBtn.disabled = true;
-      input.value = '';
-      renderSuggestions(false);
-      appendMessage('user', message);
-
-      const typingRow = appendTypingIndicator();
-      const historySnapshot = chatHistory.slice(-12);
-
-      try {
-        const res = await fetch('/api/chat', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            message,
-            history: historySnapshot
-          })
-        });
-
-        let data = {};
-        try {
-          data = await res.json();
-        } catch (_) {
-          data = {};
-        }
-
-        typingRow.remove();
-
-        if (!res.ok || !data.reply) {
-          appendMessage(
-            'model',
-            data.error || 'Unable to get a response right now. Please try again.',
-            true
-          );
-          return;
-        }
-
-        const reply = String(data.reply).trim();
-        appendMessage('model', reply);
-        chatHistory.push({ role: 'user', text: message });
-        chatHistory.push({ role: 'model', text: reply });
-      } catch (_) {
-        typingRow.remove();
-        appendMessage(
-          'model',
-          'Network connection issue. Please check your connection and try again.',
-          true
-        );
-      } finally {
-        isSending = false;
-        sendBtn.disabled = false;
-        if (isOpen && (!isTouchOrMobileQuery || !isTouchOrMobileQuery.matches)) {
-          input.focus();
-        }
-      }
-    }
-
-    resetChat();
-
-    toggleBtn.addEventListener('click', () => {
-      setChatOpen(!isOpen);
-    });
-
-    if (closeBtn) {
-      closeBtn.addEventListener('click', () => {
-        setChatOpen(false);
-      });
-    }
-
-    if (clearBtn) {
-      clearBtn.addEventListener('click', () => {
-        if (!isSending) resetChat();
-      });
-    }
-
-    if (suggestionsEl) {
-      suggestionsEl.addEventListener('click', (e) => {
-        const chip = e.target.closest('[data-chat-prompt]');
-        if (!chip) return;
-        const prompt = chip.getAttribute('data-chat-prompt');
-        if (prompt) handleSendMessage(prompt);
-      });
-    }
-
-    form.addEventListener('submit', (e) => {
-      e.preventDefault();
-      handleSendMessage(input.value);
-    });
-
-    document.addEventListener('keydown', (e) => {
-      if (e.key === 'Escape' && isOpen) {
-        setChatOpen(false);
-      }
-    });
-  }
-
   function safeRun(fn) {
     try {
       fn();
@@ -1950,7 +1770,6 @@ import appConfig from './config.json';
     safeRun(initFloatingPackets);
     safeRun(initMouseGlow);
     safeRun(initCertificateModal);
-    safeRun(initChatbot);
 
     if (mobileMenuToggle) {
       mobileMenuToggle.addEventListener('click', () => {
@@ -1966,10 +1785,22 @@ import appConfig from './config.json';
         window.requestAnimationFrame(() => {
           scrollTickPending = false;
           updateNavbarScrollState();
+          checkPendingReveals();
         });
       },
       { passive: true }
     );
+
+    window.addEventListener('pageshow', (e) => {
+      scrollTickPending = false;
+      updateNavbarScrollState();
+      if (e.persisted) {
+        initObservers();
+        if (currentPath === '/') {
+          startTypewriter();
+        }
+      }
+    });
 
     window.addEventListener('popstate', () => {
       currentPath = getInitialPath();

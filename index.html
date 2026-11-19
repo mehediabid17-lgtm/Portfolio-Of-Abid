@@ -22,8 +22,36 @@
       rel="apple-touch-icon"
       href="https://lh3.googleusercontent.com/d/1bKCgrClSnZ740vDgDpjWALJKmc0wW8Hl"
     />
-    <meta name="theme-color" content="#0b0e14" />
+    <meta name="theme-color" id="theme-color-meta" content="#0b0e14" />
+    <script>
+      (function () {
+        try {
+          var t = window.localStorage.getItem('portfolio-theme');
+          if (t === 'day' || t === 'night') {
+            document.documentElement.setAttribute('data-theme', t);
+            var m = document.getElementById('theme-color-meta');
+            if (m) m.setAttribute('content', t === 'day' ? '#f8fafc' : '#0b0e14');
+          }
+        } catch (_) {}
+      })();
+    </script>
     <link rel="preconnect" href="https://lh3.googleusercontent.com" crossorigin />
+    <link
+      rel="preload"
+      as="image"
+      type="image/webp"
+      href="/assets/aistudio/abid_final_1530903f_640.webp"
+      media="(max-width: 767px)"
+      fetchpriority="high"
+    />
+    <link
+      rel="preload"
+      as="image"
+      type="image/webp"
+      href="/assets/aistudio/abid_final_1530903f.webp"
+      media="(min-width: 768px)"
+      fetchpriority="high"
+    />
     <link rel="stylesheet" href="/style.css" />
   </head>
   <body>
@@ -32,14 +60,18 @@
       <div class="bg-effect" aria-hidden="true">
         <div class="bg-grid"></div>
         <div class="bg-watermark">
-          <img
-            src="/assets/aistudio/Screenshot_2026-11-18_015154_2ae8300a.png"
-            alt=""
-            width="687"
-            height="693"
-            loading="eager"
-            decoding="async"
-          />
+          <picture>
+            <source srcset="/assets/aistudio/Screenshot_2026-11-18_015154_2ae8300a.webp" type="image/webp" />
+            <img
+              src="/assets/aistudio/Screenshot_2026-11-18_015154_2ae8300a.png"
+              alt=""
+              width="687"
+              height="693"
+              loading="lazy"
+              decoding="async"
+              fetchpriority="low"
+            />
+          </picture>
         </div>
 
         <div class="bg-beams">
@@ -182,94 +214,30 @@
       </div>
     </div>
 
-    <!-- Ask About Abid Chatbot -->
-    <div id="abid-chatbot" class="abid-chatbot">
-      <div
-        id="chatbot-panel"
-        class="chatbot-panel"
-        role="dialog"
-        aria-modal="false"
-        aria-hidden="true"
-        aria-labelledby="chatbot-title"
-      >
-        <div class="chatbot-header">
-          <div class="chatbot-header-info">
-            <img
-              src="https://lh3.googleusercontent.com/d/1Ndola8V3NBqVVnb0o3vo7pQCcPuA8ol9"
-              alt="Abid"
-              width="36"
-              height="36"
-              class="chatbot-avatar"
-              referrerpolicy="no-referrer"
-              loading="lazy"
-              decoding="async"
-            />
-            <div>
-              <h3 id="chatbot-title" class="chatbot-title">Ask About Abid</h3>
-              <p class="chatbot-subtitle">Portfolio Assistant</p>
-            </div>
-          </div>
-          <div class="chatbot-header-actions">
-            <button
-              type="button"
-              id="chatbot-clear-btn"
-              class="chatbot-icon-btn"
-              aria-label="Clear chat"
-              title="Clear chat"
-            ></button>
-            <button
-              type="button"
-              id="chatbot-close-btn"
-              class="chatbot-icon-btn"
-              aria-label="Close chat"
-              title="Close chat"
-            ></button>
-          </div>
-        </div>
-
-        <div id="chatbot-messages" class="chatbot-messages" role="log" aria-live="polite"></div>
-
-        <div id="chatbot-suggestions" class="chatbot-suggestions" aria-label="Suggested questions"></div>
-
-        <form id="chatbot-form" class="chatbot-form">
-          <input
-            id="chatbot-input"
-            type="text"
-            class="chatbot-input"
-            placeholder="Ask about Abid's skills, projects..."
-            maxlength="1000"
-            autocomplete="off"
-            aria-label="Ask a question about Abid"
-          />
-          <button
-            type="submit"
-            id="chatbot-send-btn"
-            class="chatbot-send-btn"
-            aria-label="Send message"
-            title="Send message"
-          ></button>
-        </form>
-      </div>
-
-      <button
-        type="button"
-        id="chatbot-toggle-btn"
-        class="chatbot-toggle-btn warp-glow"
-        aria-expanded="false"
-        aria-controls="chatbot-panel"
-      >
-        <span id="chatbot-toggle-icon" class="chatbot-toggle-icon" aria-hidden="true"></span>
-        <span class="chatbot-toggle-label">Ask About Abid</span>
-      </button>
-    </div>
-
-    <script type="module" src="/script.js"></script>
+    <script
+      type="module"
+      src="/script.js"
+      onerror="window.__PORTFOLIO_SCRIPT_ERR__=true"
+    ></script>
     <script>
       (function () {
         var retryKey = 'portfolio_boot_retry';
-        function checkBoot() {
+        function showFallback() {
+          var root = document.getElementById('page-root');
+          if (!root || root.children.length > 0) return;
+          root.innerHTML =
+            '<div style="min-height:70vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:2rem;text-align:center;color:#cbd5e1;font-family:system-ui,sans-serif;">' +
+            '<p style="margin-bottom:1rem;font-size:1rem;">Unable to finish loading on this connection.</p>' +
+            '<button type="button" onclick="window.location.reload()" style="padding:0.75rem 1.5rem;border-radius:9999px;background:#7c3aed;color:#fff;font-weight:700;border:0;cursor:pointer;">Tap to Reload</button>' +
+            '</div>';
+        }
+        function checkBoot(force) {
           if (window.__PORTFOLIO_BOOTED__) {
             try { sessionStorage.removeItem(retryKey); } catch (_) {}
+            return;
+          }
+          if (!force && window.__PORTFOLIO_BOOTING__ && !window.__PORTFOLIO_SCRIPT_ERR__) {
+            window.setTimeout(function () { checkBoot(true); }, 3000);
             return;
           }
           var root = document.getElementById('page-root');
@@ -283,18 +251,19 @@
               return;
             }
           } catch (_) {}
-          if (root && !root.children.length) {
-            root.innerHTML =
-              '<div style="min-height:70vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:2rem;text-align:center;color:#cbd5e1;font-family:system-ui,sans-serif;">' +
-              '<p style="margin-bottom:1rem;font-size:1rem;">Unable to finish loading on this connection.</p>' +
-              '<button type="button" onclick="window.location.reload()" style="padding:0.75rem 1.5rem;border-radius:9999px;background:#7c3aed;color:#fff;font-weight:700;border:0;cursor:pointer;">Tap to Reload</button>' +
-              '</div>';
-          }
+          showFallback();
         }
+        window.addEventListener('error', function (ev) {
+          if (window.__PORTFOLIO_BOOTED__) return;
+          if (ev && ev.target && ev.target.tagName === 'SCRIPT') {
+            window.__PORTFOLIO_SCRIPT_ERR__ = true;
+            checkBoot(true);
+          }
+        }, true);
         window.addEventListener('load', function () {
-          window.setTimeout(checkBoot, 1500);
+          window.setTimeout(function () { checkBoot(false); }, 1500);
         });
-        window.setTimeout(checkBoot, 5000);
+        window.setTimeout(function () { checkBoot(false); }, 8500);
       })();
     </script>
   </body>
