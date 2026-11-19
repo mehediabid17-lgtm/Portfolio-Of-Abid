@@ -1445,6 +1445,26 @@ import appConfig from './config.json';
     );
     const skillBars = document.querySelectorAll('.skill-bar');
 
+    function revealInViewportNow() {
+      const vh = window.innerHeight || document.documentElement.clientHeight || 800;
+      revealElements.forEach((el) => {
+        if (el.classList.contains('is-visible')) return;
+        const rect = el.getBoundingClientRect();
+        if (rect.top <= vh + 120 && rect.bottom >= -120) {
+          el.classList.add('is-visible');
+          if (revealObserver) revealObserver.unobserve(el);
+        }
+      });
+      skillBars.forEach((bar) => {
+        if (bar.classList.contains('is-visible')) return;
+        const rect = bar.getBoundingClientRect();
+        if (rect.top <= vh + 120 && rect.bottom >= -120) {
+          bar.classList.add('is-visible');
+          if (revealObserver) revealObserver.unobserve(bar);
+        }
+      });
+    }
+
     if (!('IntersectionObserver' in window)) {
       revealElements.forEach((el) => el.classList.add('is-visible'));
       skillBars.forEach((bar) => bar.classList.add('is-visible'));
@@ -1465,6 +1485,8 @@ import appConfig from './config.json';
 
     revealElements.forEach((el) => revealObserver.observe(el));
     skillBars.forEach((bar) => revealObserver.observe(bar));
+
+    window.requestAnimationFrame(revealInViewportNow);
   }
 
   // --------------------------------------------------------------------------
@@ -1625,7 +1647,11 @@ import appConfig from './config.json';
       if (window.location.protocol === 'file:') {
         window.location.hash = nextPath;
       } else if (window.location.pathname !== nextPath) {
-        window.history.pushState({ path: nextPath }, '', nextPath);
+        try {
+          window.history.pushState({ path: nextPath }, '', nextPath);
+        } catch (_) {
+          // Ignore pushState restrictions in sandboxed/in-app contexts
+        }
       }
     }
 
@@ -1702,12 +1728,20 @@ import appConfig from './config.json';
     `;
   }
 
+  function safeRun(fn) {
+    try {
+      fn();
+    } catch (_) {
+      // Non-critical enhancement error must never block page render
+    }
+  }
+
   function init() {
-    renderFooterConnect();
-    initTheme();
-    initFloatingPackets();
-    initMouseGlow();
-    initCertificateModal();
+    safeRun(renderFooterConnect);
+    safeRun(initTheme);
+    safeRun(initFloatingPackets);
+    safeRun(initMouseGlow);
+    safeRun(initCertificateModal);
 
     if (mobileMenuToggle) {
       mobileMenuToggle.addEventListener('click', () => {
@@ -1799,7 +1833,12 @@ import appConfig from './config.json';
 
     currentPath = getInitialPath();
     renderCurrentPage();
+    window.__PORTFOLIO_BOOTED__ = true;
   }
 
-  init();
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', init, { once: true });
+  } else {
+    init();
+  }
 })();

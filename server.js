@@ -33,6 +33,46 @@ async function startServer() {
   const isProduction =
     process.env.NODE_ENV === 'production' || process.argv.includes('--prod');
 
+  const NO_STORE_HTML_HEADERS = {
+    'Cache-Control': 'no-cache, no-store, must-revalidate',
+    Pragma: 'no-cache',
+    Expires: '0',
+  };
+
+  function isStaticAssetRequest(reqPath) {
+    return (
+      reqPath.startsWith('/assets/') ||
+      reqPath.startsWith('/api/') ||
+      /\.(?:js|mjs|css|map|json|png|jpe?g|webp|gif|svg|ico|woff2?|ttf|eot)$/i.test(reqPath)
+    );
+  }
+
+  function mountProductionStatic() {
+    app.use(
+      express.static(distDir, {
+        setHeaders(res, filePath) {
+          if (filePath.endsWith('.html')) {
+            res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
+            res.setHeader('Pragma', 'no-cache');
+            res.setHeader('Expires', '0');
+          } else if (/\.[a-f0-9]{8,}\.(?:js|css)$/i.test(filePath) || /-[A-Za-z0-9_-]{6,}\.(?:js|css)$/i.test(filePath)) {
+            res.setHeader('Cache-Control', 'public, max-age=31536000, immutable');
+          } else {
+            res.setHeader('Cache-Control', 'public, max-age=3600');
+          }
+        },
+      })
+    );
+
+    app.get('*', (req, res) => {
+      if (isStaticAssetRequest(req.path)) {
+        return res.status(404).end();
+      }
+      res.set(NO_STORE_HTML_HEADERS);
+      return res.sendFile(path.join(distDir, 'index.html'));
+    });
+  }
+
   if (!isProduction) {
     try {
       const { createServer: createViteServer } = await import('vite');
@@ -43,27 +83,31 @@ async function startServer() {
         },
         appType: 'spa',
       });
+      app.use((req, res, next) => {
+        if (req.method === 'GET' && !isStaticAssetRequest(req.path)) {
+          res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
+        }
+        next();
+      });
       app.use(vite.middlewares);
     } catch (viteErr) {
       if (fs.existsSync(distDir)) {
-        app.use(express.static(distDir));
-        app.get('*', (_req, res) => {
-          res.sendFile(path.join(distDir, 'index.html'));
-        });
+        mountProductionStatic();
       } else {
         throw viteErr;
       }
     }
   } else {
-    app.use(express.static(distDir));
-    app.get('*', (_req, res) => {
-      res.sendFile(path.join(distDir, 'index.html'));
-    });
+    mountProductionStatic();
   }
 
-  app.listen(PORT, HOST, () => {
+  const server = app.listen(PORT, HOST, () => {
     console.log(`Server running on http://${HOST}:${PORT}`);
   });
+
+  // Prevent intermittent 502/connection-reset behind Cloud Run / reverse proxies on mobile
+  server.keepAliveTimeout = 65000;
+  server.headersTimeout = 66000;
 }
 
 startServer().catch((err) => {

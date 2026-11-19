@@ -22,8 +22,9 @@
       rel="apple-touch-icon"
       href="https://lh3.googleusercontent.com/d/1bKCgrClSnZ740vDgDpjWALJKmc0wW8Hl"
     />
+    <meta name="theme-color" content="#0b0e14" />
     <link rel="preconnect" href="https://lh3.googleusercontent.com" crossorigin />
-    <link rel="stylesheet" href="./style.css" />
+    <link rel="stylesheet" href="/style.css" />
   </head>
   <body>
     <div id="app-shell" class="app-shell">
@@ -181,6 +182,39 @@
       </div>
     </div>
 
-    <script type="module" src="./script.js"></script>
+    <script type="module" src="/script.js"></script>
+    <script>
+      (function () {
+        var retryKey = 'portfolio_boot_retry';
+        function checkBoot() {
+          if (window.__PORTFOLIO_BOOTED__) {
+            try { sessionStorage.removeItem(retryKey); } catch (_) {}
+            return;
+          }
+          var root = document.getElementById('page-root');
+          if (root && root.children.length > 0) return;
+          var alreadyRetried = false;
+          try {
+            alreadyRetried = sessionStorage.getItem(retryKey) === '1';
+            if (!alreadyRetried) {
+              sessionStorage.setItem(retryKey, '1');
+              window.location.reload();
+              return;
+            }
+          } catch (_) {}
+          if (root && !root.children.length) {
+            root.innerHTML =
+              '<div style="min-height:70vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:2rem;text-align:center;color:#cbd5e1;font-family:system-ui,sans-serif;">' +
+              '<p style="margin-bottom:1rem;font-size:1rem;">Unable to finish loading on this connection.</p>' +
+              '<button type="button" onclick="window.location.reload()" style="padding:0.75rem 1.5rem;border-radius:9999px;background:#7c3aed;color:#fff;font-weight:700;border:0;cursor:pointer;">Tap to Reload</button>' +
+              '</div>';
+          }
+        }
+        window.addEventListener('load', function () {
+          window.setTimeout(checkBoot, 1500);
+        });
+        window.setTimeout(checkBoot, 5000);
+      })();
+    </script>
   </body>
 </html>
