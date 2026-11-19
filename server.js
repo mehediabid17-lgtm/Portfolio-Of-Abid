@@ -45,10 +45,26 @@ async function startServer() {
   function isStaticAssetRequest(reqPath) {
     return (
       reqPath.startsWith('/assets/') ||
+      reqPath.startsWith('/images/') ||
       reqPath.startsWith('/api/') ||
       /\.(?:js|mjs|css|map|json|png|jpe?g|webp|gif|svg|ico|woff2?|ttf|eot)$/i.test(reqPath)
     );
   }
+
+  app.use((req, res, next) => {
+    if (
+      req.method === 'GET' &&
+      req.path.length > 1 &&
+      req.path.endsWith('/') &&
+      !isStaticAssetRequest(req.path)
+    ) {
+      const cleanPath = req.path.replace(/\/+$/, '') || '/';
+      const queryIndex = req.originalUrl.indexOf('?');
+      const query = queryIndex >= 0 ? req.originalUrl.slice(queryIndex) : '';
+      return res.redirect(302, cleanPath + query);
+    }
+    return next();
+  });
 
   function mountProductionStatic() {
     app.use(

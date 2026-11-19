@@ -1,12 +1,60 @@
 // ============================================================================
 // Portfolio Of Abid — Vanilla JavaScript (JSON-driven)
 // ============================================================================
-import portfolioData from './portfolio-data.json';
-import appConfig from './config.json';
-
 (function () {
   'use strict';
   window.__PORTFOLIO_BOOTING__ = true;
+
+  const IS_FILE_PROTOCOL = window.location.protocol === 'file:';
+  const APP_BASE_URL = (() => {
+    try {
+      const cs = document.currentScript && document.currentScript.src;
+      if (cs) return new URL('./', cs).href;
+    } catch (_) {}
+    try {
+      const scriptEl = document.querySelector('script[src*="script.js"]');
+      if (scriptEl && scriptEl.src) return new URL('./', scriptEl.src).href;
+    } catch (_) {}
+    try {
+      const href = window.location.href.split('#')[0].split('?')[0];
+      return href.endsWith('/') ? href : href.replace(/\/[^/]*$/, '/');
+    } catch (_) {
+      return './';
+    }
+  })();
+
+  const APP_BASE_PATH = (() => {
+    try {
+      return new URL(APP_BASE_URL).pathname || '/';
+    } catch (_) {
+      return '/';
+    }
+  })();
+
+  const USE_HASH_ROUTING =
+    IS_FILE_PROTOCOL ||
+    window.location.pathname.endsWith('/index.html') ||
+    window.location.hostname.endsWith('.github.io') ||
+    APP_BASE_PATH !== '/';
+
+  let portfolioData = window.__PORTFOLIO_DATA__ || {
+    profile: {},
+    navLinks: [
+      { name: 'Home', href: '/' },
+      { name: 'Education', href: '/education' },
+      { name: 'Experience', href: '/experience' },
+      { name: 'Certificates', href: '/certificates' },
+      { name: 'Projects', href: '/projects' },
+      { name: 'Contact', href: '/contact' }
+    ],
+    education: [],
+    experience: [],
+    certificates: [],
+    projects: [],
+    skillCategories: [],
+    customMilestones: []
+  };
+  let appConfig = window.__APP_CONFIG__ || { updatesFeed: { limit: 10 } };
 
   // --------------------------------------------------------------------------
   // Lucide-compatible SVG Icons
@@ -46,22 +94,39 @@ import appConfig from './config.json';
   };
 
   // --------------------------------------------------------------------------
-  // Portfolio Data & Configuration (Loaded from JSON)
+  // Portfolio Data & Configuration
   // --------------------------------------------------------------------------
-  const PROFILE = portfolioData.profile;
-  const NAV_LINKS = portfolioData.navLinks;
+  let PROFILE = portfolioData.profile || {};
+  let NAV_LINKS = portfolioData.navLinks || [];
+  let EDUCATION = portfolioData.education || [];
+  let EXPERIENCE = portfolioData.experience || [];
+  let CO_CURRICULAR = portfolioData.certificates || [];
+  let PROJECTS = portfolioData.projects || [];
+  let SKILL_CATEGORIES = [];
+  let TYPEWRITER_WORDS = [];
+  let CUSTOM_MILESTONES = [];
 
-  const EDUCATION = portfolioData.education;
-  const EXPERIENCE = portfolioData.experience;
-  const CO_CURRICULAR = portfolioData.certificates;
-  const PROJECTS = portfolioData.projects;
+  function hydrateDataBindings(nextPortfolioData, nextAppConfig) {
+    if (nextPortfolioData) portfolioData = nextPortfolioData;
+    if (nextAppConfig) appConfig = nextAppConfig;
 
-  const SKILL_CATEGORIES = portfolioData.skillCategories.map((cat) => ({
-    ...cat,
-    icon: ICONS[cat.iconKey] || ICONS.code2
-  }));
+    PROFILE = portfolioData.profile || {};
+    NAV_LINKS = Array.isArray(portfolioData.navLinks) ? portfolioData.navLinks : [];
+    EDUCATION = Array.isArray(portfolioData.education) ? portfolioData.education : [];
+    EXPERIENCE = Array.isArray(portfolioData.experience) ? portfolioData.experience : [];
+    CO_CURRICULAR = Array.isArray(portfolioData.certificates) ? portfolioData.certificates : [];
+    PROJECTS = Array.isArray(portfolioData.projects) ? portfolioData.projects : [];
+    SKILL_CATEGORIES = (portfolioData.skillCategories || []).map((cat) => ({
+      ...cat,
+      icon: ICONS[cat.iconKey] || ICONS.code2
+    }));
+    TYPEWRITER_WORDS = Array.isArray(PROFILE.typewriterWords) ? PROFILE.typewriterWords : [];
+    CUSTOM_MILESTONES = Array.isArray(portfolioData.customMilestones)
+      ? [...portfolioData.customMilestones]
+      : [];
+  }
 
-  const TYPEWRITER_WORDS = PROFILE.typewriterWords;
+  hydrateDataBindings(portfolioData, appConfig);
 
   // --------------------------------------------------------------------------
   // State & DOM References
@@ -84,10 +149,6 @@ import appConfig from './config.json';
   const certModalLoader = document.getElementById('cert-modal-loader');
   const certModalCloseIcon = document.getElementById('cert-modal-close-icon');
   const certModalCloseBtn = document.getElementById('cert-modal-close-btn');
-
-  const CUSTOM_MILESTONES = Array.isArray(portfolioData.customMilestones)
-    ? [...portfolioData.customMilestones]
-    : [];
 
   let isMobileMenuOpen = false;
   let currentPath = '/';
@@ -122,16 +183,46 @@ import appConfig from './config.json';
       .replace(/'/g, '&#39;');
   }
 
+  function resolveAssetUrl(rawPath) {
+    const p = String(rawPath || '').trim();
+    if (!p) return '';
+    if (/^(?:https?:|data:|blob:|mailto:|tel:|#)/i.test(p)) {
+      return p;
+    }
+    const cleanRel = p.replace(/^\/+/, '');
+    try {
+      return new URL(cleanRel, APP_BASE_URL).href;
+    } catch (_) {
+      return cleanRel;
+    }
+  }
+
   function normalizePath(path) {
-    if (!path || path === '/') return '/';
-    const cleaned = path.replace(/\/+$/, '');
+    if (!path || path === '/' || path === '/index.html') return '/';
+    let cleaned = String(path).replace(/\/+$/, '');
+    const baseNoTrail = APP_BASE_PATH.replace(/\/+$/, '');
+    if (baseNoTrail && baseNoTrail !== '/' && cleaned.startsWith(baseNoTrail)) {
+      cleaned = cleaned.slice(baseNoTrail.length) || '/';
+    }
+    if (cleaned === '/index.html') return '/';
     const validRoutes = NAV_LINKS.map((l) => l.href);
     return validRoutes.includes(cleaned) ? cleaned : '/';
   }
 
+  function routeHref(route) {
+    const normalized = normalizePath(route);
+    if (USE_HASH_ROUTING) {
+      return normalized === '/' ? './' : `#${normalized}`;
+    }
+    return normalized;
+  }
+
   function getInitialPath() {
-    if (window.location.protocol === 'file:' && window.location.hash) {
-      return normalizePath(window.location.hash.slice(1));
+    if (window.location.hash) {
+      const hashRoute = window.location.hash.slice(1);
+      if (hashRoute.startsWith('/')) {
+        return normalizePath(hashRoute);
+      }
     }
     return normalizePath(window.location.pathname);
   }
@@ -300,7 +391,7 @@ import appConfig from './config.json';
       desktopNavLinks.innerHTML = NAV_LINKS.map((link) => {
         const isActive = currentPath === link.href;
         return `
-          <a href="${link.href}" data-route="${link.href}" class="nav-link ${isActive ? 'active' : ''}">
+          <a href="${escapeHtml(routeHref(link.href))}" data-route="${escapeHtml(link.href)}" class="nav-link ${isActive ? 'active' : ''}">
             ${escapeHtml(link.name)}
             ${isActive ? '<span class="nav-link-underline"></span>' : ''}
           </a>
@@ -313,7 +404,7 @@ import appConfig from './config.json';
         NAV_LINKS.map((link) => {
           const isActive = currentPath === link.href;
           return `
-            <a href="${link.href}" data-route="${link.href}" class="mobile-nav-link ${isActive ? 'active' : ''}">
+            <a href="${escapeHtml(routeHref(link.href))}" data-route="${escapeHtml(link.href)}" class="mobile-nav-link ${isActive ? 'active' : ''}">
               ${escapeHtml(link.name)}
             </a>
           `;
@@ -525,7 +616,7 @@ import appConfig from './config.json';
   }
 
   function renderHomeLatestUpdatesSection() {
-    const feed = getLatestUpdatesFeed(appConfig.updatesFeed?.limit || 10);
+    const feed = getLatestUpdatesFeed((appConfig.updatesFeed && appConfig.updatesFeed.limit) || 10);
     const counts = {
       all: feed.length,
       Project: feed.filter((item) => item.category === 'Project').length,
@@ -579,7 +670,7 @@ import appConfig from './config.json';
                     : item.category === 'Experience'
                     ? 'is-experience'
                     : 'is-certificate';
-                const isNewestOverall = item.id === feed[0]?.id;
+                const isNewestOverall = Boolean(feed[0] && item.id === feed[0].id);
 
                 return `
                   <article class="updates-item reveal-up" style="transition-delay: ${Math.min(idx * 20, 80)}ms">
@@ -603,7 +694,7 @@ import appConfig from './config.json';
                       <div class="updates-card-actions">
                         ${
                           item.certUrl
-                            ? `<button type="button" class="updates-action-btn" data-cert-url="${escapeHtml(item.certUrl)}" data-cert-title="${escapeHtml(item.title)}">View Certificate ${ICONS.externalLink}</button>`
+                            ? `<button type="button" class="updates-action-btn" data-cert-url="${escapeHtml(resolveAssetUrl(item.certUrl))}" data-cert-title="${escapeHtml(item.title)}">View Certificate ${ICONS.externalLink}</button>`
                             : ''
                         }
                         ${
@@ -616,7 +707,7 @@ import appConfig from './config.json';
                             ? `<a href="${escapeHtml(item.githubUrl)}" target="_blank" rel="noopener noreferrer" class="updates-action-link updates-action-muted">Source ${ICONS.github}</a>`
                             : ''
                         }
-                        <a href="${escapeHtml(item.categoryRoute)}" data-route="${escapeHtml(item.categoryRoute)}" class="updates-action-route">
+                        <a href="${escapeHtml(routeHref(item.categoryRoute))}" data-route="${escapeHtml(item.categoryRoute)}" class="updates-action-route">
                           Explore ${escapeHtml(item.categoryLabel)} ${ICONS.chevronRight}
                         </a>
                       </div>
@@ -797,8 +888,8 @@ import appConfig from './config.json';
 
                 return `
               <a
-                href="${cat.href}"
-                data-route="${cat.href}"
+                href="${escapeHtml(routeHref(cat.href))}"
+                data-route="${escapeHtml(cat.href)}"
                 class="envelope-card envelope-accent-${cat.accent} reveal-up"
                 aria-label="Check all the ${escapeHtml(cat.name)}"
               >
@@ -830,7 +921,7 @@ import appConfig from './config.json';
                           </div>
                           <img
                             class="envelope-sheet-img"
-                            src="${escapeHtml(preview.image)}"
+                            src="${escapeHtml(resolveAssetUrl(preview.image))}"
                             alt="${escapeHtml(preview.title)}"
                             referrerpolicy="no-referrer"
                             loading="lazy"
@@ -927,10 +1018,10 @@ import appConfig from './config.json';
               </div>
 
               <div class="hero-actions">
-                <a href="/projects" data-route="/projects" class="hero-btn-primary">
+                <a href="${escapeHtml(routeHref('/projects'))}" data-route="/projects" class="hero-btn-primary">
                   View Projects ${ICONS.chevronRight}
                 </a>
-                <a href="/contact" data-route="/contact" class="hero-btn-secondary">
+                <a href="${escapeHtml(routeHref('/contact'))}" data-route="/contact" class="hero-btn-secondary">
                   Contact Me
                 </a>
               </div>
@@ -942,12 +1033,12 @@ import appConfig from './config.json';
                 <div class="hero-image-card">
                   <picture>
                     <source
-                      srcset="/images/hero-abid-640.webp 640w, /images/hero-abid.webp 1200w"
+                      srcset="${escapeHtml(resolveAssetUrl('images/hero-abid-640.webp'))} 640w, ${escapeHtml(resolveAssetUrl('images/hero-abid.webp'))} 1200w"
                       sizes="(max-width: 767px) 88vw, 512px"
                       type="image/webp"
                     />
                     <img
-                      src="${escapeHtml(PROFILE.heroImage || '/images/hero-abid.png')}"
+                      src="${escapeHtml(resolveAssetUrl(PROFILE.heroImage || 'images/hero-abid.png'))}"
                       alt="Mehedi Hasan Abid"
                       width="1536"
                       height="1024"
@@ -1110,13 +1201,13 @@ import appConfig from './config.json';
                     <div>
                       <div
                         class="exp-cert-box"
-                        data-cert-url="${escapeHtml(item.certificate)}"
+                        data-cert-url="${escapeHtml(resolveAssetUrl(item.certificate))}"
                         data-cert-title="${escapeHtml(item.role)}"
                         role="button"
                         tabindex="0"
                       >
                         <img
-                          src="${escapeHtml(item.certificate)}"
+                          src="${escapeHtml(resolveAssetUrl(item.certificate))}"
                           alt="${escapeHtml(item.role)} Certificate"
                           referrerpolicy="no-referrer"
                           loading="lazy"
@@ -1159,13 +1250,13 @@ import appConfig from './config.json';
                 <div class="warp-card cert-card reveal-up">
                   <div
                     class="cert-thumb-box"
-                    data-cert-url="${escapeHtml(item.certificate)}"
+                    data-cert-url="${escapeHtml(resolveAssetUrl(item.certificate))}"
                     data-cert-title="${escapeHtml(item.title)}"
                     role="button"
                     tabindex="0"
                   >
                     <img
-                      src="${escapeHtml(item.certificate)}"
+                      src="${escapeHtml(resolveAssetUrl(item.certificate))}"
                       alt="${escapeHtml(item.title)} Certificate"
                       referrerpolicy="no-referrer"
                       loading="lazy"
@@ -1212,7 +1303,7 @@ import appConfig from './config.json';
                 <div class="warp-card project-card reveal-up">
                   <div class="project-thumb">
                     <img
-                      src="${escapeHtml(project.image)}"
+                      src="${escapeHtml(resolveAssetUrl(project.image))}"
                       alt="${escapeHtml(project.title)}"
                       referrerpolicy="no-referrer"
                       loading="lazy"
@@ -1527,7 +1618,7 @@ import appConfig from './config.json';
     certModalLoader.classList.remove('hidden');
     certModalImg.classList.add('is-loading');
     certModalImg.alt = title || 'Certificate';
-    certModalImg.src = url;
+    certModalImg.src = resolveAssetUrl(url);
 
     if (certModalImg.complete && certModalImg.naturalWidth > 0) {
       certModalLoader.classList.add('hidden');
@@ -1672,8 +1763,11 @@ import appConfig from './config.json';
     }
 
     if (pushHistory) {
-      if (window.location.protocol === 'file:') {
-        window.location.hash = nextPath;
+      if (USE_HASH_ROUTING) {
+        const targetHash = nextPath === '/' ? '#/' : `#${nextPath}`;
+        if (window.location.hash !== targetHash) {
+          window.location.hash = targetHash;
+        }
       } else if (window.location.pathname !== nextPath) {
         try {
           window.history.pushState({ path: nextPath }, '', nextPath);
@@ -1691,6 +1785,15 @@ import appConfig from './config.json';
   // --------------------------------------------------------------------------
   // Global Event Delegation & Bootstrap
   // --------------------------------------------------------------------------
+  function syncStaticRouteHrefs() {
+    document.querySelectorAll('a[data-route]').forEach((anchor) => {
+      const route = anchor.getAttribute('data-route');
+      if (route) {
+        anchor.setAttribute('href', routeHref(route));
+      }
+    });
+  }
+
   function renderFooterConnect() {
     if (!footerConnect) return;
 
@@ -1749,11 +1852,30 @@ import appConfig from './config.json';
             : ''
         }
       </div>
-      <a href="/contact" data-route="/contact" class="footer-contact-btn">
+      <a href="${escapeHtml(routeHref('/contact'))}" data-route="/contact" class="footer-contact-btn">
         ${ICONS.mail}
         <span>Contact</span>
       </a>
     `;
+  }
+
+  function syncLiveJsonData() {
+    if (IS_FILE_PROTOCOL || typeof window.fetch !== 'function') return;
+    const prevSnapshot = JSON.stringify({ portfolioData, appConfig });
+    Promise.all([
+      fetch(resolveAssetUrl('portfolio-data.json')).then((r) => (r.ok ? r.json() : null)).catch(() => null),
+      fetch(resolveAssetUrl('config.json')).then((r) => (r.ok ? r.json() : null)).catch(() => null)
+    ]).then(([freshPortfolio, freshConfig]) => {
+      if (!freshPortfolio && !freshConfig) return;
+      const nextPortfolio = freshPortfolio || portfolioData;
+      const nextConfig = freshConfig || appConfig;
+      const nextSnapshot = JSON.stringify({ portfolioData: nextPortfolio, appConfig: nextConfig });
+      if (nextSnapshot !== prevSnapshot) {
+        hydrateDataBindings(nextPortfolio, nextConfig);
+        safeRun(renderFooterConnect);
+        renderCurrentPage();
+      }
+    }).catch(() => {});
   }
 
   function safeRun(fn) {
@@ -1765,6 +1887,7 @@ import appConfig from './config.json';
   }
 
   function init() {
+    safeRun(syncStaticRouteHrefs);
     safeRun(renderFooterConnect);
     safeRun(initTheme);
     safeRun(initFloatingPackets);
@@ -1810,7 +1933,7 @@ import appConfig from './config.json';
     });
 
     window.addEventListener('hashchange', () => {
-      if (window.location.protocol === 'file:') {
+      if (USE_HASH_ROUTING || window.location.hash.startsWith('#/')) {
         currentPath = getInitialPath();
         isMobileMenuOpen = false;
         scrollToPageTopInstant();
@@ -1874,6 +1997,7 @@ import appConfig from './config.json';
     currentPath = getInitialPath();
     renderCurrentPage();
     window.__PORTFOLIO_BOOTED__ = true;
+    safeRun(syncLiveJsonData);
   }
 
   if (document.readyState === 'loading') {
