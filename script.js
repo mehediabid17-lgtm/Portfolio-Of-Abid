@@ -41,7 +41,8 @@ import appConfig from './config.json';
     send: `<svg ${svgAttr}><path d="M14.536 21.686a.5.5 0 0 0 .937-.024l6.5-19a.496.496 0 0 0-.635-.635l-19 6.5a.5.5 0 0 0-.024.937l7.93 3.18a2 2 0 0 1 1.112 1.11z"/><path d="m21.854 2.147-10.94 10.939"/></svg>`,
     loader2: `<svg ${svgAttr}><path d="M21 12a9 9 0 1 1-6.219-8.56"/></svg>`,
     sun: `<svg ${svgAttr}><circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="m17.66 17.66 1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="m6.34 17.66-1.41 1.41"/><path d="m19.07 4.93-1.41 1.41"/></svg>`,
-    moon: `<svg ${svgAttr}><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/></svg>`
+    moon: `<svg ${svgAttr}><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/></svg>`,
+    refreshCw: `<svg ${svgAttr}><path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"/><path d="M21 3v5h-5"/><path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"/><path d="M8 16H3v5"/></svg>`
   };
 
   // --------------------------------------------------------------------------
@@ -1728,6 +1729,213 @@ import appConfig from './config.json';
     `;
   }
 
+  // --------------------------------------------------------------------------
+  // Ask About Abid Chatbot
+  // --------------------------------------------------------------------------
+  function initChatbot() {
+    const panel = document.getElementById('chatbot-panel');
+    const toggleBtn = document.getElementById('chatbot-toggle-btn');
+    const toggleIcon = document.getElementById('chatbot-toggle-icon');
+    const closeBtn = document.getElementById('chatbot-close-btn');
+    const clearBtn = document.getElementById('chatbot-clear-btn');
+    const messagesEl = document.getElementById('chatbot-messages');
+    const suggestionsEl = document.getElementById('chatbot-suggestions');
+    const form = document.getElementById('chatbot-form');
+    const input = document.getElementById('chatbot-input');
+    const sendBtn = document.getElementById('chatbot-send-btn');
+
+    if (!panel || !toggleBtn || !messagesEl || !form || !input || !sendBtn) return;
+
+    if (toggleIcon) toggleIcon.innerHTML = ICONS.messageCircle;
+    if (closeBtn) closeBtn.innerHTML = ICONS.x;
+    if (clearBtn) clearBtn.innerHTML = ICONS.refreshCw;
+    sendBtn.innerHTML = ICONS.send;
+
+    const INITIAL_GREETING =
+      "Hi! I'm Abid's portfolio assistant. Ask me anything about Abid's background, education, experience, skills, projects, certificates, or contact info.";
+    const QUICK_QUESTIONS = [
+      'Who is Abid?',
+      'What are his projects?',
+      'Tell me about his skills',
+      'How can I contact Abid?'
+    ];
+
+    let isOpen = false;
+    let isSending = false;
+    let chatHistory = [];
+
+    function formatSafeReply(text) {
+      return escapeHtml(text)
+        .replace(/\*\*([^*\n]+)\*\*/g, '<strong>$1</strong>')
+        .replace(/\n/g, '<br />');
+    }
+
+    function scrollToBottom() {
+      messagesEl.scrollTop = messagesEl.scrollHeight;
+    }
+
+    function appendMessage(role, text, isError = false) {
+      const row = document.createElement('div');
+      row.className = `chatbot-msg-row ${role === 'user' ? 'is-user' : 'is-bot'}`;
+
+      const bubble = document.createElement('div');
+      bubble.className = `chatbot-bubble ${role === 'user' ? 'is-user' : 'is-bot'}${isError ? ' is-error' : ''}`;
+      bubble.innerHTML = role === 'user' ? escapeHtml(text).replace(/\n/g, '<br />') : formatSafeReply(text);
+
+      row.appendChild(bubble);
+      messagesEl.appendChild(row);
+      scrollToBottom();
+    }
+
+    function appendTypingIndicator() {
+      const row = document.createElement('div');
+      row.className = 'chatbot-msg-row is-bot';
+      row.id = 'chatbot-typing-row';
+
+      const bubble = document.createElement('div');
+      bubble.className = 'chatbot-bubble is-bot chatbot-typing';
+      bubble.setAttribute('aria-label', 'Assistant is typing');
+      bubble.innerHTML = '<span></span><span></span><span></span>';
+
+      row.appendChild(bubble);
+      messagesEl.appendChild(row);
+      scrollToBottom();
+      return row;
+    }
+
+    function renderSuggestions(show) {
+      if (!suggestionsEl) return;
+      if (!show) {
+        suggestionsEl.innerHTML = '';
+        suggestionsEl.hidden = true;
+        return;
+      }
+      suggestionsEl.hidden = false;
+      suggestionsEl.innerHTML = QUICK_QUESTIONS.map(
+        (q) =>
+          `<button type="button" class="chatbot-suggestion-btn" data-chat-prompt="${escapeHtml(q)}">${escapeHtml(q)}</button>`
+      ).join('');
+    }
+
+    function resetChat() {
+      chatHistory = [];
+      messagesEl.innerHTML = '';
+      appendMessage('model', INITIAL_GREETING);
+      renderSuggestions(true);
+    }
+
+    function setChatOpen(open) {
+      isOpen = Boolean(open);
+      panel.classList.toggle('is-open', isOpen);
+      panel.setAttribute('aria-hidden', String(!isOpen));
+      toggleBtn.setAttribute('aria-expanded', String(isOpen));
+      toggleBtn.classList.toggle('is-active', isOpen);
+
+      if (isOpen && (!isTouchOrMobileQuery || !isTouchOrMobileQuery.matches)) {
+        window.setTimeout(() => input.focus(), 60);
+      }
+    }
+
+    async function handleSendMessage(rawText) {
+      const message = String(rawText || '').trim();
+      if (!message || isSending) return;
+
+      isSending = true;
+      sendBtn.disabled = true;
+      input.value = '';
+      renderSuggestions(false);
+      appendMessage('user', message);
+
+      const typingRow = appendTypingIndicator();
+      const historySnapshot = chatHistory.slice(-12);
+
+      try {
+        const res = await fetch('/api/chat', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            message,
+            history: historySnapshot
+          })
+        });
+
+        let data = {};
+        try {
+          data = await res.json();
+        } catch (_) {
+          data = {};
+        }
+
+        typingRow.remove();
+
+        if (!res.ok || !data.reply) {
+          appendMessage(
+            'model',
+            data.error || 'Unable to get a response right now. Please try again.',
+            true
+          );
+          return;
+        }
+
+        const reply = String(data.reply).trim();
+        appendMessage('model', reply);
+        chatHistory.push({ role: 'user', text: message });
+        chatHistory.push({ role: 'model', text: reply });
+      } catch (_) {
+        typingRow.remove();
+        appendMessage(
+          'model',
+          'Network connection issue. Please check your connection and try again.',
+          true
+        );
+      } finally {
+        isSending = false;
+        sendBtn.disabled = false;
+        if (isOpen && (!isTouchOrMobileQuery || !isTouchOrMobileQuery.matches)) {
+          input.focus();
+        }
+      }
+    }
+
+    resetChat();
+
+    toggleBtn.addEventListener('click', () => {
+      setChatOpen(!isOpen);
+    });
+
+    if (closeBtn) {
+      closeBtn.addEventListener('click', () => {
+        setChatOpen(false);
+      });
+    }
+
+    if (clearBtn) {
+      clearBtn.addEventListener('click', () => {
+        if (!isSending) resetChat();
+      });
+    }
+
+    if (suggestionsEl) {
+      suggestionsEl.addEventListener('click', (e) => {
+        const chip = e.target.closest('[data-chat-prompt]');
+        if (!chip) return;
+        const prompt = chip.getAttribute('data-chat-prompt');
+        if (prompt) handleSendMessage(prompt);
+      });
+    }
+
+    form.addEventListener('submit', (e) => {
+      e.preventDefault();
+      handleSendMessage(input.value);
+    });
+
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && isOpen) {
+        setChatOpen(false);
+      }
+    });
+  }
+
   function safeRun(fn) {
     try {
       fn();
@@ -1742,6 +1950,7 @@ import appConfig from './config.json';
     safeRun(initFloatingPackets);
     safeRun(initMouseGlow);
     safeRun(initCertificateModal);
+    safeRun(initChatbot);
 
     if (mobileMenuToggle) {
       mobileMenuToggle.addEventListener('click', () => {

@@ -182,6 +182,87 @@
       </div>
     </div>
 
+    <!-- Ask About Abid Chatbot -->
+    <div id="abid-chatbot" class="abid-chatbot">
+      <div
+        id="chatbot-panel"
+        class="chatbot-panel"
+        role="dialog"
+        aria-modal="false"
+        aria-hidden="true"
+        aria-labelledby="chatbot-title"
+      >
+        <div class="chatbot-header">
+          <div class="chatbot-header-info">
+            <img
+              src="https://lh3.googleusercontent.com/d/1Ndola8V3NBqVVnb0o3vo7pQCcPuA8ol9"
+              alt="Abid"
+              width="36"
+              height="36"
+              class="chatbot-avatar"
+              referrerpolicy="no-referrer"
+              loading="lazy"
+              decoding="async"
+            />
+            <div>
+              <h3 id="chatbot-title" class="chatbot-title">Ask About Abid</h3>
+              <p class="chatbot-subtitle">Portfolio Assistant</p>
+            </div>
+          </div>
+          <div class="chatbot-header-actions">
+            <button
+              type="button"
+              id="chatbot-clear-btn"
+              class="chatbot-icon-btn"
+              aria-label="Clear chat"
+              title="Clear chat"
+            ></button>
+            <button
+              type="button"
+              id="chatbot-close-btn"
+              class="chatbot-icon-btn"
+              aria-label="Close chat"
+              title="Close chat"
+            ></button>
+          </div>
+        </div>
+
+        <div id="chatbot-messages" class="chatbot-messages" role="log" aria-live="polite"></div>
+
+        <div id="chatbot-suggestions" class="chatbot-suggestions" aria-label="Suggested questions"></div>
+
+        <form id="chatbot-form" class="chatbot-form">
+          <input
+            id="chatbot-input"
+            type="text"
+            class="chatbot-input"
+            placeholder="Ask about Abid's skills, projects..."
+            maxlength="1000"
+            autocomplete="off"
+            aria-label="Ask a question about Abid"
+          />
+          <button
+            type="submit"
+            id="chatbot-send-btn"
+            class="chatbot-send-btn"
+            aria-label="Send message"
+            title="Send message"
+          ></button>
+        </form>
+      </div>
+
+      <button
+        type="button"
+        id="chatbot-toggle-btn"
+        class="chatbot-toggle-btn warp-glow"
+        aria-expanded="false"
+        aria-controls="chatbot-panel"
+      >
+        <span id="chatbot-toggle-icon" class="chatbot-toggle-icon" aria-hidden="true"></span>
+        <span class="chatbot-toggle-label">Ask About Abid</span>
+      </button>
+    </div>
+
     <script type="module" src="/script.js"></script>
     <script>
       (function () {
