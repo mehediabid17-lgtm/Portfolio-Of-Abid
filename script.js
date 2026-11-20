@@ -1727,14 +1727,18 @@
               </div>
 
               <div class="hero-bd-clock" aria-label="Current Bangladesh Time (GMT+6)">
-                <span class="hero-bd-clock-icon" aria-hidden="true">${ICONS.clock}</span>
-                <span class="hero-bd-clock-dot" aria-hidden="true"></span>
-                <span class="hero-bd-clock-zone">Dhaka, BD</span>
-                <span class="hero-bd-clock-sep" aria-hidden="true">&middot;</span>
-                <time id="bd-clock-time" class="hero-bd-clock-time">${escapeHtml(bdClock.time)}</time>
-                <span class="hero-bd-clock-sep" aria-hidden="true">&middot;</span>
-                <span id="bd-clock-date" class="hero-bd-clock-date">${escapeHtml(bdClock.date)}</span>
-                <span class="hero-bd-clock-offset">GMT+6</span>
+                <div class="hero-bd-clock-primary">
+                  <span class="hero-bd-clock-icon" aria-hidden="true">${ICONS.clock}</span>
+                  <time id="bd-clock-time" class="hero-bd-clock-time">${escapeHtml(bdClock.time)}</time>
+                  <span class="hero-bd-clock-offset">GMT+6</span>
+                </div>
+                <span class="hero-bd-clock-divider" aria-hidden="true"></span>
+                <div class="hero-bd-clock-meta">
+                  <span class="hero-bd-clock-dot" aria-hidden="true"></span>
+                  <span class="hero-bd-clock-zone">Dhaka, BD</span>
+                  <span class="hero-bd-clock-sep" aria-hidden="true">&middot;</span>
+                  <span id="bd-clock-date" class="hero-bd-clock-date">${escapeHtml(bdClock.date)}</span>
+                </div>
               </div>
 
               <div class="hero-actions">
