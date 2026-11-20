@@ -112,6 +112,7 @@
                   referrerpolicy="no-referrer"
                   loading="lazy"
                   decoding="async"
+                  onerror="this.style.visibility='hidden'"
                 />
               </div>
               <span class="navbar-brand-text">
@@ -237,8 +238,8 @@
             try { sessionStorage.removeItem(retryKey); } catch (_) {}
             return;
           }
-          if (!force && window.__PORTFOLIO_BOOTING__ && !window.__PORTFOLIO_SCRIPT_ERR__) {
-            window.setTimeout(function () { checkBoot(true); }, 3000);
+          if (!force && !window.__PORTFOLIO_SCRIPT_ERR__ && (window.__PORTFOLIO_BOOTING__ || document.readyState === 'loading')) {
+            window.setTimeout(function () { checkBoot(true); }, 3500);
             return;
           }
           var root = document.getElementById('page-root');

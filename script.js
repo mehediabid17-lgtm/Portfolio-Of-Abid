@@ -41,7 +41,6 @@
     profile: {},
     navLinks: [
       { name: 'Home', href: '/' },
-      { name: 'Education', href: '/education' },
       { name: 'Experience', href: '/experience' },
       { name: 'Certificates', href: '/certificates' },
       { name: 'Projects', href: '/projects' },
@@ -155,6 +154,9 @@
   let currentPath = '/';
   let currentTheme = 'night';
   let updatesFilter = 'all';
+  let githubRange = 'last';
+  let githubSelectedDayText = '';
+  let githubDataLoadStarted = false;
   let typewriterTimer = null;
   let bdClockTimer = null;
   let revealObserver = null;
@@ -413,7 +415,7 @@
         }).join('') +
         `
           <a
-            href="https://drive.google.com/file/d/1av2uOGhOnMayS2xQPic2vAB0hcpmdG3h/view?usp=sharing"
+            href="${escapeHtml(PROFILE.cvUrl || 'https://drive.google.com/file/d/1av2uOGhOnMayS2xQPic2vAB0hcpmdG3h/view?usp=sharing')}"
             target="_blank"
             rel="noopener noreferrer"
             class="mobile-cv-btn"
@@ -799,6 +801,722 @@
     `;
   }
 
+  function getInstitutionLogoSvg(logoKey) {
+    if (logoKey === 'diu') {
+      return `
+        <svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+          <defs>
+            <linearGradient id="diu-crest-grad" x1="6" y1="4" x2="42" y2="44" gradientUnits="userSpaceOnUse">
+              <stop offset="0%" stop-color="#38bdf8" />
+              <stop offset="55%" stop-color="#2563eb" />
+              <stop offset="100%" stop-color="#10b981" />
+            </linearGradient>
+          </defs>
+          <path d="M24 4L40 10V22.5C40 32.8 33.1 40.7 24 44C14.9 40.7 8 32.8 8 22.5V10L24 4Z" fill="url(#diu-crest-grad)" fill-opacity="0.16" stroke="url(#diu-crest-grad)" stroke-width="2" stroke-linejoin="round" />
+          <path d="M16 17.5C18.5 16 21.5 16 24 17.5C26.5 16 29.5 16 32 17.5V25.5C29.5 24 26.5 24 24 25.5C21.5 24 18.5 24 16 25.5V17.5Z" stroke="#60a5fa" stroke-width="1.6" stroke-linejoin="round" />
+          <line x1="24" y1="17.5" x2="24" y2="25.5" stroke="#60a5fa" stroke-width="1.6" />
+          <text x="24" y="36.2" text-anchor="middle" fill="currentColor" font-size="8.2" font-weight="800" font-family="ui-sans-serif, system-ui, sans-serif" letter-spacing="0.8">DIU</text>
+        </svg>
+      `;
+    }
+    if (logoKey === 'nhmsc') {
+      return `
+        <svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+          <defs>
+            <linearGradient id="nhmsc-crest-grad" x1="6" y1="4" x2="42" y2="44" gradientUnits="userSpaceOnUse">
+              <stop offset="0%" stop-color="#a78bfa" />
+              <stop offset="100%" stop-color="#6366f1" />
+            </linearGradient>
+          </defs>
+          <path d="M24 4L40 10V22.5C40 32.8 33.1 40.7 24 44C14.9 40.7 8 32.8 8 22.5V10L24 4Z" fill="url(#nhmsc-crest-grad)" fill-opacity="0.16" stroke="url(#nhmsc-crest-grad)" stroke-width="2" stroke-linejoin="round" />
+          <path d="M24 11.5L32.5 15.8L24 20.1L15.5 15.8L24 11.5Z" stroke="#a78bfa" stroke-width="1.6" stroke-linejoin="round" />
+          <path d="M18.5 17.8V22.2C18.5 23.8 21 25 24 25C27 25 29.5 23.8 29.5 22.2V17.8" stroke="#a78bfa" stroke-width="1.6" stroke-linecap="round" />
+          <text x="24" y="36" text-anchor="middle" fill="currentColor" font-size="6.4" font-weight="800" font-family="ui-sans-serif, system-ui, sans-serif" letter-spacing="0.35">NHMSC</text>
+        </svg>
+      `;
+    }
+    return ICONS.graduationCap;
+  }
+
+  function renderHomeEducationAndVisionSection() {
+    return `
+      <section id="education-section" class="edu-vision-section">
+        <div class="container-xl edu-vision-grid">
+          <div class="edu-col">
+            <div class="edu-vision-head">
+              <span class="updates-kicker">Academic Background</span>
+              <h2 class="page-title">Education</h2>
+            </div>
+
+            <div class="edu-timeline">
+              ${EDUCATION.map((item, idx) => {
+                const accent = item.accent || (idx === 0 ? 'violet' : idx === 1 ? 'blue' : 'emerald');
+                const isInProgress = /running|progress|present/i.test(String(item.status || item.year || ''));
+                const statusLabel = item.status || (isInProgress ? 'In progress' : 'Completed');
+                const statusModifier = isInProgress ? 'is-progress' : 'is-completed';
+                const levelTag = item.level ? `${item.level} · ${item.year}` : item.year;
+                const logoUrl = item.logo ? resolveAssetUrl(item.logo) : '';
+
+                return `
+                  <article class="edu-timeline-item reveal-up" style="transition-delay: ${Math.min(idx * 45, 140)}ms">
+                    <div class="edu-rail-col" aria-hidden="true">
+                      <span class="edu-node is-${escapeHtml(accent)}"></span>
+                    </div>
+
+                    <div class="warp-card edu-timeline-card">
+                      <div class="edu-card-logo is-${escapeHtml(accent)}${logoUrl ? ' has-photo' : ''}">
+                        ${
+                          logoUrl
+                            ? `<img src="${escapeHtml(logoUrl)}" alt="${escapeHtml(item.institution)} logo" width="54" height="54" loading="lazy" decoding="async" onerror="this.style.display='none'" />`
+                            : getInstitutionLogoSvg(item.logoKey)
+                        }
+                      </div>
+
+                      <div class="edu-card-main">
+                        <span class="edu-card-meta is-${escapeHtml(accent)}">${escapeHtml(levelTag)}</span>
+                        <h3 class="edu-card-degree">${escapeHtml(item.degree)}</h3>
+                        <p class="edu-card-institution">${escapeHtml(item.institution)}</p>
+                      </div>
+
+                      <div class="edu-card-status-wrap">
+                        <span class="edu-card-status ${statusModifier}">${escapeHtml(statusLabel)}</span>
+                      </div>
+                    </div>
+                  </article>
+                `;
+              }).join('')}
+            </div>
+          </div>
+
+          <div class="vision-col">
+            <div class="edu-vision-head">
+              <span class="updates-kicker">Future Direction</span>
+              <h2 class="page-title">My Vision</h2>
+            </div>
+
+            <div class="warp-card vision-card reveal-up">
+              <div class="vision-glow-tr"></div>
+              <div class="vision-glow-bl"></div>
+
+              <div class="vision-flex">
+                <div class="vision-icon-box">
+                  ${ICONS.target}
+                </div>
+                <div>
+                  <p class="vision-quote">
+                    &ldquo;${escapeHtml(
+                      PROFILE.visionQuote ||
+                        'My vision is to become a highly skilled software engineer and data science professional with expertise in machine learning and artificial intelligence. I aim to combine my technical proficiency with analytical thinking to design intelligent, data-driven solutions that solve real-world problems. By leveraging the power of AI and modern software development, I strive to create innovative systems that enhance efficiency, improve decision-making, and contribute to technological advancement. I am committed to continuous learning and growth, with the goal of making a meaningful impact in the evolving world of data and intelligent technologies.'
+                    )}&rdquo;
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+    `;
+  }
+
+  // --------------------------------------------------------------------------
+  // Home GitHub Contributions Section
+  // --------------------------------------------------------------------------
+  const DEFAULT_GITHUB_ACTIVE_DAYS = [
+    { date: '2025-11-16', count: 1, level: 1 },
+    { date: '2026-01-07', count: 4, level: 2 },
+    { date: '2026-04-08', count: 6, level: 3 },
+    { date: '2026-04-10', count: 9, level: 4 },
+    { date: '2026-04-11', count: 11, level: 4 },
+    { date: '2026-04-12', count: 3, level: 2 },
+    { date: '2026-04-19', count: 1, level: 1 },
+    { date: '2026-04-28', count: 1, level: 1 },
+    { date: '2026-04-29', count: 1, level: 1 },
+    { date: '2026-04-30', count: 2, level: 1 },
+    { date: '2026-05-01', count: 1, level: 1 },
+    { date: '2026-11-17', count: 7, level: 3 },
+    { date: '2026-11-18', count: 3, level: 2 },
+    { date: '2026-11-19', count: 5, level: 2 },
+    { date: '2026-11-20', count: 5, level: 2 }
+  ];
+
+  const DEFAULT_GITHUB_REPOS = [
+    {
+      name: 'Portfolio-Of-Abid',
+      url: 'https://github.com/mehediabid17-lgtm/Portfolio-Of-Abid',
+      language: 'JavaScript',
+      pushedAt: '2026-11-20'
+    },
+    {
+      name: 'Banking_Transaction_Management_System',
+      url: 'https://github.com/mehediabid17-lgtm/Banking_Transaction_Management_System',
+      language: 'C',
+      pushedAt: '2026-01-07'
+    }
+  ];
+
+  const GH_MONTH_SHORT = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+
+  function extractGithubUsername() {
+    const socials = Array.isArray(PROFILE.socials) ? PROFILE.socials : [];
+    const gh = socials.find((s) => String(s.name || '').toLowerCase() === 'github');
+    if (gh && gh.url) {
+      const match = String(gh.url).match(/github\.com\/([^/?#]+)/i);
+      if (match && match[1]) return match[1];
+    }
+    return 'mehediabid17-lgtm';
+  }
+
+  function buildFullYearRangeDays(startIso, endIso, activeList) {
+    const byDate = new Map();
+    for (let i = 0; i < activeList.length; i += 1) {
+      const item = activeList[i];
+      if (item && item.date) {
+        byDate.set(item.date, {
+          date: item.date,
+          count: Number(item.count) || 0,
+          level: Math.max(0, Math.min(4, Number(item.level) || 0))
+        });
+      }
+    }
+
+    const startMs = Date.parse(`${startIso}T00:00:00Z`);
+    const endMs = Date.parse(`${endIso}T00:00:00Z`);
+    const out = [];
+    for (let ms = startMs; ms <= endMs; ms += 86400000) {
+      const iso = new Date(ms).toISOString().slice(0, 10);
+      out.push(byDate.get(iso) || { date: iso, count: 0, level: 0 });
+    }
+    return out;
+  }
+
+  let githubActivityState = {
+    username: extractGithubUsername(),
+    isLive: false,
+    totalsByYear: { '2025': 1, '2026': 59 },
+    contributions: buildFullYearRangeDays('2025-01-01', '2026-12-31', DEFAULT_GITHUB_ACTIVE_DAYS),
+    profile: {
+      login: 'mehediabid17-lgtm',
+      htmlUrl: 'https://github.com/mehediabid17-lgtm',
+      publicRepos: 2,
+      followers: 1
+    },
+    repos: DEFAULT_GITHUB_REPOS
+  };
+
+  function formatIsoDateLabel(isoDate) {
+    const parts = String(isoDate || '').split('-');
+    if (parts.length !== 3) return isoDate;
+    const year = Number(parts[0]);
+    const month = Number(parts[1]) - 1;
+    const day = Number(parts[2]);
+    return `${GH_MONTH_SHORT[month] || ''} ${day}, ${year}`;
+  }
+
+  function formatContributionReadout(day) {
+    if (!day || !day.date) return 'Hover or tap any square to inspect daily commits';
+    const label = formatIsoDateLabel(day.date);
+    if (!day.count) return `No contributions on ${label}`;
+    return `${day.count} ${day.count === 1 ? 'contribution' : 'contributions'} on ${label}`;
+  }
+
+  function getGithubHeatmapSnapshot(rangeKey) {
+    const allList = Array.isArray(githubActivityState.contributions)
+      ? githubActivityState.contributions
+      : [];
+
+    const byDate = new Map();
+    for (let i = 0; i < allList.length; i += 1) {
+      const c = allList[i];
+      if (c && c.date) {
+        byDate.set(c.date, {
+          date: c.date,
+          count: Number(c.count) || 0,
+          level: Math.max(0, Math.min(4, Number(c.level) || 0))
+        });
+      }
+    }
+
+    const bdToday = (() => {
+      try {
+        const now = new Date(Date.now() + 6 * 3600000);
+        return now.toISOString().slice(0, 10);
+      } catch (_) {
+        return '2026-11-20';
+      }
+    })();
+
+    const sortedDates = [...byDate.keys()].sort();
+    const latestActiveOrToday = (() => {
+      let maxDate = bdToday;
+      for (const item of byDate.values()) {
+        if (item.count > 0 && item.date > maxDate) maxDate = item.date;
+      }
+      if (sortedDates.length > 0 && sortedDates[sortedDates.length - 1] < maxDate) {
+        return sortedDates[sortedDates.length - 1];
+      }
+      return maxDate;
+    })();
+
+    let rangeStartIso;
+    let rangeEndIso;
+
+    if (rangeKey === 'last') {
+      const endMs = Date.parse(`${latestActiveOrToday}T00:00:00Z`);
+      const endWeekday = new Date(endMs).getUTCDay();
+      const startMs = endMs - (52 * 7 + endWeekday) * 86400000;
+      rangeStartIso = new Date(startMs).toISOString().slice(0, 10);
+      rangeEndIso = latestActiveOrToday;
+    } else {
+      rangeStartIso = `${rangeKey}-01-01`;
+      rangeEndIso = `${rangeKey}-12-31`;
+    }
+
+    const days = [];
+    const startMs = Date.parse(`${rangeStartIso}T00:00:00Z`);
+    const endMs = Date.parse(`${rangeEndIso}T00:00:00Z`);
+    for (let ms = startMs; ms <= endMs; ms += 86400000) {
+      const iso = new Date(ms).toISOString().slice(0, 10);
+      days.push(byDate.get(iso) || { date: iso, count: 0, level: 0 });
+    }
+
+    const firstWeekday = days.length ? new Date(`${days[0].date}T00:00:00Z`).getUTCDay() : 0;
+    const lastWeekday = days.length ? new Date(`${days[days.length - 1].date}T00:00:00Z`).getUTCDay() : 6;
+    const gridCells = [];
+    for (let i = 0; i < firstWeekday; i += 1) gridCells.push(null);
+    for (let i = 0; i < days.length; i += 1) gridCells.push(days[i]);
+    for (let i = lastWeekday + 1; i < 7; i += 1) gridCells.push(null);
+
+    const weekCount = Math.ceil(gridCells.length / 7);
+    const monthMarks = [];
+    let lastLabeledMonth = -1;
+    for (let w = 0; w < weekCount; w += 1) {
+      const colDays = gridCells.slice(w * 7, w * 7 + 7).filter(Boolean);
+      if (!colDays.length) continue;
+      const firstOfMonthCell = colDays.find((d) => d.date.endsWith('-01'));
+      const refCell = firstOfMonthCell || (w === 0 ? colDays[0] : null);
+      if (refCell) {
+        const mIdx = Number(refCell.date.slice(5, 7)) - 1;
+        if (mIdx !== lastLabeledMonth) {
+          if (!monthMarks.length || w - monthMarks[monthMarks.length - 1].weekIndex >= 2) {
+            monthMarks.push({ weekIndex: w, label: GH_MONTH_SHORT[mIdx] || '' });
+            lastLabeledMonth = mIdx;
+          }
+        }
+      }
+    }
+
+    let total = 0;
+    let activeDays = 0;
+    let bestDay = null;
+    let longestStreak = 0;
+    let runningStreak = 0;
+
+    for (let i = 0; i < days.length; i += 1) {
+      const d = days[i];
+      total += d.count;
+      if (d.count > 0) {
+        activeDays += 1;
+        runningStreak += 1;
+        if (runningStreak > longestStreak) longestStreak = runningStreak;
+        if (!bestDay || d.count > bestDay.count || (d.count === bestDay.count && d.date > bestDay.date)) {
+          bestDay = d;
+        }
+      } else {
+        runningStreak = 0;
+      }
+    }
+
+    let currentStreak = 0;
+    if (days.length > 0) {
+      let anchorIdx = days.length - 1;
+      for (let i = days.length - 1; i >= 0; i -= 1) {
+        if (days[i].date <= latestActiveOrToday) {
+          anchorIdx = i;
+          break;
+        }
+      }
+      const tailHasActivity =
+        days[anchorIdx].count > 0 || (anchorIdx > 0 && days[anchorIdx - 1].count > 0);
+      if (tailHasActivity) {
+        let idx = days[anchorIdx].count > 0 ? anchorIdx : anchorIdx - 1;
+        while (idx >= 0 && days[idx].count > 0) {
+          currentStreak += 1;
+          idx -= 1;
+        }
+      }
+    }
+
+    return {
+      rangeKey,
+      days,
+      gridCells,
+      weekCount,
+      monthMarks,
+      total,
+      activeDays,
+      currentStreak,
+      longestStreak,
+      bestDay
+    };
+  }
+
+  function renderHomeGithubContributionsSection() {
+    const username = extractGithubUsername();
+    const profileUrl =
+      (githubActivityState.profile && githubActivityState.profile.htmlUrl) ||
+      `https://github.com/${username}`;
+    const publicRepos =
+      (githubActivityState.profile && githubActivityState.profile.publicRepos) ||
+      (githubActivityState.repos && githubActivityState.repos.length) ||
+      2;
+
+    const availableYears = Object.keys(githubActivityState.totalsByYear || {})
+      .filter((y) => /^\d{4}$/.test(y))
+      .sort((a, b) => Number(b) - Number(a));
+    if (!availableYears.length) {
+      availableYears.push('2026', '2025');
+    }
+
+    const activeRange =
+      githubRange === 'last' || availableYears.includes(githubRange) ? githubRange : 'last';
+    const snapshot = getGithubHeatmapSnapshot(activeRange);
+    const rangeButtons = [
+      { id: 'last', label: 'Last Year' },
+      ...availableYears.map((yr) => ({ id: yr, label: yr }))
+    ];
+
+    const rangeSummaryLabel =
+      activeRange === 'last'
+        ? `${snapshot.total} contributions in the last 12 months`
+        : `${snapshot.total} contributions in ${activeRange}`;
+
+    const readoutText =
+      githubSelectedDayText ||
+      (snapshot.bestDay
+        ? `Peak activity: ${formatContributionReadout(snapshot.bestDay)}`
+        : 'Hover or tap any square to inspect commits');
+
+    const repos = Array.isArray(githubActivityState.repos) ? githubActivityState.repos.slice(0, 3) : [];
+
+    return `
+      <section id="github-contributions-section" class="github-contrib-section">
+        <div class="container-xl">
+          <div class="section-header-center github-contrib-header">
+            <span class="updates-kicker">Open Source Activity</span>
+            <h2 class="page-title">GitHub <span class="text-violet-500">Contributions</span></h2>
+            <p class="page-subtitle">Consistent commits, code experiments, and open-source repositories on GitHub.</p>
+          </div>
+
+          <div class="warp-card github-contrib-card reveal-up">
+            <div class="github-contrib-top">
+              <div class="github-identity">
+                <a
+                  href="${escapeHtml(profileUrl)}"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  class="github-avatar-link"
+                  aria-label="Visit ${escapeHtml(username)} on GitHub"
+                >
+                  ${ICONS.github}
+                </a>
+                <div class="github-identity-copy">
+                  <div class="github-handle-row">
+                    <a
+                      href="${escapeHtml(profileUrl)}"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      class="github-handle-link"
+                    >
+                      @${escapeHtml(username)}
+                    </a>
+                    <span class="updates-sep" aria-hidden="true">&middot;</span>
+                    <span class="github-repo-count">${escapeHtml(String(publicRepos))} Public Repos</span>
+                  </div>
+                  <p class="github-range-summary">${escapeHtml(rangeSummaryLabel)}</p>
+                </div>
+              </div>
+
+              <div class="github-top-controls">
+                <div class="github-range-tabs" role="group" aria-label="Select GitHub contribution timeframe">
+                  ${rangeButtons
+                    .map(
+                      (btn) => `
+                    <button
+                      type="button"
+                      class="github-range-btn${activeRange === btn.id ? ' active' : ''}"
+                      data-github-range="${escapeHtml(btn.id)}"
+                      aria-pressed="${activeRange === btn.id ? 'true' : 'false'}"
+                    >
+                      ${escapeHtml(btn.label)}
+                    </button>
+                  `
+                    )
+                    .join('')}
+                </div>
+
+                <a
+                  href="${escapeHtml(profileUrl)}"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  class="github-profile-btn"
+                >
+                  <span>GitHub</span>
+                  ${ICONS.externalLink}
+                </a>
+              </div>
+            </div>
+
+            <div class="github-stats-row">
+              <div class="github-stat-item">
+                <span class="github-stat-label">Total Contributions</span>
+                <span class="github-stat-value">${escapeHtml(String(snapshot.total))}</span>
+              </div>
+              <div class="github-stat-item">
+                <span class="github-stat-label">Active Days</span>
+                <span class="github-stat-value">${escapeHtml(String(snapshot.activeDays))}</span>
+              </div>
+              <div class="github-stat-item">
+                <span class="github-stat-label">Current Streak</span>
+                <span class="github-stat-value">${escapeHtml(String(snapshot.currentStreak))} ${snapshot.currentStreak === 1 ? 'day' : 'days'}</span>
+              </div>
+              <div class="github-stat-item">
+                <span class="github-stat-label">Best Day</span>
+                <span class="github-stat-value">${snapshot.bestDay ? escapeHtml(`${snapshot.bestDay.count} commits`) : '0 commits'}</span>
+              </div>
+            </div>
+
+            <div class="github-heatmap-wrap">
+              <div class="github-heatmap-scroll" id="github-heatmap-scroll">
+                <div class="github-heatmap-canvas" style="--gh-weeks: ${snapshot.weekCount};">
+                  <div class="github-heatmap-months" aria-hidden="true">
+                    ${snapshot.monthMarks
+                      .map(
+                        (mark) => `
+                      <span class="github-month-label" style="grid-column: ${mark.weekIndex + 1};">${escapeHtml(mark.label)}</span>
+                    `
+                      )
+                      .join('')}
+                  </div>
+
+                  <div class="github-heatmap-body">
+                    <div class="github-weekdays" aria-hidden="true">
+                      <span></span>
+                      <span>Mon</span>
+                      <span></span>
+                      <span>Wed</span>
+                      <span></span>
+                      <span>Fri</span>
+                      <span></span>
+                    </div>
+
+                    <div class="github-heatmap-grid" role="grid" aria-label="GitHub contribution calendar">
+                      ${snapshot.gridCells
+                        .map((cell) => {
+                          if (!cell) {
+                            return '<span class="github-cell is-empty-pad" aria-hidden="true"></span>';
+                          }
+                          const desc = formatContributionReadout(cell);
+                          return `<button type="button" class="github-cell" data-level="${cell.level}" data-contrib-date="${escapeHtml(cell.date)}" data-contrib-count="${cell.count}" title="${escapeHtml(desc)}" aria-label="${escapeHtml(desc)}"></button>`;
+                        })
+                        .join('')}
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="github-heatmap-footer">
+                <p id="github-contrib-readout" class="github-contrib-readout">${escapeHtml(readoutText)}</p>
+
+                <div class="github-legend" aria-label="Contribution intensity legend">
+                  <span>Less</span>
+                  <span class="github-cell github-legend-swatch" data-level="0" aria-hidden="true"></span>
+                  <span class="github-cell github-legend-swatch" data-level="1" aria-hidden="true"></span>
+                  <span class="github-cell github-legend-swatch" data-level="2" aria-hidden="true"></span>
+                  <span class="github-cell github-legend-swatch" data-level="3" aria-hidden="true"></span>
+                  <span class="github-cell github-legend-swatch" data-level="4" aria-hidden="true"></span>
+                  <span>More</span>
+                </div>
+              </div>
+            </div>
+
+            ${
+              repos.length
+                ? `
+              <div class="github-repos-row">
+                <span class="github-repos-heading">Recent Repositories</span>
+                <div class="github-repos-list">
+                  ${repos
+                    .map(
+                      (repo) => `
+                    <a
+                      href="${escapeHtml(repo.url)}"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      class="github-repo-link"
+                    >
+                      <span class="github-repo-name">${escapeHtml(repo.name)}</span>
+                      ${
+                        repo.language
+                          ? `<span class="updates-sep" aria-hidden="true">&middot;</span><span class="github-repo-lang">${escapeHtml(repo.language)}</span>`
+                          : ''
+                      }
+                      ${ICONS.externalLink}
+                    </a>
+                  `
+                    )
+                    .join('')}
+                </div>
+              </div>
+            `
+                : ''
+            }
+          </div>
+        </div>
+      </section>
+    `;
+  }
+
+  function scrollGithubHeatmapToRecent() {
+    const scroller = document.getElementById('github-heatmap-scroll');
+    if (!scroller) return;
+    if (scroller.scrollWidth > scroller.clientWidth + 4) {
+      scroller.scrollLeft = scroller.scrollWidth;
+    }
+  }
+
+  function refreshGithubContributionsSection(makeVisibleImmediately = false) {
+    const existing = document.getElementById('github-contributions-section');
+    if (!existing) return;
+    existing.outerHTML = renderHomeGithubContributionsSection();
+    if (makeVisibleImmediately) {
+      document
+        .querySelectorAll('#github-contributions-section .reveal-up')
+        .forEach((el) => el.classList.add('is-visible'));
+    } else {
+      initObservers();
+    }
+    window.requestAnimationFrame(scrollGithubHeatmapToRecent);
+  }
+
+  function getGithubStateDigest(state) {
+    if (!state) return '';
+    const active = (Array.isArray(state.contributions) ? state.contributions : [])
+      .filter((c) => c && c.count > 0)
+      .map((c) => `${c.date}:${c.count}`)
+      .join(',');
+    const repos = (Array.isArray(state.repos) ? state.repos : [])
+      .slice(0, 3)
+      .map((r) => `${r.name || ''}|${r.language || ''}`)
+      .join(',');
+    const publicRepos = (state.profile && state.profile.publicRepos) || 0;
+    const years = state.totalsByYear ? JSON.stringify(state.totalsByYear) : '';
+    return `${state.username || ''}|${publicRepos}|${years}|${repos}|${active}`;
+  }
+
+  function applyGithubBundle(bundle) {
+    if (!bundle || !Array.isArray(bundle.contributions) || !bundle.contributions.length) return;
+    const sortedContributions = [...bundle.contributions].sort((a, b) =>
+      String(a.date || '').localeCompare(String(b.date || ''))
+    );
+    const nextState = {
+      username: bundle.username || extractGithubUsername(),
+      isLive: true,
+      totalsByYear: bundle.totalsByYear || githubActivityState.totalsByYear,
+      contributions: sortedContributions,
+      profile: bundle.profile || githubActivityState.profile,
+      repos: Array.isArray(bundle.repos) && bundle.repos.length ? bundle.repos : githubActivityState.repos
+    };
+    const changed = getGithubStateDigest(nextState) !== getGithubStateDigest(githubActivityState);
+    githubActivityState = nextState;
+    if (changed && currentPath === '/') {
+      refreshGithubContributionsSection(true);
+    }
+  }
+
+  function syncLiveGithubContributions() {
+    if (githubDataLoadStarted || typeof window.fetch !== 'function') return;
+    githubDataLoadStarted = true;
+
+    const username = extractGithubUsername();
+    const cacheKey = `portfolio-gh-v1-${username}`;
+    try {
+      const cachedRaw = window.sessionStorage.getItem(cacheKey);
+      if (cachedRaw) {
+        const cached = JSON.parse(cachedRaw);
+        if (cached && cached.ts && Date.now() - cached.ts < 15 * 60 * 1000 && cached.data) {
+          applyGithubBundle(cached.data);
+          return;
+        }
+      }
+    } catch (_) {}
+
+    const saveToCache = (data) => {
+      try {
+        window.sessionStorage.setItem(cacheKey, JSON.stringify({ ts: Date.now(), data }));
+      } catch (_) {}
+    };
+
+    const fetchDirectGithub = () =>
+      Promise.allSettled([
+        fetch(`https://github-contributions-api.jogruber.de/v4/${encodeURIComponent(username)}`).then((r) =>
+          r.ok ? r.json() : null
+        ),
+        fetch(`https://api.github.com/users/${encodeURIComponent(username)}`).then((r) =>
+          r.ok ? r.json() : null
+        ),
+        fetch(`https://api.github.com/users/${encodeURIComponent(username)}/repos?per_page=10&sort=pushed`).then((r) =>
+          r.ok ? r.json() : null
+        )
+      ]).then(([contribRes, userRes, reposRes]) => {
+        const contribJson = contribRes.status === 'fulfilled' ? contribRes.value : null;
+        if (!contribJson || !Array.isArray(contribJson.contributions) || !contribJson.contributions.length) {
+          return null;
+        }
+        const userJson = userRes.status === 'fulfilled' ? userRes.value : null;
+        const reposJson = reposRes.status === 'fulfilled' ? reposRes.value : null;
+        return {
+          username,
+          totalsByYear: contribJson.total || {},
+          contributions: contribJson.contributions,
+          profile: userJson
+            ? {
+                login: userJson.login || username,
+                htmlUrl: userJson.html_url || `https://github.com/${username}`,
+                publicRepos: Number(userJson.public_repos) || 0,
+                followers: Number(userJson.followers) || 0
+              }
+            : null,
+          repos: Array.isArray(reposJson)
+            ? reposJson
+                .filter((r) => !r.fork)
+                .slice(0, 4)
+                .map((r) => ({
+                  name: r.name,
+                  url: r.html_url,
+                  language: r.language || '',
+                  pushedAt: r.pushed_at || ''
+                }))
+            : []
+        };
+      });
+
+    const initialPromise = !IS_FILE_PROTOCOL
+      ? fetch(`/api/github-contributions?user=${encodeURIComponent(username)}`)
+          .then((r) => (r.ok ? r.json() : null))
+          .catch(() => null)
+      : Promise.resolve(null);
+
+    initialPromise
+      .then((bundle) => (bundle && bundle.contributions && bundle.contributions.length ? bundle : fetchDirectGithub()))
+      .then((bundle) => {
+        if (bundle && Array.isArray(bundle.contributions) && bundle.contributions.length) {
+          saveToCache(bundle);
+          applyGithubBundle(bundle);
+        }
+      })
+      .catch(() => {});
+  }
+
   function renderExploreJourney() {
     const featuredCertificate =
       CO_CURRICULAR.find((item) => item.title === 'Code Trap') || CO_CURRICULAR[0];
@@ -815,18 +1533,6 @@
     ].filter(Boolean);
 
     const envelopeCategories = [
-      {
-        name: 'Education',
-        href: '/education',
-        accent: 'violet',
-        icon: ICONS.bookOpen,
-        summary: `${EDUCATION.length} Academic Records · 2019–Present`,
-        previews: EDUCATION.slice(0, 3).map((item) => ({
-          title: item.degree,
-          meta: item.year,
-          sub: item.institution
-        }))
-      },
       {
         name: 'Experience',
         href: '/experience',
@@ -874,7 +1580,7 @@
           <div class="section-header-center">
             <h2 class="explore-title">Explore My Journey</h2>
             <p class="explore-sub">
-              Click any envelope to explore the full archive of my academic background, experiences, certificates, and builds.
+              Click any envelope to explore the full archive of my experiences, certificates, and builds.
             </p>
           </div>
 
@@ -1089,6 +1795,7 @@
                     loading="lazy"
                     fetchpriority="low"
                     decoding="async"
+                    onerror="this.style.opacity='0'"
                   />
                 </div>
                 <div class="about-deco-br"></div>
@@ -1127,63 +1834,14 @@
           </div>
         </section>
 
-        <!-- My Vision Section -->
-        <section class="vision-section">
-          <div class="container-xl">
-            <div class="warp-card vision-card reveal-up">
-              <div class="vision-glow-tr"></div>
-              <div class="vision-glow-bl"></div>
-
-              <div class="vision-flex">
-                <div class="vision-icon-box">
-                  ${ICONS.target}
-                </div>
-                <div>
-                  <h2 class="vision-title">My Vision</h2>
-                  <p class="vision-quote">
-                    "My vision is to become a highly skilled software engineer and data science professional with expertise in machine learning and artificial intelligence. I aim to combine my technical proficiency with analytical thinking to design intelligent, data-driven solutions that solve real-world problems. By leveraging the power of AI and modern software development, I strive to create innovative systems that enhance efficiency, improve decision-making, and contribute to technological advancement. I am committed to continuous learning and growth, with the goal of making a meaningful impact in the evolving world of data and intelligent technologies."
-                  </p>
-                </div>
-              </div>
-            </div>
-          </div>
-        </section>
+        ${renderHomeEducationAndVisionSection()}
 
         ${renderHomeLatestUpdatesSection()}
 
         ${renderHomeSkillsSection()}
 
-        ${renderExploreJourney()}
-      </div>
-    `;
-  }
+        ${renderHomeGithubContributionsSection()}
 
-  function renderEducationPage() {
-    return `
-      <div class="page-wrapper">
-        <section class="page-section">
-          <div class="container-xl">
-            <div class="section-header-center">
-              <h2 class="page-title">Education</h2>
-              <p class="page-subtitle">Academic records from my journey.</p>
-            </div>
-
-            <div class="stack-16">
-              ${EDUCATION.map(
-                (item) => `
-                <div class="warp-card edu-card reveal-up">
-                  <div>
-                    <span class="item-year-violet">${escapeHtml(item.year)}</span>
-                    <h3 class="item-title-3xl">${escapeHtml(item.degree)}</h3>
-                    <p class="item-org-xl">${escapeHtml(item.institution)}</p>
-                    <p class="item-desc-lg">${escapeHtml(item.description)}</p>
-                  </div>
-                </div>
-              `
-              ).join('')}
-            </div>
-          </div>
-        </section>
         ${renderExploreJourney()}
       </div>
     `;
@@ -1226,6 +1884,7 @@
                           referrerpolicy="no-referrer"
                           loading="lazy"
                           decoding="async"
+                          onerror="this.style.opacity='0'"
                         />
                         <div class="exp-cert-overlay">
                           <span class="exp-cert-pill">
@@ -1275,6 +1934,7 @@
                       referrerpolicy="no-referrer"
                       loading="lazy"
                       decoding="async"
+                      onerror="this.style.opacity='0'"
                     />
                     <div class="cert-overlay">
                       <span class="cert-pill warp-glow">
@@ -1322,6 +1982,7 @@
                       referrerpolicy="no-referrer"
                       loading="lazy"
                       decoding="async"
+                      onerror="this.style.opacity='0'"
                     />
                   </div>
                   <div class="project-body">
@@ -1514,7 +2175,7 @@
   function startTypewriter() {
     stopTypewriter();
     const target = document.getElementById('typewriter-text');
-    if (!target) return;
+    if (!target || !TYPEWRITER_WORDS.length || document.hidden) return;
 
     let wordIndex = 0;
     let charIndex = 0;
@@ -1522,14 +2183,15 @@
 
     function step() {
       if (document.hidden) {
-        typewriterTimer = window.setTimeout(step, 500);
+        typewriterTimer = null;
         return;
       }
 
       const currentEl = document.getElementById('typewriter-text');
-      if (!currentEl) return;
+      if (!currentEl || !TYPEWRITER_WORDS.length) return;
 
-      const currentWord = TYPEWRITER_WORDS[wordIndex];
+      const currentWord = String(TYPEWRITER_WORDS[wordIndex] || '');
+      if (!currentWord) return;
 
       if (!isDeleting) {
         charIndex += 1;
@@ -1651,6 +2313,7 @@
   // Scroll Reveal & Skill Bars Observer
   // --------------------------------------------------------------------------
   let revealCheckTimer = null;
+  let resizeRevealTimer = null;
   let pendingRevealNodes = [];
 
   function checkPendingReveals() {
@@ -1714,14 +2377,30 @@
   // --------------------------------------------------------------------------
   // Certificate Modal
   // --------------------------------------------------------------------------
+  let certModalRequestToken = 0;
+  let certModalClearTimer = null;
+
   function openCertificateModal(url, title) {
     if (!certModal || !certModalImg || !certModalTitle || !certModalLoader) return;
 
+    if (certModalClearTimer !== null) {
+      window.clearTimeout(certModalClearTimer);
+      certModalClearTimer = null;
+    }
+
+    const resolvedUrl = resolveAssetUrl(url);
+    const token = ++certModalRequestToken;
+    certModalImg.dataset.reqToken = String(token);
     certModalTitle.textContent = title || '';
+
+    if (certModalImg.getAttribute('src') !== resolvedUrl) {
+      certModalImg.removeAttribute('src');
+    }
+
     certModalLoader.classList.remove('hidden');
     certModalImg.classList.add('is-loading');
     certModalImg.alt = title || 'Certificate';
-    certModalImg.src = resolveAssetUrl(url);
+    certModalImg.src = resolvedUrl;
 
     if (certModalImg.complete && certModalImg.naturalWidth > 0) {
       certModalLoader.classList.add('hidden');
@@ -1737,8 +2416,20 @@
 
   function closeCertificateModal() {
     if (!certModal) return;
+    certModalRequestToken += 1;
     certModal.classList.remove('open');
     certModal.setAttribute('aria-hidden', 'true');
+    if (certModalImg) {
+      if (certModalClearTimer !== null) {
+        window.clearTimeout(certModalClearTimer);
+      }
+      certModalClearTimer = window.setTimeout(() => {
+        certModalClearTimer = null;
+        if (!certModal.classList.contains('open')) {
+          certModalImg.removeAttribute('src');
+        }
+      }, 220);
+    }
   }
 
   function initCertificateModal() {
@@ -1754,6 +2445,9 @@
     }
     if (certModalImg) {
       const doneLoading = () => {
+        if (certModalImg.dataset.reqToken !== String(certModalRequestToken)) {
+          return;
+        }
         certModalLoader.classList.add('hidden');
         certModalImg.classList.remove('is-loading');
       };
@@ -1819,9 +2513,6 @@
 
     let html = '';
     switch (currentPath) {
-      case '/education':
-        html = renderEducationPage();
-        break;
       case '/experience':
         html = renderExperiencePage();
         break;
@@ -1848,6 +2539,7 @@
     if (currentPath === '/') {
       startTypewriter();
       startBdClock();
+      window.requestAnimationFrame(scrollGithubHeatmapToRecent);
     } else if (currentPath === '/contact') {
       bindContactForm();
     }
@@ -2013,8 +2705,21 @@
         window.requestAnimationFrame(() => {
           scrollTickPending = false;
           updateNavbarScrollState();
-          checkPendingReveals();
         });
+      },
+      { passive: true }
+    );
+
+    window.addEventListener(
+      'resize',
+      () => {
+        if (resizeRevealTimer !== null) {
+          window.clearTimeout(resizeRevealTimer);
+        }
+        resizeRevealTimer = window.setTimeout(() => {
+          resizeRevealTimer = null;
+          checkPendingReveals();
+        }, 150);
       },
       { passive: true }
     );
@@ -2022,6 +2727,7 @@
     window.addEventListener('pageshow', (e) => {
       scrollTickPending = false;
       updateNavbarScrollState();
+      checkPendingReveals();
       if (e.persisted) {
         initObservers();
         if (currentPath === '/') {
@@ -2032,8 +2738,12 @@
     });
 
     document.addEventListener('visibilitychange', () => {
-      if (!document.hidden && currentPath === '/') {
-        updateBdClockDom();
+      if (document.hidden) {
+        stopTypewriter();
+        stopBdClock();
+      } else if (currentPath === '/') {
+        startBdClock();
+        startTypewriter();
       }
     });
 
@@ -2065,6 +2775,28 @@
         return;
       }
 
+      const githubRangeBtn = e.target.closest('[data-github-range]');
+      if (githubRangeBtn) {
+        const nextRange = githubRangeBtn.getAttribute('data-github-range') || 'last';
+        if (nextRange !== githubRange) {
+          githubRange = nextRange;
+          githubSelectedDayText = '';
+          refreshGithubContributionsSection(true);
+        }
+        return;
+      }
+
+      const contribCell = e.target.closest('[data-contrib-date]');
+      if (contribCell) {
+        const label = contribCell.getAttribute('aria-label') || '';
+        const readoutEl = document.getElementById('github-contrib-readout');
+        if (label) {
+          githubSelectedDayText = label;
+          if (readoutEl) readoutEl.textContent = label;
+        }
+        return;
+      }
+
       const routeTrigger = e.target.closest('[data-route]');
       if (routeTrigger) {
         if (routeTrigger.tagName === 'A' && (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey || e.button !== 0)) {
@@ -2084,6 +2816,19 @@
         }
       }
     });
+
+    const handleContribHoverOrFocus = (e) => {
+      const contribCell = e.target && e.target.closest ? e.target.closest('[data-contrib-date]') : null;
+      if (!contribCell) return;
+      const label = contribCell.getAttribute('aria-label') || '';
+      const readoutEl = document.getElementById('github-contrib-readout');
+      if (label && readoutEl) {
+        readoutEl.textContent = label;
+      }
+    };
+
+    document.addEventListener('mouseover', handleContribHoverOrFocus, { passive: true });
+    document.addEventListener('focusin', handleContribHoverOrFocus);
 
     document.addEventListener('keydown', (e) => {
       if (e.key === 'Enter' || e.key === ' ') {
@@ -2109,7 +2854,17 @@
     currentPath = getInitialPath();
     renderCurrentPage();
     window.__PORTFOLIO_BOOTED__ = true;
-    safeRun(syncLiveJsonData);
+
+    const runDeferredSyncs = () => {
+      safeRun(syncLiveJsonData);
+      safeRun(syncLiveGithubContributions);
+    };
+
+    if (typeof window.requestIdleCallback === 'function') {
+      window.requestIdleCallback(runDeferredSyncs, { timeout: 1200 });
+    } else {
+      window.setTimeout(runDeferredSyncs, 250);
+    }
   }
 
   if (document.readyState === 'loading') {

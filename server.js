@@ -15,21 +15,162 @@ function loadJsonFile(relativePath) {
 const appConfig = loadJsonFile('config.json');
 const portfolioData = loadJsonFile('portfolio-data.json');
 
+function getConfiguredGithubUsername() {
+  const socials = (portfolioData.profile && portfolioData.profile.socials) || [];
+  const gh = socials.find((s) => String(s.name || '').toLowerCase() === 'github');
+  if (gh && gh.url) {
+    const match = String(gh.url).match(/github\.com\/([^/?#]+)/i);
+    if (match && match[1]) return match[1];
+  }
+  return 'mehediabid17-lgtm';
+}
+
+const GITHUB_CACHE_TTL_MS = 15 * 60 * 1000;
+const githubCache = new Map();
+
+function parseGithubContributionsHtml(html) {
+  const contributions = [];
+  const rowRegex = /data-date="(\d{4}-\d{2}-\d{2})"[^>]*data-level="([0-4])"/g;
+  const seen = new Set();
+  let match;
+  while ((match = rowRegex.exec(html)) !== null) {
+    const date = match[1];
+    const level = Number(match[2]) || 0;
+    if (seen.has(date)) continue;
+    seen.add(date);
+    contributions.push({ date, count: level > 0 ? level : 0, level });
+  }
+  contributions.sort((a, b) => a.date.localeCompare(b.date));
+  return contributions;
+}
+
+async function fetchLiveGithubBundle(username) {
+  const cached = githubCache.get(username);
+  if (cached && Date.now() - cached.fetchedAt < GITHUB_CACHE_TTL_MS) {
+    return cached.data;
+  }
+
+  const headers = {
+    'User-Agent': 'Portfolio-Of-Abid/1.0',
+    Accept: 'application/json',
+  };
+
+  const [contribRes, userRes, reposRes] = await Promise.allSettled([
+    fetch(`https://github-contributions-api.jogruber.de/v4/${encodeURIComponent(username)}`, {
+      headers,
+      signal: AbortSignal.timeout(6000),
+    }),
+    fetch(`https://api.github.com/users/${encodeURIComponent(username)}`, {
+      headers,
+      signal: AbortSignal.timeout(6000),
+    }),
+    fetch(`https://api.github.com/users/${encodeURIComponent(username)}/repos?per_page=10&sort=pushed`, {
+      headers,
+      signal: AbortSignal.timeout(6000),
+    }),
+  ]);
+
+  let totalsByYear = {};
+  let contributions = [];
+
+  if (contribRes.status === 'fulfilled' && contribRes.value.ok) {
+    const contribJson = await contribRes.value.json();
+    totalsByYear = contribJson.total || {};
+    contributions = Array.isArray(contribJson.contributions) ? contribJson.contributions : [];
+  } else {
+    try {
+      const htmlRes = await fetch(
+        `https://github.com/users/${encodeURIComponent(username)}/contributions`,
+        { headers: { 'User-Agent': 'Mozilla/5.0' }, signal: AbortSignal.timeout(6000) }
+      );
+      if (htmlRes.ok) {
+        const htmlText = await htmlRes.text();
+        contributions = parseGithubContributionsHtml(htmlText);
+      }
+    } catch (_) {
+      // Fall through cleanly
+    }
+  }
+
+  let profile = null;
+  if (userRes.status === 'fulfilled' && userRes.value.ok) {
+    const userJson = await userRes.value.json();
+    profile = {
+      login: userJson.login || username,
+      name: userJson.name || username,
+      avatarUrl: userJson.avatar_url || '',
+      htmlUrl: userJson.html_url || `https://github.com/${username}`,
+      publicRepos: Number(userJson.public_repos) || 0,
+      followers: Number(userJson.followers) || 0,
+      following: Number(userJson.following) || 0,
+    };
+  }
+
+  let repos = [];
+  if (reposRes.status === 'fulfilled' && reposRes.value.ok) {
+    const reposJson = await reposRes.value.json();
+    if (Array.isArray(reposJson)) {
+      repos = reposJson
+        .filter((r) => !r.fork)
+        .slice(0, 4)
+        .map((r) => ({
+          name: r.name,
+          url: r.html_url,
+          description: r.description || '',
+          language: r.language || '',
+          stars: Number(r.stargazers_count) || 0,
+          pushedAt: r.pushed_at || r.updated_at || '',
+        }));
+    }
+  }
+
+  const payload = {
+    username,
+    fetchedAt: new Date().toISOString(),
+    totalsByYear,
+    contributions,
+    profile,
+    repos,
+  };
+
+  if (contributions.length > 0) {
+    githubCache.set(username, { fetchedAt: Date.now(), data: payload });
+  }
+
+  return payload;
+}
+
 async function startServer() {
   const app = express();
   const PORT = Number(process.env.PORT) || appConfig.server.defaultPort || 3000;
   const HOST = appConfig.server.host || '0.0.0.0';
 
-  app.use(compression({ threshold: 1024 }));
+  app.use(compression({ threshold: 512 }));
 
   app.get('/api/portfolio', (_req, res) => {
+    res.setHeader('Cache-Control', 'public, max-age=60');
     res.json(portfolioData);
   });
 
   app.get('/api/config', (_req, res) => {
+    res.setHeader('Cache-Control', 'public, max-age=60');
     res.json({
       updatesFeed: appConfig.updatesFeed,
     });
+  });
+
+  app.get('/api/github-contributions', async (req, res) => {
+    const requested = String(req.query.user || '').trim();
+    const username = /^[a-z\d](?:[a-z\d]|-(?=[a-z\d])){0,38}$/i.test(requested)
+      ? requested
+      : getConfiguredGithubUsername();
+    try {
+      const bundle = await fetchLiveGithubBundle(username);
+      res.setHeader('Cache-Control', 'public, max-age=300');
+      res.json(bundle);
+    } catch (err) {
+      res.status(502).json({ error: 'Unable to fetch GitHub activity right now' });
+    }
   });
 
   const distDir = path.resolve(__dirname, 'dist');
@@ -76,6 +217,8 @@ async function startServer() {
             res.setHeader('Expires', '0');
           } else if (/\.[a-f0-9]{8,}\.(?:js|css)$/i.test(filePath) || /-[A-Za-z0-9_-]{6,}\.(?:js|css)$/i.test(filePath)) {
             res.setHeader('Cache-Control', 'public, max-age=31536000, immutable');
+          } else if (/\.(?:webp|png|jpe?g|svg|ico)$/i.test(filePath)) {
+            res.setHeader('Cache-Control', 'public, max-age=86400');
           } else {
             res.setHeader('Cache-Control', 'public, max-age=3600');
           }
@@ -93,6 +236,7 @@ async function startServer() {
   }
 
   if (!isProduction) {
+    app.use('/images', express.static(path.resolve(__dirname, 'images'), { maxAge: '1d' }));
     try {
       const { createServer: createViteServer } = await import('vite');
       const vite = await createViteServer({

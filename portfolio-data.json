@@ -40,7 +40,6 @@
   },
   "navLinks": [
     { "name": "Home", "href": "/" },
-    { "name": "Education", "href": "/education" },
     { "name": "Experience", "href": "/experience" },
     { "name": "Certificates", "href": "/certificates" },
     { "name": "Projects", "href": "/projects" },
@@ -54,14 +53,6 @@
       "href": "/",
       "bgColor": "bg-slate-soft",
       "textColor": "text-slate-400"
-    },
-    {
-      "title": "Education",
-      "desc": "Academic background and certifications.",
-      "iconKey": "bookOpen",
-      "href": "/education",
-      "bgColor": "bg-violet-soft",
-      "textColor": "text-violet-400"
     },
     {
       "title": "Experience",
@@ -98,21 +89,36 @@
   ],
   "education": [
     {
+      "level": "Undergraduate",
       "degree": "Bachelor of Science (BSc) in Software Engineering (SWE)",
       "institution": "Daffodil International University",
       "year": "2025 - Running",
+      "status": "In progress",
+      "accent": "violet",
+      "logoKey": "diu",
+      "logo": "images/diu-logo.jpg",
       "description": "Currently pursuing a degree in Software Engineering with a strong focus on Data Science and Machine Learning. Actively engaged in building data-driven applications and exploring advanced statistical models."
     },
     {
+      "level": "Higher Secondary",
       "degree": "Higher Secondary Certificate (HSC)",
       "institution": "Nawab Habibullah Model School And College",
       "year": "2022 - 2023",
+      "status": "Completed",
+      "accent": "blue",
+      "logoKey": "nhmsc",
+      "logo": "images/nhmsc-logo.jpeg",
       "description": "Science Group. Achieved a perfect GPA of 5.00 / 5.00. Developed a strong foundation in Mathematics, Physics, and Chemistry."
     },
     {
+      "level": "Secondary",
       "degree": "Secondary School Certificate (SSC)",
       "institution": "Nawab Habibullah Model School And College",
       "year": "2019 - 2021",
+      "status": "Completed",
+      "accent": "emerald",
+      "logoKey": "nhmsc",
+      "logo": "images/nhmsc-logo.jpeg",
       "description": "Science Group. Achieved a perfect GPA of 5.00 / 5.00. This was the beginning of my journey into the world of science and technology."
     }
   ],
