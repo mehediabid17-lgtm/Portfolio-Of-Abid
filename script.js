@@ -90,7 +90,8 @@
     send: `<svg ${svgAttr}><path d="M14.536 21.686a.5.5 0 0 0 .937-.024l6.5-19a.496.496 0 0 0-.635-.635l-19 6.5a.5.5 0 0 0-.024.937l7.93 3.18a2 2 0 0 1 1.112 1.11z"/><path d="m21.854 2.147-10.94 10.939"/></svg>`,
     loader2: `<svg ${svgAttr}><path d="M21 12a9 9 0 1 1-6.219-8.56"/></svg>`,
     sun: `<svg ${svgAttr}><circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="m17.66 17.66 1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="m6.34 17.66-1.41 1.41"/><path d="m19.07 4.93-1.41 1.41"/></svg>`,
-    moon: `<svg ${svgAttr}><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/></svg>`
+    moon: `<svg ${svgAttr}><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/></svg>`,
+    clock: `<svg ${svgAttr}><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>`
   };
 
   // --------------------------------------------------------------------------
@@ -155,6 +156,7 @@
   let currentTheme = 'night';
   let updatesFilter = 'all';
   let typewriterTimer = null;
+  let bdClockTimer = null;
   let revealObserver = null;
   let lastNavbarScrolled = null;
   let scrollTickPending = false;
@@ -994,6 +996,7 @@
   // Page Renderers
   // --------------------------------------------------------------------------
   function renderHomePage() {
+    const bdClock = getBangladeshTimeParts();
     return `
       <div class="page-wrapper">
         <!-- Hero Section -->
@@ -1015,6 +1018,17 @@
               </h1>
               <div class="hero-typewriter-wrap">
                 I am a <span class="text-white"><span id="typewriter-text"></span><span class="typewriter-cursor">|</span></span>
+              </div>
+
+              <div class="hero-bd-clock" aria-label="Current Bangladesh Time (GMT+6)">
+                <span class="hero-bd-clock-icon" aria-hidden="true">${ICONS.clock}</span>
+                <span class="hero-bd-clock-dot" aria-hidden="true"></span>
+                <span class="hero-bd-clock-zone">Dhaka, BD</span>
+                <span class="hero-bd-clock-sep" aria-hidden="true">&middot;</span>
+                <time id="bd-clock-time" class="hero-bd-clock-time">${escapeHtml(bdClock.time)}</time>
+                <span class="hero-bd-clock-sep" aria-hidden="true">&middot;</span>
+                <span id="bd-clock-date" class="hero-bd-clock-date">${escapeHtml(bdClock.date)}</span>
+                <span class="hero-bd-clock-offset">GMT+6</span>
               </div>
 
               <div class="hero-actions">
@@ -1545,6 +1559,95 @@
   }
 
   // --------------------------------------------------------------------------
+  // Live Bangladesh Time Clock (Asia/Dhaka, UTC+6)
+  // --------------------------------------------------------------------------
+  const bdTimeFormatter =
+    typeof Intl !== 'undefined' && typeof Intl.DateTimeFormat === 'function'
+      ? new Intl.DateTimeFormat('en-US', {
+          timeZone: 'Asia/Dhaka',
+          hour: '2-digit',
+          minute: '2-digit',
+          second: '2-digit',
+          hour12: true
+        })
+      : null;
+
+  const bdDateFormatter =
+    typeof Intl !== 'undefined' && typeof Intl.DateTimeFormat === 'function'
+      ? new Intl.DateTimeFormat('en-US', {
+          timeZone: 'Asia/Dhaka',
+          weekday: 'short',
+          month: 'short',
+          day: 'numeric'
+        })
+      : null;
+
+  function getBangladeshTimeParts() {
+    const now = new Date();
+    if (bdTimeFormatter && bdDateFormatter) {
+      try {
+        return {
+          time: bdTimeFormatter.format(now),
+          date: bdDateFormatter.format(now)
+        };
+      } catch (_) {}
+    }
+    const utcPlus6 = new Date(now.getTime() + 6 * 60 * 60 * 1000);
+    const days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+    const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+    const hours24 = utcPlus6.getUTCHours();
+    const ampm = hours24 >= 12 ? 'PM' : 'AM';
+    const hours12 = String(hours24 % 12 || 12).padStart(2, '0');
+    const mins = String(utcPlus6.getUTCMinutes()).padStart(2, '0');
+    const secs = String(utcPlus6.getUTCSeconds()).padStart(2, '0');
+    return {
+      time: `${hours12}:${mins}:${secs} ${ampm}`,
+      date: `${days[utcPlus6.getUTCDay()]}, ${months[utcPlus6.getUTCMonth()]} ${utcPlus6.getUTCDate()}`
+    };
+  }
+
+  function updateBdClockDom() {
+    const timeEl = document.getElementById('bd-clock-time');
+    const dateEl = document.getElementById('bd-clock-date');
+    if (!timeEl) return false;
+    const parts = getBangladeshTimeParts();
+    if (timeEl.textContent !== parts.time) {
+      timeEl.textContent = parts.time;
+    }
+    if (dateEl && dateEl.textContent !== parts.date) {
+      dateEl.textContent = parts.date;
+    }
+    return true;
+  }
+
+  function stopBdClock() {
+    if (bdClockTimer !== null) {
+      window.clearTimeout(bdClockTimer);
+      bdClockTimer = null;
+    }
+  }
+
+  function startBdClock() {
+    stopBdClock();
+    if (!updateBdClockDom()) return;
+
+    function tick() {
+      if (!document.getElementById('bd-clock-time')) {
+        stopBdClock();
+        return;
+      }
+      if (!document.hidden) {
+        updateBdClockDom();
+      }
+      const delay = 1000 - (Date.now() % 1000) + 12;
+      bdClockTimer = window.setTimeout(tick, delay);
+    }
+
+    const initialDelay = 1000 - (Date.now() % 1000) + 12;
+    bdClockTimer = window.setTimeout(tick, initialDelay);
+  }
+
+  // --------------------------------------------------------------------------
   // Scroll Reveal & Skill Bars Observer
   // --------------------------------------------------------------------------
   let revealCheckTimer = null;
@@ -1712,6 +1815,7 @@
   function renderCurrentPage() {
     if (!pageRoot) return;
     stopTypewriter();
+    stopBdClock();
 
     let html = '';
     switch (currentPath) {
@@ -1743,6 +1847,7 @@
 
     if (currentPath === '/') {
       startTypewriter();
+      startBdClock();
     } else if (currentPath === '/contact') {
       bindContactForm();
     }
@@ -1921,7 +2026,14 @@
         initObservers();
         if (currentPath === '/') {
           startTypewriter();
+          startBdClock();
         }
+      }
+    });
+
+    document.addEventListener('visibilitychange', () => {
+      if (!document.hidden && currentPath === '/') {
+        updateBdClockDom();
       }
     });
 

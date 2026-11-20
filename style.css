@@ -716,13 +716,84 @@ img, svg {
   line-height: 1.75rem;
   font-weight: 500;
   color: #94a3b8;
-  margin-bottom: 2.5rem;
-  height: 3rem;
+  margin-bottom: 1.25rem;
+  min-height: 2.25rem;
 }
 
 .typewriter-cursor {
   display: inline-block;
   animation: blinkCursor 0.8s steps(2, start) infinite;
+}
+
+.hero-bd-clock {
+  display: inline-flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.45rem;
+  max-width: 100%;
+  padding: 0.5rem 0.9rem;
+  margin-bottom: 1.85rem;
+  border-radius: 9999px;
+  background-color: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  font-size: 0.8125rem;
+  line-height: 1.25;
+  color: #cbd5e1;
+}
+
+.hero-bd-clock-icon {
+  display: inline-flex;
+  align-items: center;
+  color: #a78bfa;
+}
+
+.hero-bd-clock-icon svg {
+  width: 0.95rem;
+  height: 0.95rem;
+}
+
+.hero-bd-clock-dot {
+  width: 0.45rem;
+  height: 0.45rem;
+  border-radius: 9999px;
+  background-color: #34d399;
+  box-shadow: 0 0 8px rgba(52, 211, 153, 0.7);
+  animation: pulseOpacity 1.8s ease-in-out infinite;
+  flex-shrink: 0;
+}
+
+.hero-bd-clock-zone {
+  font-weight: 600;
+  color: #e2e8f0;
+}
+
+.hero-bd-clock-sep {
+  color: #64748b;
+}
+
+.hero-bd-clock-time {
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.02em;
+  color: #ffffff;
+}
+
+.hero-bd-clock-date {
+  color: #94a3b8;
+  font-weight: 500;
+}
+
+.hero-bd-clock-offset {
+  padding: 0.125rem 0.45rem;
+  border-radius: 9999px;
+  font-size: 0.6875rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  color: #a78bfa;
+  background-color: rgba(167, 139, 250, 0.12);
+  border: 1px solid rgba(167, 139, 250, 0.22);
 }
 
 .hero-actions {
@@ -3022,6 +3093,40 @@ img, svg {
   color: #475569;
 }
 
+[data-theme="day"] .hero-bd-clock {
+  background-color: rgba(255, 255, 255, 0.78);
+  border-color: rgba(15, 23, 42, 0.1);
+  color: #334155;
+  box-shadow: 0 6px 18px -10px rgba(15, 23, 42, 0.16);
+}
+
+[data-theme="day"] .hero-bd-clock-icon {
+  color: #6d28d9;
+}
+
+[data-theme="day"] .hero-bd-clock-dot {
+  background-color: #10b981;
+  box-shadow: 0 0 8px rgba(16, 185, 129, 0.45);
+}
+
+[data-theme="day"] .hero-bd-clock-zone {
+  color: #1e293b;
+}
+
+[data-theme="day"] .hero-bd-clock-time {
+  color: #0f172a;
+}
+
+[data-theme="day"] .hero-bd-clock-date {
+  color: #475569;
+}
+
+[data-theme="day"] .hero-bd-clock-offset {
+  color: #6d28d9;
+  background-color: rgba(124, 58, 237, 0.08);
+  border-color: rgba(124, 58, 237, 0.22);
+}
+
 [data-theme="day"] .hero-btn-secondary {
   background-color: rgba(15, 23, 42, 0.04);
   color: #0f172a;
@@ -3734,6 +3839,7 @@ img, svg {
   .hero-image-pulse,
   .scroll-indicator-arrow,
   .typewriter-cursor,
+  .hero-bd-clock-dot,
   .page-wrapper,
   .hero-copy,
   .hero-image-col,
